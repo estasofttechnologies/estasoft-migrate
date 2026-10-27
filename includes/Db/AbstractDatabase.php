@@ -203,9 +203,8 @@ abstract class AbstractDatabase implements Database {
 			$buffer[] = $tuple;
 			$size    += $len;
 		}
-		if ( $buffer ) {
-			$written += $this->run( $head . implode( ',', $buffer ) );
-		}
+		// An empty $rows returned above, so the loop ran and the last tuple is still waiting in the buffer.
+		$written += $this->run( $head . implode( ',', $buffer ) );
 		return $written;
 	}
 

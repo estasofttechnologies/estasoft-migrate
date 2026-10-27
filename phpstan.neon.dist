@@ -2,6 +2,9 @@
 parameters:
   level: 5
   phpVersion: 70400
+  # WordPress docblocks are often more optimistic than what really comes back (WP_REST_Request::get_json_params()
+  # returns null for a body that is not JSON, for one). Check the code, not the docblock.
+  treatPhpDocTypesAsCertain: false
   paths:
     - estasoft-migrate.php
     - includes

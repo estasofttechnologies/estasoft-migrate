@@ -223,7 +223,10 @@ class MysqlRoundtripTest extends TestCase {
 		foreach ( array( 'estm_blob', 'estm_multi', 'estm_nopk', 'posts', 'postmeta' ) as $t ) {
 			$before = $wpdb->get_row( "SHOW CREATE TABLE `{$p}{$t}`", ARRAY_N )[1];
 			$after  = $this->dest_wpdb->get_row( "SHOW CREATE TABLE `{$p}{$t}`", ARRAY_N )[1];
-			$this->assertSame( $before, $after, "Table definition of {$t} changed.\nSource:\n{$before}\nDestination:\n{$after}\n" );
+			$last = static function ( $definition ) {
+				return substr( $definition, (int) strrpos( $definition, "\n" ) + 1 );
+			};
+			$this->assertSame( $before, $after, "Table definition of {$t} changed.\nSource options: " . $last( $before ) . "\nDestination options: " . $last( $after ) . "\n" );
 		}
 	}
 
