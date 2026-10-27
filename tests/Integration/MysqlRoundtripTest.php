@@ -221,11 +221,9 @@ class MysqlRoundtripTest extends TestCase {
 		$this->dest->run( 'import', array( 'package_id' => $this->export() ) );
 		$p = $wpdb->prefix;
 		foreach ( array( 'estm_blob', 'estm_multi', 'estm_nopk', 'posts', 'postmeta' ) as $t ) {
-			$this->assertSame(
-				$wpdb->get_row( "SHOW CREATE TABLE `{$p}{$t}`", ARRAY_N )[1],
-				$this->dest_wpdb->get_row( "SHOW CREATE TABLE `{$p}{$t}`", ARRAY_N )[1],
-				"Table definition of {$t} changed."
-			);
+			$before = $wpdb->get_row( "SHOW CREATE TABLE `{$p}{$t}`", ARRAY_N )[1];
+			$after  = $this->dest_wpdb->get_row( "SHOW CREATE TABLE `{$p}{$t}`", ARRAY_N )[1];
+			$this->assertSame( $before, $after, "Table definition of {$t} changed.\nSource:\n{$before}\nDestination:\n{$after}\n" );
 		}
 	}
 
