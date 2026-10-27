@@ -18,7 +18,6 @@
 	var __ = i18n ? i18n.__ : function ( s ) { return s; };
 	var _n = i18n ? i18n._n : function ( single, plural, n ) { return 1 === n ? single : plural; };
 	var sprintf = i18n ? i18n.sprintf : function ( s ) { return s; };
-	var TD = 'estasoft-migrate';
 
 	/* ------------------------------------------------------------------ DOM builder */
 
@@ -102,13 +101,31 @@
 
 	/* ------------------------------------------------------------------ Formatting */
 
-	var locale = ( document.documentElement.lang || 'en' ).replace( '_', '-' );
+	/**
+	 * The page language as a tag that Intl understands. WordPress writes some locales in ways that Intl rejects
+	 * (pt-PT-ao90, ca@valencia), so try the full tag, then the language and region, then the language alone.
+	 */
+	var locale = ( function () {
+		var raw = String( document.documentElement.lang || 'en' ).replace( /_/g, '-' );
+		var candidates = [ raw, raw.replace( /@.*$/, '' ), raw.split( /[-@]/ ).slice( 0, 2 ).join( '-' ), raw.split( /[-@]/ )[ 0 ], 'en' ];
+		for ( var i = 0; i < candidates.length; i++ ) {
+			try {
+				if ( candidates[ i ] && Intl.DateTimeFormat.supportedLocalesOf( [ candidates[ i ] ] ).length ) {
+					return candidates[ i ];
+				}
+			} catch ( e ) {
+				// Not a valid tag: try the next shorter one.
+			}
+		}
+		return 'en';
+	}() );
 
-	function number( n ) {
+	function number( n, maxFraction ) {
+		var value = Number( n ) || 0;
 		try {
-			return new Intl.NumberFormat( locale ).format( Number( n ) || 0 );
+			return new Intl.NumberFormat( locale, 'number' === typeof maxFraction ? { maximumFractionDigits: maxFraction } : undefined ).format( value );
 		} catch ( e ) {
-			return String( Number( n ) || 0 );
+			return String( value );
 		}
 	}
 
@@ -120,7 +137,7 @@
 			n /= 1024;
 			i += 1;
 		}
-		var text = 0 === i || n >= 10 ? String( Math.round( n ) ) : ( Math.round( n * 10 ) / 10 ).toFixed( 1 ).replace( /\.0$/, '' );
+		var text = 0 === i || n >= 10 ? number( Math.round( n ) ) : number( Math.round( n * 10 ) / 10, 1 );
 		return text + ' ' + units[ i ];
 	}
 
@@ -128,16 +145,16 @@
 		sec = Math.max( 0, Math.round( Number( sec ) || 0 ) );
 		if ( sec < 60 ) {
 			/* translators: %d: seconds */
-			return sprintf( __( '%d s', TD ), sec );
+			return sprintf( __( '%d s', 'estasoft-migrate' ), sec );
 		}
 		var m = Math.floor( sec / 60 );
 		var s = sec % 60;
 		if ( m < 60 ) {
 			/* translators: 1: minutes, 2: seconds */
-			return sprintf( __( '%1$d min %2$02d s', TD ), m, s );
+			return sprintf( __( '%1$d min %2$02d s', 'estasoft-migrate' ), m, s );
 		}
 		/* translators: 1: hours, 2: minutes */
-		return sprintf( __( '%1$d h %2$02d min', TD ), Math.floor( m / 60 ), m % 60 );
+		return sprintf( __( '%1$d h %2$02d min', 'estasoft-migrate' ), Math.floor( m / 60 ), m % 60 );
 	}
 
 	/** The server sends UTC as "YYYY-MM-DD HH:MM:SS". */
@@ -177,7 +194,11 @@
 				}
 			}
 		}
-		return new Intl.DateTimeFormat( locale, opts ).format( d );
+		try {
+			return new Intl.DateTimeFormat( locale, opts ).format( d );
+		} catch ( e ) {
+			return d.toISOString().replace( 'T', ' ' ).slice( 0, 16 );
+		}
 	}
 
 	function clock( s ) {
@@ -203,22 +224,22 @@
 		}
 		var sec = Math.max( 0, Math.round( ( Date.now() - d.getTime() ) / 1000 ) );
 		if ( sec < 45 ) {
-			return __( 'just now', TD );
+			return __( 'just now', 'estasoft-migrate' );
 		}
 		if ( sec < 3600 ) {
 			/* translators: %d: minutes */
-			return sprintf( _n( '%d minute ago', '%d minutes ago', Math.round( sec / 60 ), TD ), Math.round( sec / 60 ) );
+			return sprintf( _n( '%d minute ago', '%d minutes ago', Math.round( sec / 60 ), 'estasoft-migrate' ), Math.round( sec / 60 ) );
 		}
 		if ( sec < 86400 ) {
 			/* translators: %d: hours */
-			return sprintf( _n( '%d hour ago', '%d hours ago', Math.round( sec / 3600 ), TD ), Math.round( sec / 3600 ) );
+			return sprintf( _n( '%d hour ago', '%d hours ago', Math.round( sec / 3600 ), 'estasoft-migrate' ), Math.round( sec / 3600 ) );
 		}
 		return date( s );
 	}
 
 	function percent( n ) {
 		n = Number( n ) || 0;
-		return ( n >= 10 || Math.round( n ) === n ? String( Math.round( n ) ) : n.toFixed( 1 ) ) + '%';
+		return ( n >= 10 || Math.round( n ) === n ? number( Math.round( n ) ) : number( n, 1 ) ) + '%';
 	}
 
 	/* ------------------------------------------------------------------ API */
@@ -301,7 +322,7 @@
 			if ( err && 'AbortError' === err.name ) {
 				throw err;
 			}
-			throw new ApiError( __( 'Could not reach the server. Check your connection. Jobs that are already running keep going on the server.', TD ), 'estm_network', 0 );
+			throw new ApiError( __( 'Could not reach the server. Check your connection. Jobs that are already running keep going on the server.', 'estasoft-migrate' ), 'estm_network', 0 );
 		} );
 	}
 
@@ -309,12 +330,12 @@
 		var code = data && data.code ? data.code : 'estm_http';
 		var message = data && data.message ? data.message : '';
 		if ( 'rest_cookie_invalid_nonce' === code ) {
-			message = __( 'Your login session has ended. This can happen after an import, because it replaces this site’s users. Reload the page and sign in again; jobs keep going on the server.', TD );
+			message = __( 'Your login session has ended. This can happen after an import, because it replaces this site’s users. Reload the page and sign in again; jobs keep going on the server.', 'estasoft-migrate' );
 		} else if ( 'rest_forbidden' === code || 401 === res.status || 403 === res.status ) {
-			message = message || __( 'You are not allowed to do that.', TD );
+			message = message || __( 'You are not allowed to do that.', 'estasoft-migrate' );
 		} else if ( ! message ) {
 			/* translators: %d: HTTP status code */
-			message = sprintf( __( 'The server answered with an error (HTTP %d). The PHP error log has the details.', TD ), res.status );
+			message = sprintf( __( 'The server answered with an error (HTTP %d). The PHP error log has the details.', 'estasoft-migrate' ), res.status );
 		}
 		return new ApiError( message, code, res.status, data && data.data ? data.data : {} );
 	}
@@ -330,7 +351,7 @@
 		if ( e && e.message ) {
 			return e.message;
 		}
-		return __( 'Something went wrong. Try again.', TD );
+		return __( 'Something went wrong. Try again.', 'estasoft-migrate' );
 	}
 
 	/* ------------------------------------------------------------------ Jobs */
@@ -339,6 +360,21 @@
 
 	function isFinished( status ) {
 		return FINISHED.indexOf( status ) >= 0;
+	}
+
+	/**
+	 * Does a job carry on when nobody has the page open? Not with the browser runner or the command line, and not with
+	 * WP-Cron when the server has it switched off. When the server could not say, nothing is promised.
+	 */
+	function canLeave( env ) {
+		if ( ! env || ! env.runner ) {
+			return false;
+		}
+		var r = String( env.runner );
+		if ( 'ajax' === r || 'cli' === r ) {
+			return false;
+		}
+		return ! ( 'cron' === r && env.cron_off );
 	}
 
 	function isActive( status ) {
@@ -359,6 +395,20 @@
 		var failures = 0;
 		var running = false;
 
+		/** A screen that throws while drawing must not stop the job from moving: report it and carry on. */
+		function safely( fn, a, b ) {
+			if ( ! fn ) {
+				return;
+			}
+			try {
+				fn( a, b );
+			} catch ( e ) {
+				if ( window.console && window.console.error ) {
+					window.console.error( e );
+				}
+			}
+		}
+
 		function step() {
 			if ( stopped || running ) {
 				return;
@@ -371,30 +421,30 @@
 				if ( stopped ) {
 					return;
 				}
-				if ( handlers.onUpdate ) {
-					handlers.onUpdate( view );
-				}
-				if ( view.logs && view.logs.length && handlers.onLogs ) {
-					handlers.onLogs( view.logs, view );
-				}
-				if ( isFinished( view.status ) || 'paused' === view.status ) {
+				var done = isFinished( view.status ) || 'paused' === view.status;
+				if ( done ) {
 					stopped = true;
-					if ( handlers.onDone ) {
-						handlers.onDone( view );
-					}
+				}
+				safely( handlers.onUpdate, view );
+				if ( view.logs && view.logs.length ) {
+					safely( handlers.onLogs, view.logs, view );
+				}
+				if ( done ) {
+					safely( handlers.onDone, view );
 					return;
 				}
-				timer = setTimeout( step, view.ran ? 30 : ( view.locked ? 1500 : 1000 ) );
+				if ( ! stopped ) {
+					timer = setTimeout( step, view.ran ? 30 : ( view.locked ? 1500 : 1000 ) );
+				}
 			}, function ( err ) {
 				running = false;
 				failures += 1;
 				if ( stopped ) {
 					return;
 				}
-				if ( handlers.onError ) {
-					handlers.onError( err, failures );
-				}
-				if ( 404 === err.status ) {
+				safely( handlers.onError, err, failures );
+				// A finished login session or a missing job will not come back by asking again.
+				if ( 404 === err.status || 401 === err.status || 403 === err.status || 'rest_cookie_invalid_nonce' === err.code ) {
 					stopped = true;
 					return;
 				}
@@ -411,15 +461,15 @@
 
 	var TYPE_LABELS = function () {
 		return {
-			export: __( 'Export', TD ),
-			sanitize: __( 'Sanitize', TD ),
-			import: __( 'Import', TD ),
-			restore: __( 'Restore', TD ),
-			snapshot: __( 'Snapshot', TD ),
-			push: __( 'Push', TD ),
-			pull: __( 'Pull', TD ),
-			search_replace: __( 'Search & replace', TD ),
-			verify: __( 'Check package', TD ),
+			export: __( 'Export', 'estasoft-migrate' ),
+			sanitize: __( 'Sanitize', 'estasoft-migrate' ),
+			import: __( 'Import', 'estasoft-migrate' ),
+			restore: __( 'Restore', 'estasoft-migrate' ),
+			snapshot: __( 'Snapshot', 'estasoft-migrate' ),
+			push: __( 'Push', 'estasoft-migrate' ),
+			pull: __( 'Pull', 'estasoft-migrate' ),
+			search_replace: __( 'Search & replace', 'estasoft-migrate' ),
+			verify: __( 'Check package', 'estasoft-migrate' ),
 		};
 	};
 
@@ -433,15 +483,15 @@
 	function jobBadge( job ) {
 		var status = job.status;
 		if ( 'completed' === status && job.dry_run ) {
-			return badge( __( 'Dry run', TD ), 'warn' );
+			return badge( __( 'Dry run', 'estasoft-migrate' ), 'warn' );
 		}
 		switch ( status ) {
-			case 'queued': return badge( __( 'Queued', TD ), 'idle' );
-			case 'running': return badge( __( 'Running', TD ), 'run' );
-			case 'paused': return badge( __( 'Paused', TD ), 'pause' );
-			case 'failed': return badge( __( 'Failed', TD ), 'block' );
-			case 'completed': return badge( __( 'Completed', TD ), 'ready' );
-			case 'cancelled': return badge( __( 'Cancelled', TD ), 'idle' );
+			case 'queued': return badge( __( 'Queued', 'estasoft-migrate' ), 'idle' );
+			case 'running': return badge( __( 'Running', 'estasoft-migrate' ), 'run' );
+			case 'paused': return badge( __( 'Paused', 'estasoft-migrate' ), 'pause' );
+			case 'failed': return badge( __( 'Failed', 'estasoft-migrate' ), 'block' );
+			case 'completed': return badge( __( 'Completed', 'estasoft-migrate' ), 'ready' );
+			case 'cancelled': return badge( __( 'Cancelled', 'estasoft-migrate' ), 'idle' );
 		}
 		return badge( status, 'plain' );
 	}
@@ -630,7 +680,7 @@
 			var describe = [ hintId, errId ].filter( Boolean ).join( ' ' );
 			target.setAttribute( 'aria-describedby', describe );
 		}
-		var el = h( 'div.field', o.className ? { class: o.className } : null, o.label ? h( 'label', { for: id }, o.label, o.optional ? h( 'span.muted', ' ' + __( '(optional)', TD ) ) : null ) : null, control, o.hint ? h( 'span.hint', { id: hintId }, o.hint ) : null, err );
+		var el = h( 'div.field', o.className ? { class: o.className } : null, o.label ? h( 'label', { for: id }, o.label, o.optional ? h( 'span.muted', ' ' + __( '(optional)', 'estasoft-migrate' ) ) : null ) : null, control, o.hint ? h( 'span.hint', { id: hintId }, o.hint ) : null, err );
 		el.setError = function ( message ) {
 			el.classList.toggle( 'has-error', !! message );
 			err.hidden = ! message;
@@ -676,13 +726,11 @@
 		o = o || {};
 		var input = ui.input( { type: 'password', autocomplete: 'new-password', id: o.id, placeholder: o.placeholder, onInput: o.onInput, mono: true } );
 		var shown = false;
-		var toggle = ui.btn( __( 'Show', TD ), { kind: 'quiet', onClick: function () {
+		var toggle = ui.btn( __( 'Show', 'estasoft-migrate' ), { kind: 'quiet', onClick: function () {
 			shown = ! shown;
 			input.type = shown ? 'text' : 'password';
-			toggle.textContent = shown ? __( 'Hide', TD ) : __( 'Show', TD );
-			toggle.setAttribute( 'aria-pressed', shown ? 'true' : 'false' );
+			toggle.textContent = shown ? __( 'Hide', 'estasoft-migrate' ) : __( 'Show', 'estasoft-migrate' );
 		} } );
-		toggle.setAttribute( 'aria-pressed', 'false' );
 		var el = h( 'div.input-group', input, toggle );
 		el.input = input;
 		return el;
@@ -754,7 +802,7 @@
 	};
 
 	ui.spinner = function ( label ) {
-		return h( 'span.spinner', { role: 'status', 'aria-label': label || __( 'Loading', TD ) } );
+		return h( 'span.spinner', { role: 'status', 'aria-label': label || __( 'Loading', 'estasoft-migrate' ) } );
 	};
 
 	ui.empty = function ( title, text, action ) {
@@ -805,7 +853,7 @@
 
 	/** Message at the top of a screen when loading failed, with a retry button. */
 	ui.loadError = function ( err, retry ) {
-		return h( 'div.stack', ui.note( 'err', errorMessage( err ), { title: __( 'This screen could not load.', TD ) } ), retry ? h( 'div', ui.btn( __( 'Try again', TD ), { onClick: retry } ) ) : null );
+		return h( 'div.stack', ui.note( 'err', errorMessage( err ), { title: __( 'This screen could not load.', 'estasoft-migrate' ) } ), retry ? h( 'div', ui.btn( __( 'Try again', 'estasoft-migrate' ), { onClick: retry } ) ) : null );
 	};
 
 	/* Dialogs and toasts ------------------------------------------------- */
@@ -855,8 +903,8 @@
 	 */
 	ui.confirm = function ( o ) {
 		var d;
-		var cancel = ui.btn( o.cancel || __( 'Cancel', TD ), { kind: 'quiet', onClick: function () { d.close( false ); } } );
-		var ok = ui.btn( o.confirm || __( 'Continue', TD ), { kind: o.danger ? 'danger' : 'primary', onClick: function () { d.close( true ); } } );
+		var cancel = ui.btn( o.cancel || __( 'Cancel', 'estasoft-migrate' ), { kind: 'quiet', onClick: function () { d.close( false ); } } );
+		var ok = ui.btn( o.confirm || __( 'Continue', 'estasoft-migrate' ), { kind: o.danger ? 'danger' : 'primary', onClick: function () { d.close( true ); } } );
 		d = ui.dialog( { title: o.title, body: [ 'string' === typeof o.message ? h( 'p', o.message ) : o.message ], actions: [ cancel, ok ] } );
 		( o.danger ? cancel : ok ).focus();
 		return d.result.then( function ( v ) { return true === v; } );
@@ -864,32 +912,69 @@
 
 	var toastHost = null;
 
-	/** Short message that fades by itself. kind: '' or 'err'. */
-	ui.toast = function ( message, kind ) {
+	/** The place toasts appear in. It exists from the start, because a live region that is added together with its first message is often not announced. */
+	function toastRoot() {
 		if ( ! toastHost ) {
-			toastHost = h( 'div.estm-toasts', { 'aria-live': 'polite', role: 'status' } );
+			toastHost = h( 'div.estm-toasts', { 'aria-live': 'polite' } );
 			( appRoot || document.body ).appendChild( toastHost );
 		}
-		var t = h( 'div', { class: 'estm-toast' + ( 'err' === kind ? ' err' : '' ) }, message );
-		toastHost.appendChild( t );
-		setTimeout( function () { t.remove(); }, 'err' === kind ? 8000 : 3500 );
+		return toastHost;
+	}
+
+	/** Short message that fades by itself. An error stays until it is dismissed, so it can be read at any speed. kind: '' or 'err'. */
+	ui.toast = function ( message, kind ) {
+		var host = toastRoot();
+		var err = 'err' === kind;
+		var t = h( 'div', { class: 'estm-toast' + ( err ? ' err' : '' ), role: err ? 'alert' : null }, h( 'span.estm-toast-text', message ) );
+		if ( err ) {
+			t.appendChild( h( 'button', { type: 'button', class: 'estm-toast-x', 'aria-label': __( 'Dismiss', 'estasoft-migrate' ), onclick: function () { t.remove(); } }, '\u00d7' ) );
+			// Keep a handful at most: the oldest goes when a sixth arrives.
+			var errors = host.querySelectorAll( '.estm-toast.err' );
+			if ( errors.length >= 5 ) {
+				errors[ 0 ].remove();
+			}
+		} else {
+			setTimeout( function () { t.remove(); }, 3500 );
+		}
+		host.appendChild( t );
+	};
+
+	/**
+	 * Bring a result into view: scroll to it (without animation for people who asked for less motion) and move focus to its
+	 * heading, but only when the person is not busy somewhere else on the page.
+	 */
+	ui.reveal = function ( heading, box ) {
+		var active = document.activeElement;
+		var idle = ! active || active === document.body || active.disabled || ( box && box.contains( active ) );
+		if ( heading && idle ) {
+			heading.focus( { preventScroll: true } );
+		}
+		var calm = window.matchMedia && window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+		if ( box && box.scrollIntoView ) {
+			box.scrollIntoView( { block: 'nearest', behavior: calm ? 'auto' : 'smooth' } );
+		}
 	};
 
 	/** Copy text and say so. */
 	ui.copy = function ( text ) {
-		function done() { ui.toast( __( 'Copied to the clipboard.', TD ) ); }
+		function done() { ui.toast( __( 'Copied to the clipboard.', 'estasoft-migrate' ) ); }
 		function fallback() {
 			var ta = h( 'textarea', { style: 'position:fixed;opacity:0', 'aria-hidden': 'true' } );
 			ta.value = text;
 			document.body.appendChild( ta );
 			ta.select();
+			var ok = false;
 			try {
-				document.execCommand( 'copy' );
-				done();
+				ok = document.execCommand( 'copy' );
 			} catch ( e ) {
-				ui.toast( __( 'Copying did not work here. Select the text and copy it yourself.', TD ), 'err' );
+				ok = false;
 			}
 			ta.remove();
+			if ( ok ) {
+				done();
+			} else {
+				ui.toast( __( 'Copying did not work here. Select the text and copy it yourself.', 'estasoft-migrate' ), 'err' );
+			}
 		}
 		if ( navigator.clipboard && window.isSecureContext ) {
 			navigator.clipboard.writeText( text ).then( done, fallback );
@@ -903,7 +988,7 @@
 		o = o || {};
 		var input = ui.input( { value: value, readonly: true, mono: true, ariaLabel: o.label } );
 		input.addEventListener( 'focus', function () { input.select(); } );
-		return h( 'div.copy', input, ui.btn( __( 'Copy', TD ), { kind: 'quiet', onClick: function () { ui.copy( input.value ); } } ) );
+		return h( 'div.copy', input, ui.btn( __( 'Copy', 'estasoft-migrate' ), { kind: 'quiet', onClick: function () { ui.copy( input.value ); } } ) );
 	};
 
 	/** Escape-free highlighting: wrap the first occurrence of `needle` in <mark>. */
@@ -941,18 +1026,29 @@
 		appRoot = root.closest( '.estm' ) || root;
 		var fn = screens[ ESTM.screenId ];
 		if ( ! fn ) {
-			replace( root, ui.note( 'err', __( 'This screen could not be started because its script did not load.', TD ) ) );
+			replace( root, ui.note( 'err', __( 'This screen could not be started because its script did not load.', 'estasoft-migrate' ) ) );
 			root.setAttribute( 'aria-busy', 'false' );
 			return;
 		}
 		replace( root, h( 'div', { style: 'padding:48px 0;text-align:center' }, ui.spinner() ) );
-		try {
-			fn( root, ESTM );
-		} catch ( e ) {
+		toastRoot();
+		function failed( e ) {
 			window.console && window.console.error( e );
-			replace( root, ui.note( 'err', e && e.message ? e.message : '', { title: __( 'Something went wrong while drawing this screen.', TD ) } ) );
+			replace( root, ui.note( 'err', e && e.message ? e.message : '', { title: __( 'Something went wrong while drawing this screen.', 'estasoft-migrate' ) } ) );
 		}
-		root.setAttribute( 'aria-busy', 'false' );
+		function finished() {
+			root.setAttribute( 'aria-busy', 'false' );
+		}
+		try {
+			// A screen may load its data first. It is busy until that is done.
+			Promise.resolve( fn( root, ESTM ) ).then( finished, function ( e ) {
+				failed( e );
+				finished();
+			} );
+		} catch ( e ) {
+			failed( e );
+			finished();
+		}
 	}
 
 	Object.assign( ESTM, {
@@ -964,6 +1060,7 @@
 		errorMessage: errorMessage,
 		isFinished: isFinished,
 		isActive: isActive,
+		canLeave: canLeave,
 		watchJob: watchJob,
 		jobLabel: jobLabel,
 		jobBadge: jobBadge,

@@ -9,7 +9,7 @@ namespace Estasoft\Migrate\Engine;
 
 use Estasoft\Migrate\Db\Database;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Collected into the package manifest, and compared when a package is imported on another site.
@@ -44,7 +44,7 @@ final class SiteInfo {
 	 *
 	 * @param array $source Facts from the package manifest.
 	 * @param array $local  Facts of this site.
-	 * @return array<int,array{0:string,1:string}>
+	 * @return array<int,array{0:string,1:string,2:bool}>
 	 */
 	public static function rewrite_pairs( array $source, array $local ) {
 		$pairs = array();
@@ -55,6 +55,7 @@ final class SiteInfo {
 				$pairs[ $from ] = $to;
 			}
 		};
+		// These pairs carry a third element: they match whole addresses only, so acme.com leaves acme.com.au alone.
 
 		$targets = array( 'url' => (string) ( $local['url'] ?? '' ) );
 		foreach ( array( 'url', 'siteurl' ) as $key ) {
@@ -84,7 +85,7 @@ final class SiteInfo {
 
 		$out = array();
 		foreach ( $pairs as $from => $to ) {
-			$out[] = array( $from, $to );
+			$out[] = array( (string) $from, $to, true );
 		}
 		return $out;
 	}

@@ -63,9 +63,13 @@ final class Plugin {
 	 * @return void
 	 */
 	public function init() {
-		load_plugin_textdomain( 'estasoft-migrate', false, dirname( plugin_basename( ESTASOFT_MIGRATE_FILE ) ) . '/languages' );
-
-		Activator::maybe_upgrade( $this->settings() );
+		// The version check reads the settings, which are not loaded with every page. It runs where the plugin is used:
+		// the admin, cron, the command line and the REST API (the screens call it), not on every visit to the front end.
+		if ( is_admin() || wp_doing_cron() || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
+			Activator::maybe_upgrade( $this->settings() );
+		} else {
+			add_action( 'rest_api_init', array( $this, 'upgrade' ), 1 );
+		}
 		SafetySwitches::boot();
 
 		// Requests from another site are answered before the theme and the other plugins do any work.
@@ -77,10 +81,20 @@ final class Plugin {
 
 		if ( is_admin() ) {
 			( new Admin\Admin( $this ) )->register();
+			( new Privacy() )->register();
 		}
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			\WP_CLI::add_command( 'estasoft-migrate', new Cli\Command( $this ) );
 		}
+	}
+
+	/**
+	 * Create or update the plugin tables and schedule the daily clean-up when that has not happened yet.
+	 *
+	 * @return void
+	 */
+	public function upgrade() {
+		Activator::maybe_upgrade( $this->settings() );
 	}
 
 	/**
@@ -91,6 +105,7 @@ final class Plugin {
 	public function daily() {
 		$settings = $this->settings();
 		$this->storage()->clean_up( (int) $settings->get( 'delete_packages_days', 30 ), (int) $settings->get( 'keep_snapshots', 2 ), (int) $settings->get( 'delete_snapshots_days', 30 ) );
+		$this->runner()->sweep();
 		$this->store()->purge_finished( 60 );
 		$this->logger()->purge( null, 60 );
 		$this->scheduler()->nudge_stalled();

@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate\Db;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Raised when a query fails. Knows whether trying again later can help.

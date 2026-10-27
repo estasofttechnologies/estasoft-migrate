@@ -429,6 +429,35 @@ class ApiTest extends TestCase {
 		$this->assertSame( Job::QUEUED, $api->create_job( 'export', array() )['status'] );
 	}
 
+	public function test_an_upload_cannot_grow_past_the_size_it_announced() {
+		list( , $api ) = $this->rig();
+		$id            = $api->upload_init( 'x.estm', 100 )['package_id'];
+		$api->upload_chunk( $id, 0, str_repeat( 'a', 60 ) );
+
+		$e = $this->fails( function () use ( $api, $id ) {
+			$api->upload_chunk( $id, 60, str_repeat( 'b', 50 ) );
+		} );
+		$this->assertSame( 413, $e->status );
+		$this->assertSame( 60, $api->upload_chunk( $id, 0, str_repeat( 'a', 60 ) )['received'], 'What was stored is untouched.' );
+
+		$e = $this->fails( function () use ( $api ) {
+			$api->upload_init( 'huge.estm', \Estasoft\Migrate\Storage::max_package_bytes() + 1 );
+		} );
+		$this->assertSame( 413, $e->status );
+	}
+
+	public function test_a_list_of_allowed_addresses_with_no_valid_entry_is_refused() {
+		list( , $api ) = $this->rig();
+		$api->save_settings( array( 'ip_allowlist' => '203.0.113.7' ) );
+
+		$e = $this->fails( function () use ( $api ) {
+			$api->save_settings( array( 'ip_allowlist' => "203.0.113.700\nnope" ) );
+		} );
+		$this->assertSame( 'estm_invalid', $e->error_code );
+		$this->assertSame( '203.0.113.7', $api->settings()['values']['ip_allowlist'], 'The list that worked is still there.' );
+		$this->assertSame( '', $api->save_settings( array( 'ip_allowlist' => '' ) )['values']['ip_allowlist'], 'Clearing the list on purpose is allowed.' );
+	}
+
 	public function test_the_sanitizer_settings_are_saved_and_can_start_a_sanitized_export() {
 		list( , $api ) = $this->rig();
 		$info          = $api->sanitizer_info();

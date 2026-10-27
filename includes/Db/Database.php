@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate\Db;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Everything the engine needs from a database, so the engine can be tested without WordPress.

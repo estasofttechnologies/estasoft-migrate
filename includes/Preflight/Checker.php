@@ -21,7 +21,7 @@ use Estasoft\Migrate\Remote\RemoteException;
 use Estasoft\Migrate\Storage;
 use Estasoft\Migrate\Util;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Every check is pass, warn or block. A warning always says what the plugin will do about it; a block
@@ -301,16 +301,28 @@ class Checker {
 			$this->add( self::BLOCK, 'storage', __( 'Package folder', 'estasoft-migrate' ), __( 'The folder for packages is not writable. Make wp-content/uploads writable by the web server.', 'estasoft-migrate' ) );
 			return;
 		}
-		$dir       = $storage->dir();
-		$protected = is_file( $dir . '/index.php' ) && ( is_file( $dir . '/.htaccess' ) || is_file( $dir . '/web.config' ) );
-		$this->add(
-			$protected ? self::PASS : self::WARN,
-			'storage',
-			__( 'Package folder is writable and protected', 'estasoft-migrate' ),
-			$protected
-				? __( 'Direct downloads are blocked; packages are served only to signed-in administrators.', 'estasoft-migrate' )
-				: __( 'The folder could not be fully protected. On nginx, deny access to the folder in the server settings.', 'estasoft-migrate' )
-		);
+		$dir     = $storage->dir();
+		$guarded = is_file( $dir . '/index.php' ) && ( is_file( $dir . '/.htaccess' ) || is_file( $dir . '/web.config' ) );
+		$blocked = $storage->direct_access_blocked( true ); // A pre-flight check is asked for, so it looks again instead of repeating an old answer.
+		if ( false === $blocked ) {
+			$this->add(
+				self::WARN,
+				'storage',
+				__( 'Package folder can be downloaded from directly', 'estasoft-migrate' ),
+				__( 'A test file in the package folder could be fetched without signing in. Ask your host to deny access to wp-content/uploads/estasoft-migrate-* (on nginx the .htaccess file has no effect), or protect the package with a password.', 'estasoft-migrate' )
+			);
+		} elseif ( true === $blocked ) {
+			$this->add( self::PASS, 'storage', __( 'Package folder is writable and protected', 'estasoft-migrate' ), __( 'Direct downloads are blocked; packages are served only to signed-in administrators.', 'estasoft-migrate' ) );
+		} else {
+			$this->add(
+				$guarded ? self::PASS : self::WARN,
+				'storage',
+				__( 'Package folder is writable', 'estasoft-migrate' ),
+				$guarded
+					? __( 'Guard files are in place, but this server could not test them. If your site runs on nginx, they have no effect: deny access to the folder in the server settings, or protect the package with a password.', 'estasoft-migrate' )
+					: __( 'The folder could not be fully protected. On nginx, deny access to the folder in the server settings.', 'estasoft-migrate' )
+			);
+		}
 
 		$free = null !== $this->env['free'] ? (int) $this->env['free'] : $storage->free_space();
 		if ( null === $free || $free <= 0 ) {

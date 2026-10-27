@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate\Sanitizer;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Applies the sanitizer rules to one row at a time. Rows are masked in the stream, so the
@@ -412,7 +412,7 @@ class RowSanitizer {
 			$kind = 'note';
 		}
 		if ( null !== $kind ) {
-			$row['meta_value'] = $this->mask_kind( $kind, (string) $row['meta_value'] );
+			$row['meta_value'] = $this->mask_kind( $kind, (string) $row['meta_value'] ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- A value in a row held in memory, not a query.
 		}
 		return $row;
 	}
@@ -443,7 +443,7 @@ class RowSanitizer {
 			}
 		}
 		if ( null !== $kind ) {
-			$row['meta_value'] = $this->mask_kind( $kind, (string) $row['meta_value'] );
+			$row['meta_value'] = $this->mask_kind( $kind, (string) $row['meta_value'] ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- A value in a row held in memory, not a query.
 		}
 		return $row;
 	}
@@ -490,8 +490,23 @@ class RowSanitizer {
 	 * @return array
 	 */
 	private function posts( array $row ) {
-		if ( isset( $row['post_type'], $row['post_excerpt'] ) && 0 === strpos( (string) $row['post_type'], 'shop_order' ) && '' !== $row['post_excerpt'] ) {
+		$type = (string) ( $row['post_type'] ?? '' );
+		if ( isset( $row['post_excerpt'] ) && 0 === strpos( $type, 'shop_order' ) && '' !== $row['post_excerpt'] ) {
 			$row['post_excerpt'] = $this->mask_kind( 'note', (string) $row['post_excerpt'] );
+		}
+		// The password of a protected post is a password like any other. It is replaced by one nobody knows, so the post stays protected.
+		if ( $this->on( 'secrets' ) && isset( $row['post_password'] ) && '' !== $row['post_password'] ) {
+			$row['post_password'] = substr( $this->fake->digest( 'post_password', (string) $row['post_password'] ), 0, 20 );
+			$this->count( 'secrets', '' );
+		}
+		// Privacy export and erasure requests keep the requester's email address as their title.
+		if ( 'user_request' === $type ) {
+			if ( isset( $row['post_title'] ) && '' !== $row['post_title'] ) {
+				$row['post_title'] = $this->mask_kind( 'email', (string) $row['post_title'] );
+			}
+			if ( $this->on( 'emails' ) && isset( $row['post_content'] ) && '' !== $row['post_content'] ) {
+				$row['post_content'] = '';
+			}
 		}
 		return $row;
 	}

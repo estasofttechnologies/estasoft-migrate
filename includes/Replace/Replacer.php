@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate\Replace;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Applies search and replace pairs to a database value.
@@ -78,6 +78,27 @@ class Replacer {
 	private $replace_keys;
 
 	/**
+	 * Pattern used when some pairs must match whole addresses only, or null.
+	 *
+	 * @var string|null
+	 */
+	private $bound_pattern = null;
+
+	/**
+	 * Replacement for each text the pattern above can match (lower case keys when case is ignored).
+	 *
+	 * @var array<string,string>
+	 */
+	private $bound_map = array();
+
+	/**
+	 * Search texts that only match whole addresses (the character after the match is not part of a name).
+	 *
+	 * @var array<string,bool>
+	 */
+	private $whole = array();
+
+	/**
 	 * Counters since the last reset.
 	 *
 	 * @var array{matches:int, nested:int, unparsed:int}
@@ -92,6 +113,7 @@ class Replacer {
 	 * Constructor.
 	 *
 	 * @param array $pairs   List of [search, replace] pairs, or search => replace map. In regex mode only the first pair is used.
+	 *                       A third element set to true makes the pair match whole addresses only: acme.com does not match inside acme.com.au or acme.community.
 	 * @param array $options regex (bool), case_sensitive (bool, default true), replace_keys (bool, default true).
 	 * @throws \InvalidArgumentException When the regular expression is invalid.
 	 */
@@ -110,7 +132,7 @@ class Replacer {
 
 		foreach ( $pairs as $k => $v ) {
 			if ( is_array( $v ) ) {
-				$this->pairs[] = array( (string) ( $v[0] ?? '' ), (string) ( $v[1] ?? '' ) );
+				$this->pairs[] = array( (string) ( $v[0] ?? '' ), (string) ( $v[1] ?? '' ), ! empty( $v[2] ) );
 			} else {
 				$this->pairs[] = array( (string) $k, (string) $v );
 			}
@@ -159,14 +181,21 @@ class Replacer {
 	 */
 	private function init_plain() {
 		foreach ( $this->pairs as $pair ) {
-			list( $search, $replace ) = $pair;
-			$this->map[ $search ]     = $replace;
+			$search                 = $pair[0];
+			$replace                = $pair[1];
+			$this->map[ $search ]   = $replace;
+			$this->whole[ $search ] = ! empty( $pair[2] );
 
 			$esc_search  = self::json_escape( $search );
 			$esc_replace = self::json_escape( $replace );
 			if ( $esc_search !== $search && '' !== $esc_search && ! isset( $this->map[ $esc_search ] ) ) {
-				$this->map[ $esc_search ] = $esc_replace;
+				$this->map[ $esc_search ]   = $esc_replace;
+				$this->whole[ $esc_search ] = ! empty( $pair[2] );
 			}
+		}
+		if ( in_array( true, $this->whole, true ) ) {
+			$this->init_bounded();
+			return;
 		}
 		if ( ! $this->case_sensitive && $this->map ) {
 			$keys = array_keys( $this->map );
@@ -189,6 +218,28 @@ class Replacer {
 				)
 			) . '/i';
 		}
+	}
+
+	/**
+	 * One pattern for all pairs when some of them must match whole addresses only.
+	 *
+	 * @return void
+	 */
+	private function init_bounded() {
+		$keys = array_map( 'strval', array_keys( $this->map ) );
+		usort(
+			$keys,
+			static function ( $a, $b ) {
+				return strlen( $b ) <=> strlen( $a );
+			}
+		);
+		$parts = array();
+		foreach ( $keys as $key ) {
+			$lookahead = ! empty( $this->whole[ $key ] ) ? '(?![A-Za-z0-9_-]|\.[A-Za-z0-9])' : '';
+			$parts[]   = preg_quote( $key, '/' ) . $lookahead;
+			$this->bound_map[ $this->case_sensitive ? $key : strtolower( $key ) ] = $this->map[ $key ];
+		}
+		$this->bound_pattern = '/' . implode( '|', $parts ) . '/' . ( $this->case_sensitive ? '' : 'i' );
 	}
 
 	/**
@@ -293,6 +344,9 @@ class Replacer {
 			// JSON may hide matches behind escapes, so look inside every JSON document.
 			return JsonText::looks_json( $value ) || 1 === preg_match( $this->regex, $value );
 		}
+		if ( null !== $this->bound_pattern ) {
+			return 1 === preg_match( $this->bound_pattern, $value );
+		}
 		if ( $this->case_sensitive ) {
 			foreach ( $this->map as $search => $unused ) {
 				if ( false !== strpos( $value, (string) $search ) ) {
@@ -315,6 +369,23 @@ class Replacer {
 		if ( null !== $this->regex ) {
 			$count = 0;
 			$out   = preg_replace( $this->regex, $this->regex_replacement, $value, -1, $count );
+			if ( null === $out ) {
+				return $value;
+			}
+			$this->count( $count, $nested );
+			return $out;
+		}
+
+		if ( null !== $this->bound_pattern ) {
+			$count = 0;
+			$out   = preg_replace_callback(
+				$this->bound_pattern,
+				function ( $m ) use ( &$count ) {
+					++$count;
+					return $this->bound_map[ $this->case_sensitive ? $m[0] : strtolower( $m[0] ) ] ?? $m[0];
+				},
+				$value
+			);
 			if ( null === $out ) {
 				return $value;
 			}

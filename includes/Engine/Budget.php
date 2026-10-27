@@ -9,7 +9,7 @@ namespace Estasoft\Migrate\Engine;
 
 use Estasoft\Migrate\Util;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Tells a task when to stop and hand control back, so no request runs into a server limit.
@@ -38,6 +38,20 @@ final class Budget {
 	private $units = null;
 
 	/**
+	 * Does a slice always get to do one unit of work, even when time or memory is already short?
+	 *
+	 * @var bool
+	 */
+	private $guarantee_unit = false;
+
+	/**
+	 * Has that one guaranteed unit been handed out?
+	 *
+	 * @var bool
+	 */
+	private $unit_given = false;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param float $seconds      Seconds available from now.
@@ -46,6 +60,20 @@ final class Budget {
 	public function __construct( $seconds, $memory_limit = 0 ) {
 		$this->deadline     = microtime( true ) + max( 0.0, (float) $seconds );
 		$this->memory_limit = max( 0, (int) $memory_limit );
+	}
+
+	/**
+	 * A budget whose slice always does at least one unit of work. Without that, a slice that starts
+	 * when memory is already high (or time is short) would stop at once, every time, and the job would never move.
+	 *
+	 * @param float $seconds      Seconds available from now.
+	 * @param int   $memory_limit Bytes of memory the slice may use, 0 for no limit.
+	 * @return Budget
+	 */
+	public static function guaranteed( $seconds, $memory_limit = 0 ) {
+		$budget                 = new self( $seconds, $memory_limit );
+		$budget->guarantee_unit = true;
+		return $budget;
 	}
 
 	/**
@@ -64,7 +92,7 @@ final class Budget {
 			$seconds = min( $seconds, max( 2.0, $left ) );
 		}
 		$limit = Util::bytes_from_ini( ini_get( 'memory_limit' ) );
-		return new self( $seconds, $limit > 0 ? (int) ( $limit * 0.75 ) : 0 );
+		return self::guaranteed( $seconds, $limit > 0 ? (int) ( $limit * 0.75 ) : 0 );
 	}
 
 	/**
@@ -87,7 +115,7 @@ final class Budget {
 	 */
 	public static function unlimited() {
 		$limit = Util::bytes_from_ini( ini_get( 'memory_limit' ) );
-		return new self( 86400 * 7, $limit > 0 ? (int) ( $limit * 0.75 ) : 0 );
+		return self::guaranteed( 86400 * 7, $limit > 0 ? (int) ( $limit * 0.75 ) : 0 );
 	}
 
 	/**
@@ -120,6 +148,10 @@ final class Budget {
 				return true;
 			}
 			--$this->units;
+			return false;
+		}
+		if ( $this->guarantee_unit && ! $this->unit_given ) {
+			$this->unit_given = true;
 			return false;
 		}
 		return $this->time_left() <= $reserve || $this->memory_pressure();

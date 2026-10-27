@@ -23,7 +23,9 @@ use Estasoft\Migrate\Replace\Replacer;
 use Estasoft\Migrate\Sanitizer\SafetySwitches;
 use Estasoft\Migrate\Util;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
+
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are plain text for JSON and textContent; PHP escapes them with esc_html() where it prints them.
 
 /**
  * Zero-downtime import.
@@ -96,7 +98,11 @@ class ImportTask extends Task {
 			if ( null !== $only && ! isset( $only[ $name ] ) ) {
 				continue;
 			}
-			$logical  = Util::unprefix( $name, $from );
+			$logical = Util::unprefix( $name, $from );
+			if ( 0 === strpos( $logical, 'estasoft_' ) ) {
+				// The plugin's own tables (jobs, log, baselines) belong to this site and are never replaced by a package.
+				continue;
+			}
 			$target   = $prefix . $logical;
 			$tables[] = array(
 				'src'      => $name,
@@ -453,6 +459,9 @@ class ImportTask extends Task {
 						}
 						$state['cur'] = $i;
 						$entry        = &$state['tables'][ $i ];
+						// Where this table starts in the file, in case it has to be read again from the top.
+						$entry['t_offset'] = (int) $state['file']['offset'];
+						$entry['t_seq']    = (int) $state['file']['seq'];
 						$this->create_staging_table( $data, $entry, $state, $params, $ctx );
 						unset( $entry );
 						break;
@@ -463,6 +472,20 @@ class ImportTask extends Task {
 							break;
 						}
 						$entry = &$state['tables'][ $i ];
+						if ( $this->has_unsaved_rows( $entry, $ctx ) ) {
+							// An earlier try wrote a block and stopped before saving its place. Without a key the rows
+							// cannot be told apart, so the table is filled again from its first block.
+							$ctx->log( 'warning', sprintf( '%s was only partly staged by an earlier try. It is staged again from the start.', $entry['target'] ) );
+							$entry['rows'] = 0;
+							$state['file'] = array(
+								'offset' => (int) $entry['t_offset'],
+								'seq'    => (int) ( $entry['t_seq'] ?? 0 ),
+							);
+							$reader->seek( (int) $entry['t_offset'] );
+							unset( $entry );
+							$ctx->checkpoint();
+							continue 2;
+						}
 						$this->insert_block( $data, $entry, $pipe, $ctx );
 						unset( $entry );
 						break;
@@ -496,6 +519,20 @@ class ImportTask extends Task {
 	}
 
 	/**
+	 * Does a table without a key hold more rows than the job has saved for it?
+	 *
+	 * @param array      $entry Table entry.
+	 * @param JobContext $ctx   Services.
+	 * @return bool
+	 */
+	private function has_unsaved_rows( array $entry, JobContext $ctx ) {
+		if ( ! empty( $entry['pk'] ) || ! isset( $entry['t_offset'] ) ) {
+			return false;
+		}
+		return $ctx->db->count_rows( $entry['tmp'] ) !== (int) $entry['rows'];
+	}
+
+	/**
 	 * Create an empty temporary table from the package's CREATE statement.
 	 *
 	 * @param array      $data   T block.
@@ -509,7 +546,21 @@ class ImportTask extends Task {
 	private function create_staging_table( array $data, array &$entry, array &$state, array $params, JobContext $ctx ) {
 		$db = $ctx->db;
 		$db->drop_table( $entry['tmp'] );
-		list( $ddl, $notes ) = DdlTranslator::translate( (string) $data['ddl'], $entry['tmp'], $db, (string) ( $params['collation'] ?? '' ) );
+		list( $ddl, $notes ) = DdlTranslator::translate( (string) ( $data['ddl'] ?? '' ), $entry['tmp'], $db, (string) ( $params['collation'] ?? '' ) );
+		if ( ! DdlTranslator::is_single_create_table( $ddl, $entry['tmp'] ) ) {
+			throw new TaskException(
+				sprintf(
+					/* translators: %s: table name */
+					__( 'The definition of the table %s in this package is not a plain table definition, so it was not run.', 'estasoft-migrate' ),
+					$entry['target']
+				),
+				array(
+					'untouched' => __( 'Your site was not changed.', 'estasoft-migrate' ),
+					'advice'    => __( 'Only import packages you made yourself or got from someone you trust. This package may have been changed after it was made.', 'estasoft-migrate' ),
+					'table'     => $entry['target'],
+				)
+			);
+		}
 		try {
 			$db->query( $ddl );
 		} catch ( \Throwable $e ) {
@@ -667,7 +718,22 @@ class ImportTask extends Task {
 		try {
 			$db->rename_tables( $rename );
 		} catch ( \Throwable $e ) {
+			// The server may report a problem after it did the rename (a dropped connection, say): look at the tables.
+			$db->forget();
+			$left = 0;
+			foreach ( $state['tables'] as $t ) {
+				if ( $db->table_exists( $t['tmp'] ) ) {
+					++$left;
+				}
+			}
+			if ( 0 === $left ) {
+				$ctx->log( 'warning', 'The server reported a problem during the swap, but the tables are in place. Finishing up.' );
+				$state['phase'] = 'finish';
+				$ctx->checkpoint();
+				return;
+			}
 			$state['swapped'] = false;
+			$ctx->checkpoint(); // The saved plan said "swapped"; it did not happen.
 			throw new TaskException(
 				sprintf( 'The tables could not be swapped: %s', $e->getMessage() ),
 				array(
@@ -768,7 +834,10 @@ class ImportTask extends Task {
 		$options = $prefix . 'options';
 		$qo      = Identifier::quote( $options );
 
-		if ( $db->table_exists( $options ) ) {
+		// A partial import (some tables only) leaves the live options alone: nothing in them was replaced.
+		$options_swapped = in_array( $options, array_column( (array) $state['tables'], 'target' ), true );
+
+		if ( $options_swapped && $db->table_exists( $options ) ) {
 			// This plugin's own settings come back (the package never carries them).
 			$db->query( 'DELETE FROM ' . $qo . ' WHERE SUBSTR(option_name, 1, 17) = ' . $db->quote( 'estasoft_migrate_' ) );
 			$keep = array();
@@ -795,12 +864,15 @@ class ImportTask extends Task {
 
 			// Permalinks are rebuilt on the next request.
 			$db->query( 'DELETE FROM ' . $qo . " WHERE option_name = 'rewrite_rules'" );
+		}
 
-			// Safety switches: the ones chosen for this import, or the ones the sanitized package asks for.
-			$flags = (array) ( $params['safety'] ?? array() );
-			if ( ! $flags && ! empty( $state['manifest']['safety'] ) ) {
-				$flags = (array) $state['manifest']['safety'];
-			}
+		// Safety switches: the ones chosen for this import, or the ones the sanitized package asks for. The package's
+		// own request only applies when the imported options replaced the live ones; a partial import never changes them.
+		$flags = (array) ( $params['safety'] ?? array() );
+		if ( ! $flags && $options_swapped && ! empty( $state['manifest']['safety'] ) ) {
+			$flags = (array) $state['manifest']['safety'];
+		}
+		if ( $flags && $db->table_exists( $options ) ) {
 			foreach ( SafetySwitches::apply( $db, $prefix, $flags ) as $done ) {
 				$ctx->log( 'info', $done );
 			}
@@ -836,6 +908,17 @@ class ImportTask extends Task {
 		if ( $keep ) {
 			$ctx->storage->clean_up( 0, (int) $keep );
 		}
+	}
+
+	/**
+	 * Once the tables are swapped the new data is live; stopping then would skip the finishing steps.
+	 *
+	 * @param array $params Parameters.
+	 * @param array $state  State.
+	 * @return bool
+	 */
+	public function can_cancel( array $params, array $state ) {
+		return empty( $state['swapped'] );
 	}
 
 	/**

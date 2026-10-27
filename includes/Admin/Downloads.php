@@ -11,7 +11,7 @@ use Estasoft\Migrate\Plugin;
 use Estasoft\Migrate\Rest\ApiException;
 use Estasoft\Migrate\Rest\Router;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Both handlers check the capability and the nonce before they send anything.

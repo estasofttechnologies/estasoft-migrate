@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Writes and reads log lines. Logging never throws: a broken log must not stop a migration.
@@ -149,7 +149,7 @@ class Logger {
 		$limit  = max( 1, min( 1000, (int) $args['limit'] ) );
 		$table  = Schema::table( 'logs' );
 		$sql    = "SELECT id, job_id, level, message, context, created_gmt FROM {$table} WHERE " . implode( ' AND ', $where ) . " ORDER BY id {$order} LIMIT {$limit}";
-		$rows   = $params ? $wpdb->get_results( $wpdb->prepare( $sql, $params ), ARRAY_A ) : $wpdb->get_results( $sql, ARRAY_A ); // phpcs:ignore WordPress.DB
+		$rows   = $params ? $wpdb->get_results( $wpdb->prepare( $sql, $params ), ARRAY_A ) : $wpdb->get_results( $sql, ARRAY_A ); // phpcs:ignore WordPress.DB, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $table is the plugin's own table; every value in $where goes through prepare().
 		$result = array();
 		foreach ( (array) $rows as $row ) {
 			$row['id']      = (int) $row['id'];
@@ -168,7 +168,7 @@ class Logger {
 	public function clear() {
 		global $wpdb;
 		$table = Schema::table( 'logs' );
-		$wpdb->query( "DELETE FROM {$table}" ); // phpcs:ignore WordPress.DB
+		$wpdb->query( "DELETE FROM {$table}" ); // phpcs:ignore WordPress.DB, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $table is the plugin's own table.
 	}
 
 	/**
@@ -182,11 +182,11 @@ class Logger {
 		global $wpdb;
 		$table = Schema::table( 'logs' );
 		if ( null !== $job_id ) {
-			$wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE job_id = %d", (int) $job_id ) ); // phpcs:ignore WordPress.DB
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE job_id = %d", (int) $job_id ) ); // phpcs:ignore WordPress.DB, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $table is the plugin's own table.
 		}
 		if ( $older_days > 0 ) {
 			$cut = gmdate( 'Y-m-d H:i:s', time() - $older_days * DAY_IN_SECONDS );
-			$wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE created_gmt < %s", $cut ) ); // phpcs:ignore WordPress.DB
+			$wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE created_gmt < %s", $cut ) ); // phpcs:ignore WordPress.DB, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $table is the plugin's own table.
 		}
 	}
 

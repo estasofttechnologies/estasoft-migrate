@@ -15,7 +15,9 @@ use Estasoft\Migrate\Remote\RemoteException;
 use Estasoft\Migrate\Storage;
 use Estasoft\Migrate\Util;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
+
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are plain text for JSON and textContent; PHP escapes them with esc_html() where it prints them.
 
 /**
  * Pull = the other site exports a package, this site downloads it in resumable parts and imports it.
@@ -333,6 +335,17 @@ class PullTask extends RemoteTask {
 			)
 		);
 		$ctx->checkpoint();
+	}
+
+	/**
+	 * Once the downloaded package has replaced the tables there is nothing left to cancel.
+	 *
+	 * @param array $params Parameters.
+	 * @param array $state  State.
+	 * @return bool
+	 */
+	public function can_cancel( array $params, array $state ) {
+		return empty( $state['import']['swapped'] );
 	}
 
 	/**

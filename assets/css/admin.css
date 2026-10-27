@@ -126,7 +126,8 @@ body.estm-admin #wpfooter { display: none; }
 .estm .b-plain::before { display: none; }
 .estm .b-free { background: var(--yellow); border-color: var(--yellow); }
 .estm .b-free::before { display: none; }
-.estm .scroll { overflow-x: auto; }
+/* Positioned, so the screen-reader-only text inside a wide table is clipped with it and cannot widen the page. */
+.estm .scroll { position: relative; overflow-x: auto; }
 .estm .tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 .estm .tbl th { padding: 10px 14px; text-align: start; font-size: 12px; font-weight: 600; color: var(--muted); background: #fafafa; border-bottom: 1px solid var(--line); white-space: nowrap; }
 .estm .tbl td { padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
@@ -164,7 +165,8 @@ body.estm-admin #wpfooter { display: none; }
 .estm .sw[aria-checked="true"]::after { inset-inline-start: 23px; background: var(--yellow); }
 .estm .sw[disabled],
 .estm .sw[aria-disabled="true"] { opacity: .5; cursor: not-allowed; }
-.estm .rrow { display: grid; grid-template-columns: 44px minmax(0, 1.1fr) minmax(0, 1.3fr) minmax(0, 1.3fr); align-items: center; gap: 8px 16px; padding: 14px 20px; border-top: 1px solid var(--line); font-size: 13.5px; }
+.estm .rrow { display: grid; grid-template-columns: 44px minmax(0, 1fr) minmax(0, 1.15fr) minmax(0, 1.6fr); align-items: center; gap: 8px 16px; padding: 14px 20px; border-top: 1px solid var(--line); font-size: 13.5px; }
+.estm .rrow > .mono { overflow-wrap: anywhere; }
 .estm .rrow.head { padding-block: 10px; border-top: 0; background: #fafafa; color: var(--muted); font-size: 12px; font-weight: 600; }
 .estm .set { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px 20px; padding: 14px 0; border-top: 1px solid var(--line); }
 .estm .set:first-of-type { border-top: 0; padding-top: 0; }
@@ -239,7 +241,7 @@ body.estm-admin #wpfooter { display: none; }
 .estm input[type="checkbox"].chk, .estm input[type="radio"].chk { appearance: none; -webkit-appearance: none; display: inline-grid; place-content: center; width: 20px; height: 20px; min-width: 20px; margin: 0; padding: 0; border: 2px solid var(--ink); border-radius: 4px; background: #fff; box-shadow: none; cursor: pointer; flex: none; }
 .estm input[type="radio"].chk { border-radius: 50%; }
 .estm input[type="checkbox"].chk:checked { background: var(--ink); }
-.estm input[type="checkbox"].chk:checked::before { content: ""; float: none; width: 10px; height: 5px; margin: 0 0 3px; border-inline-start: 2px solid var(--yellow); border-bottom: 2px solid var(--yellow); background: none; transform: rotate(-45deg); }
+.estm input[type="checkbox"].chk:checked::before { content: ""; float: none; width: 10px; height: 5px; margin: 0 0 3px; border-left: 2px solid var(--yellow); border-bottom: 2px solid var(--yellow); background: none; transform: rotate(-45deg); }
 .estm input[type="radio"].chk:checked { background: radial-gradient(circle, var(--ink) 0 4px, #fff 5px); }
 .estm input[type="radio"].chk:checked::before { content: none; }
 .estm input[type="checkbox"].chk:disabled, .estm input[type="radio"].chk:disabled { opacity: .5; cursor: not-allowed; }
@@ -317,7 +319,7 @@ body.estm-admin #wpfooter { display: none; }
 .estm .diff ins::before { content: "+\00a0"; }
 .estm .diff mark { background: var(--yellow); color: var(--ink); padding: 0 2px; border-radius: 2px; }
 .estm .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.estm .chip button { display: inline-grid; place-items: center; width: 20px; height: 20px; margin-inline-end: -6px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: inherit; font-size: 14px; line-height: 1; cursor: pointer; }
+.estm .chip button { display: inline-grid; place-items: center; width: 24px; height: 24px; margin-inline-end: -8px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: inherit; font-size: 14px; line-height: 1; cursor: pointer; }
 .estm .chip button:hover { background: rgba(0, 0, 0, .12); }
 .estm .chip.on button:hover { background: rgba(255, 255, 255, .25); }
 .estm .meter { display: flex; flex-direction: column; gap: 6px; }
@@ -353,6 +355,10 @@ body.estm-admin #wpfooter { display: none; }
 .estm-toast::before { content: "\2713"; flex: none; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--yellow); color: var(--ink); font-size: 12px; }
 .estm-toast.err { background: var(--danger); border-color: var(--danger); }
 .estm-toast.err::before { content: "!"; background: #fff; color: var(--danger); }
+.estm-toast-text { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.estm-toast-x { flex: none; display: grid; place-items: center; min-width: 24px; min-height: 24px; margin-block: -2px; margin-inline-end: -6px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #fff; font: 700 18px/1 var(--font); cursor: pointer; }
+.estm-toast-x:hover, .estm-toast-x:focus-visible { background: rgba(255, 255, 255, .2); }
+.estm-toast-x:focus-visible { outline: 2px solid #fff; outline-offset: 1px; }
 
 /* ---------- Narrow screens and RTL touches ---------- */
 @media (max-width: 782px) {

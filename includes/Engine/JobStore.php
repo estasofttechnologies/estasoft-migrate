@@ -11,7 +11,7 @@ use Estasoft\Migrate\Db\Database;
 use Estasoft\Migrate\Db\Identifier;
 use Estasoft\Migrate\Util;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Jobs live in their own table. Every batch saves the job state there, so a job can resume
@@ -128,15 +128,16 @@ class JobStore {
 	 * @param int    $id      Job id.
 	 * @param string $status  New status.
 	 * @param string $message Optional message.
+	 * @param bool   $release_lock Clear the lock when the job ends. Cancelling leaves it, so a slice that is running keeps its lock.
 	 * @return void
 	 */
-	public function set_status( $id, $status, $message = null ) {
+	public function set_status( $id, $status, $message = null, $release_lock = true ) {
 		$sql = 'UPDATE ' . $this->t() . ' SET status = ' . $this->db->quote( $status ) . ', updated_gmt = ' . $this->db->quote( Util::now() );
 		if ( null !== $message ) {
 			$sql .= ', message = ' . $this->db->quote( $message );
 		}
 		if ( in_array( $status, array( Job::COMPLETED, Job::FAILED, Job::CANCELLED ), true ) ) {
-			$sql .= ', finished_gmt = ' . $this->db->quote( Util::now() ) . ', locked_until = 0';
+			$sql .= ', finished_gmt = ' . $this->db->quote( Util::now() ) . ( $release_lock ? ', locked_until = 0' : '' );
 		}
 		$this->db->query( $sql . ' WHERE id = ' . (int) $id );
 	}
@@ -282,7 +283,7 @@ class JobStore {
 	 * @return string
 	 */
 	private static function encode( array $data ) {
-		$json = json_encode( $data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PARTIAL_OUTPUT_ON_ERROR ); // phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode
+		$json = json_encode( $data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE | JSON_PARTIAL_OUTPUT_ON_ERROR ); // phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode
 		return false === $json ? '{}' : $json;
 	}
 

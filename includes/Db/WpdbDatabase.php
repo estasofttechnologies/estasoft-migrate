@@ -7,7 +7,9 @@
 
 namespace Estasoft\Migrate\Db;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
+
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are plain text for JSON and textContent; PHP escapes them with esc_html() where it prints them.
 
 /**
  * Uses the connection WordPress already opened. Bulk reads and writes go straight to mysqli,
@@ -50,6 +52,13 @@ class WpdbDatabase extends AbstractDatabase {
 	}
 
 	/**
+	 * Has mysqli's exception mode been switched off?
+	 *
+	 * @var bool
+	 */
+	private static $quiet = false;
+
+	/**
 	 * The raw mysqli link, if there is one.
 	 *
 	 * @return \mysqli|null
@@ -81,7 +90,7 @@ class WpdbDatabase extends AbstractDatabase {
 		}
 
 		$this->wpdb->suppress_errors( true );
-		$result = $this->wpdb->query( $sql ); // phpcs:ignore WordPress.DB
+		$result = $this->wpdb->query( $sql ); // phpcs:ignore WordPress.DB, PluginCheck.Security.DirectDB.UnescapedDBParameter -- The engine builds this statement from quoted identifiers and escaped values (Identifier, quote_for()).
 		$this->wpdb->suppress_errors( false );
 		if ( false === $result ) {
 			throw new DatabaseException( (string) $this->wpdb->last_error );
@@ -116,7 +125,7 @@ class WpdbDatabase extends AbstractDatabase {
 		}
 
 		$this->wpdb->suppress_errors( true );
-		$rows = $this->wpdb->get_results( $sql, ARRAY_A ); // phpcs:ignore WordPress.DB
+		$rows = $this->wpdb->get_results( $sql, ARRAY_A ); // phpcs:ignore WordPress.DB, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Same as query(): quoted identifiers and escaped values only.
 		$this->wpdb->suppress_errors( false );
 		if ( null === $rows && '' !== (string) $this->wpdb->last_error ) {
 			throw new DatabaseException( (string) $this->wpdb->last_error );
@@ -133,7 +142,11 @@ class WpdbDatabase extends AbstractDatabase {
 	 * @return \mysqli_result|bool
 	 */
 	private function try_query( \mysqli $link, $sql ) {
-		mysqli_report( MYSQLI_REPORT_OFF ); // phpcs:ignore WordPress.DB.RestrictedFunctions.mysql_mysqli_report -- Large copies use their own connection and check every result.
+		if ( ! self::$quiet ) {
+			// WordPress itself switches mysqli's exceptions off when it connects; this makes sure of it once, because every result is checked here.
+			mysqli_report( MYSQLI_REPORT_OFF ); // phpcs:ignore WordPress.DB.RestrictedFunctions.mysql_mysqli_report
+			self::$quiet = true;
+		}
 		return @$link->query( $sql ); // phpcs:ignore WordPress.PHP.NoSilencedErrors
 	}
 

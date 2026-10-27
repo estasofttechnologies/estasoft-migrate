@@ -11,7 +11,7 @@ use Estasoft\Migrate\Db\Database;
 use Estasoft\Migrate\Db\Identifier;
 use Estasoft\Migrate\Util;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Phase 1 only records the data (delta sync itself comes in Phase 2). For every table we keep a

@@ -10,7 +10,7 @@ namespace Estasoft\Migrate\Sanitizer;
 use Estasoft\Migrate\Db\Database;
 use Estasoft\Migrate\Db\Identifier;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Resolves the "keep unchanged" list (user logins, emails or ids) and, optionally, all administrators.

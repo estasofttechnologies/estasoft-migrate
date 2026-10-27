@@ -9,6 +9,7 @@ namespace Estasoft\Migrate\Engine\Tasks;
 
 use Estasoft\Migrate\Engine\Baseline;
 use Estasoft\Migrate\Engine\BatchSizer;
+use Estasoft\Migrate\Engine\Cursor;
 use Estasoft\Migrate\Engine\Budget;
 use Estasoft\Migrate\Engine\DdlTranslator;
 use Estasoft\Migrate\Engine\JobContext;
@@ -29,7 +30,9 @@ use Estasoft\Migrate\Sanitizer\RowSanitizer;
 use Estasoft\Migrate\Storage;
 use Estasoft\Migrate\Util;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
+
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are plain text for JSON and textContent; PHP escapes them with esc_html() where it prints them.
 
 /**
  * Reads every table in small keyset-paginated batches and writes them to a package.
@@ -199,10 +202,33 @@ class ExportTask extends Task {
 		if ( '' !== $pass ) {
 			return array( 'passphrase' => $pass );
 		}
-		if ( ! empty( $params['protect_with_site_key'] ) && '' !== $ctx->secret ) {
+		if ( ! empty( $params['protect_with_site_key'] ) ) {
+			if ( '' === $ctx->secret ) {
+				throw $this->protection_lost();
+			}
 			return array( 'secret' => $ctx->secret );
 		}
+		if ( ! empty( $params['passphrase_enc'] ) ) {
+			// A password was chosen but cannot be read back (the site's security keys changed): never fall back to an open file.
+			throw $this->protection_lost();
+		}
 		return array();
+	}
+
+	/**
+	 * The failure for a package that was meant to be protected but whose key is no longer available.
+	 *
+	 * @return TaskException
+	 */
+	private function protection_lost() {
+		return new TaskException(
+			__( 'The package was meant to be protected, but its password can no longer be read, so nothing was written.', 'estasoft-migrate' ),
+			array(
+				'untouched' => __( 'Your site was not changed.', 'estasoft-migrate' ),
+				'advice'    => __( 'This happens when the security keys in wp-config.php change while a job is waiting. Start the export again.', 'estasoft-migrate' ),
+			),
+			false
+		);
 	}
 
 	/**
@@ -352,12 +378,7 @@ class ExportTask extends Task {
 				// Move the cursor only after the block is safely written.
 				$last = end( $rows );
 				if ( $pk ) {
-					$state['cursor'] = array_map(
-						static function ( $c ) use ( $last ) {
-							return (string) $last[ $c ];
-						},
-						$pk
-					);
+					$state['cursor'] = Cursor::pack( $last, $pk );
 				} else {
 					$state['skip'] = (int) $state['skip'] + count( $rows );
 				}
@@ -400,7 +421,7 @@ class ExportTask extends Task {
 	 * @return array[]
 	 */
 	private function fetch( JobContext $ctx, $name, array $pk, array $state, BatchSizer $sizer ) {
-		return $ctx->db->fetch_batch( $name, $pk, $state['cursor'], $sizer->size(), (int) $state['skip'] );
+		return $ctx->db->fetch_batch( $name, $pk, Cursor::unpack( $state['cursor'] ), $sizer->size(), (int) $state['skip'] );
 	}
 
 	/**

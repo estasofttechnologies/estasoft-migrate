@@ -64,7 +64,7 @@ The logic lives in `includes/Rest/Api.php` (unit-tested with arrays in and out).
 
 Booleans accept `true/false/"1"/"0"`.
 
-- **export**: `label`, `compress` (true), `tables[]`, `exclude_tables[]`, `password` (encrypts the package), `protect_with_site_key`, `replace{pairs:[[from,to]], regex, case_sensitive}`, `sanitize{profile, overrides{rules{id:bool}, safety{id:bool}, keep_users[], keep_admins, skip_tables[], skip_columns[]}}` (presence makes it a *sanitized copy*). When Settings → “Encrypt packages” is on, `password` or `protect_with_site_key` is required (`estm_password_required`).
+- **export**: `label`, `compress` (true), `tables[]`, `exclude_tables[]`, `password` (encrypts the package), `protect_with_site_key`, `replace{pairs:[[from,to]], regex, case_sensitive}`, `sanitize{profile, overrides{rules{id:bool}, safety{id:bool}, keep_users[], keep_admins, skip_tables[], skip_columns[]}}` (presence makes it a *sanitized copy*). A `password` must have at least 8 characters. When Settings → “Encrypt packages” is on, `password` or `protect_with_site_key` is required (`estm_password_required`). `keep_admins` defaults to true for the `staging` profile and false for `dev` and `gdpr`.
 - **import**: `package_id`, `password` (if the package has one), `snapshot` (true), `rewrite` (true: change the old site address to this one), `replace{pairs…}`, `safety{mail,seo,pay,smtp: bool}`. A package of type `snapshot` is a **restore**.
 - **search_replace**: `pairs[[from,to]]`, `regex`, `case_sensitive` (true), `replace_keys` (true), `skip_guid` (true), `dry_run` (**true by default**), `snapshot` (true; only used when not a dry run), `sample_limit` (20), `skip_columns[]`, `tables[]`, `exclude_tables[]`
 - **push** / **pull**: `remote_url`, `remote_key` (starts with `esm_`), `snapshot` (true), `rewrite` (true), `keep_package`, `label`, `safety{…}`, `sanitize{…}`; push also `tables[]`, `exclude_tables[]`, `replace{…}`
@@ -87,7 +87,7 @@ Downloads are not REST: see **Downloads**.
 | --- | --- | --- |
 | GET | `/packages?type=export\|snapshot\|received` | `packages[{id,type,kind,status,label,file,size,created,encrypted,protection,sanitized,source_url,tables,rows,sha256,verified{ok,at,message}\|null,in_use,origin{job_id,type,kind,title,remote}\|null}]`, `totals{count,bytes,free}` |
 | DELETE | `/packages/{id}` | 409 while a job uses it |
-| POST | `/packages/upload` | `{name,size}` → `{package_id, chunk (bytes per piece, 1 MiB), received: 0}` starts a chunked upload |
+| POST | `/packages/upload` | `{name,size}` → `{package_id, chunk (bytes per piece, 1 MiB), received: 0}` starts a chunked upload. A `size` above the limit (64 GB, change it with the filter `estasoft_migrate_max_package_size`) gives 413, and so does a piece that runs past `size` |
 | POST | `/packages/upload/{id}?offset=N` | Raw bytes of one piece as the body (`Content-Type: application/octet-stream`) → `{received}`. Sending a piece twice is harmless. If a piece is missing: 409 `estm_offset` with `data.received` — resume from there |
 | POST | `/packages/upload/{id}/done` | `{size}` → `{package}` (a package view; 422 when the file is not a package). Then start a `verify` job and, if the person confirms, an `import` job. |
 
@@ -97,8 +97,8 @@ Downloads are not REST: see **Downloads**.
 
 | Method | Route | Notes |
 | --- | --- | --- |
-| GET | `/settings` | `values{accept_incoming,require_https,ip_allowlist,runner,max_batch,slice_seconds,encrypt_packages,delete_packages_days,keep_snapshots,delete_snapshots_days,delete_on_uninstall}`, `defaults{…same keys}`, `connection{key,key_id,endpoint,previous_key_until}`, `environment{php,wp,db,memory,max_exec,cron_off,action_scheduler,runner,sodium,zlib,multisite,storage{writable,protected,free,used}}`, `runners[]` |
-| POST | `/settings` | Any subset of `values`. Values are validated and clamped; returns the same object as GET |
+| GET | `/settings` | `values{accept_incoming,require_https,ip_allowlist,runner,max_batch,slice_seconds,encrypt_packages,delete_packages_days,keep_snapshots,delete_snapshots_days,delete_on_uninstall}`, `defaults{…same keys}`, `connection{key,key_id,endpoint,previous_key_until}`, `environment{php,wp,db,memory,max_exec,cron_off,action_scheduler,runner,sodium,zlib,multisite,storage{writable,protected,free,used}}` (`protected` is true when a test file in the package folder could not be fetched from the web, false when it could, null when the server could not try), `runners[]` |
+| POST | `/settings` | Any subset of `values`. Values are validated and clamped; returns the same object as GET. An `ip_allowlist` in which no line is a valid address or range is refused (400 `estm_invalid`) instead of being saved as an empty list |
 | POST | `/settings/key` | Replace the connection key (the old one keeps working for a short while: `previous_key_until`) |
 | POST | `/settings/test-connection` | `{remote_url, remote_key}` → `ok, took_ms, https, skew, site{url,name,wp_version,php,prefix,db,multisite}, version, writable, free_bytes, stats` |
 
@@ -106,7 +106,7 @@ Downloads are not REST: see **Downloads**.
 
 | Method | Route | Notes |
 | --- | --- | --- |
-| GET | `/sanitizer` | `profiles[{id,name,text,rules{id:bool},safety{id:bool}}]` (ids: `staging`, `dev`, `gdpr`), `rules[{id,what,where,how,example}]`, `safety[{id,title,text}]`, `admins[{id,login,email}]`, `saved{profile,rules,safety,keep_users,keep_admins,skip_tables,skip_columns,on_export}` |
+| GET | `/sanitizer` | `profiles[{id,name,text,rules{id:bool},safety{id:bool},keep_admins}]` (ids: `staging`, `dev`, `gdpr`), `rules[{id,what,where,how,example}]`, `safety[{id,title,text}]`, `admins[{id,login,email}]`, `saved{profile,rules,safety,keep_users,keep_admins,skip_tables,skip_columns,on_export}` |
 | POST | `/sanitizer/preview` | `{profile, overrides{…}, per_table}` → `profile`, `tables[{table,logical,examples[{changed:[column], before:{column:value}, after:{column:value}}],dropped}]`, `kept`. Reads a few rows, **changes nothing** |
 | POST | `/sanitizer/save` | The `saved` object → `{saved}`. Used by the New migration and Packages screens too: “Sanitize while sending” starts from it |
 

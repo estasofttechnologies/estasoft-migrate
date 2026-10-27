@@ -16,7 +16,9 @@ use Estasoft\Migrate\Package\PackageReader;
 use Estasoft\Migrate\Storage;
 use Estasoft\Migrate\Util;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
+
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are plain text for JSON and textContent; PHP escapes them with esc_html() where it prints them.
 
 /**
  * Reads every block and compares its checksum. No password is needed and nothing is changed.

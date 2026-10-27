@@ -10,7 +10,7 @@ namespace Estasoft\Migrate\Engine;
 use Estasoft\Migrate\Replace\Replacer;
 use Estasoft\Migrate\Sanitizer\RowSanitizer;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * In order: leave out the plugin's own state, mask personal data, map the table prefix in
@@ -142,9 +142,9 @@ class RowPipeline {
 
 		if ( '' !== $this->from_prefix && $this->from_prefix !== $this->to_prefix ) {
 			if ( 'options' === $this->logical ) {
-				$row = $this->map_prefix( $row, 'option_name' );
+				$row = $this->map_prefix( $row, 'option_name', self::PREFIXED_OPTIONS );
 			} elseif ( 'usermeta' === $this->logical ) {
-				$row = $this->map_prefix( $row, 'meta_key' );
+				$row = $this->map_prefix( $row, 'meta_key', self::PREFIXED_USERMETA );
 			}
 		}
 
@@ -178,6 +178,16 @@ class RowPipeline {
 	}
 
 	/**
+	 * WordPress's own option that is named after the table prefix (the other options only start with the same letters).
+	 */
+	const PREFIXED_OPTIONS = '/^(?:\d+_)?user_roles$/';
+
+	/**
+	 * WordPress's own user settings that are named after the table prefix.
+	 */
+	const PREFIXED_USERMETA = '/^(?:\d+_)?(?:capabilities|user_level|user-settings|user-settings-time|dashboard_quick_press_last_post_id|persisted_preferences|autosave_draft_ids)$/';
+
+	/**
 	 * Options that belong to this plugin on this site, and never travel.
 	 *
 	 * @param string $name Option name.
@@ -190,15 +200,20 @@ class RowPipeline {
 	}
 
 	/**
-	 * Rename a key that starts with the source prefix.
+	 * Rename a key that WordPress builds from the table prefix. Other keys that merely start with the same
+	 * letters (wp_rocket_settings, wp_page_for_privacy_policy) are not about the prefix and keep their name.
 	 *
-	 * @param array  $row Row.
-	 * @param string $col Column holding the key.
+	 * @param array  $row     Row.
+	 * @param string $col     Column holding the key.
+	 * @param string $pattern Pattern for the part after the prefix that is renamed.
 	 * @return array
 	 */
-	private function map_prefix( array $row, $col ) {
+	private function map_prefix( array $row, $col, $pattern ) {
 		if ( isset( $row[ $col ] ) && 0 === strpos( (string) $row[ $col ], $this->from_prefix ) ) {
-			$row[ $col ] = $this->to_prefix . substr( (string) $row[ $col ], strlen( $this->from_prefix ) );
+			$rest = substr( (string) $row[ $col ], strlen( $this->from_prefix ) );
+			if ( 1 === preg_match( $pattern, $rest ) ) {
+				$row[ $col ] = $this->to_prefix . $rest;
+			}
 		}
 		return $row;
 	}

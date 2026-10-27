@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate\Engine;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * A task does its work in slices. Each call to step() runs until the budget is used up, saves
@@ -76,6 +76,17 @@ abstract class Task {
 	 */
 	public function steps( array $params, array $state ) {
 		return array();
+	}
+
+	/**
+	 * Can the job still be cancelled? False once its result is already in place and cancelling would leave it half done.
+	 *
+	 * @param array $params Job parameters.
+	 * @param array $state  State.
+	 * @return bool
+	 */
+	public function can_cancel( array $params, array $state ) {
+		return true;
 	}
 
 	/**

@@ -9,6 +9,7 @@ namespace Estasoft\Migrate\Engine\Tasks;
 
 use Estasoft\Migrate\Engine\BatchSizer;
 use Estasoft\Migrate\Engine\Budget;
+use Estasoft\Migrate\Engine\Cursor;
 use Estasoft\Migrate\Engine\JobContext;
 use Estasoft\Migrate\Engine\TableSelector;
 use Estasoft\Migrate\Engine\Task;
@@ -16,7 +17,9 @@ use Estasoft\Migrate\Engine\TaskException;
 use Estasoft\Migrate\Replace\Replacer;
 use Estasoft\Migrate\Util;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
+
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are plain text for JSON and textContent; PHP escapes them with esc_html() where it prints them.
 
 /**
  * Finds and replaces text in every text column of the chosen tables, including inside serialized
@@ -205,7 +208,7 @@ class SearchReplaceTask extends Task {
 			}
 
 			$t0   = microtime( true );
-			$rows = $text ? $db->fetch_batch( $name, $pk, $state['cursor'], $sizer->size() ) : array();
+			$rows = $text ? $db->fetch_batch( $name, $pk, Cursor::unpack( $state['cursor'] ), $sizer->size() ) : array();
 			if ( ! $rows ) {
 				$entry['done'] = true;
 				if ( $entry['changed'] || $entry['matches'] ) {
@@ -280,12 +283,7 @@ class SearchReplaceTask extends Task {
 				}
 
 				$last              = end( $rows );
-				$state['cursor']   = array_map(
-					static function ( $c ) use ( $last ) {
-						return (string) $last[ $c ];
-					},
-					$pk
-				);
+				$state['cursor']   = Cursor::pack( $last, $pk );
 				$entry['scanned'] += count( $rows );
 				$sizer->record( count( $rows ), microtime( true ) - $t0, max( 1, $bytes ) );
 				if ( $budget->memory_pressure() ) {

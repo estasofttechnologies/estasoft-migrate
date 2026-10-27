@@ -9,7 +9,7 @@ namespace Estasoft\Migrate\Remote;
 
 use Estasoft\Migrate\Engine\JobContext;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Tests (and other code) can replace the transport by setting the "remote_client" service.

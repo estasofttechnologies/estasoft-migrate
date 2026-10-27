@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate\Engine;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Learns how many rows fit in one batch. A batch should take about a second and stay under a
@@ -52,6 +52,13 @@ final class BatchSizer {
 	private $target_bytes;
 
 	/**
+	 * Hard ceiling set after the server killed a step at a larger size (0 for none).
+	 *
+	 * @var int
+	 */
+	private $cap = 0;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param int   $max            Largest batch in rows.
@@ -75,7 +82,10 @@ final class BatchSizer {
 	 * @return BatchSizer
 	 */
 	public static function from_state( array $state, $max = 20000 ) {
-		return new self( $max, isset( $state['size'] ) ? (int) $state['size'] : 200 );
+		$cap      = isset( $state['cap'] ) ? max( 1, (int) $state['cap'] ) : 0;
+		$new      = new self( $cap ? min( (int) $max, $cap ) : $max, isset( $state['size'] ) ? (int) $state['size'] : 200 );
+		$new->cap = $cap;
+		return $new;
 	}
 
 	/**
@@ -84,7 +94,10 @@ final class BatchSizer {
 	 * @return array
 	 */
 	public function export_state() {
-		return array( 'size' => $this->size );
+		return $this->cap ? array(
+			'size' => $this->size,
+			'cap'  => $this->cap,
+		) : array( 'size' => $this->size );
 	}
 
 	/**

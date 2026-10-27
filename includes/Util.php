@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Formatting and parsing helpers that do not need WordPress.

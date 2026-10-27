@@ -12,7 +12,9 @@ use Estasoft\Migrate\Replace\Replacer;
 use Estasoft\Migrate\Sanitizer\Profiles;
 use Estasoft\Migrate\Storage;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
+
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are plain text for JSON and textContent; PHP escapes them with esc_html() where it prints them.
 
 /**
  * Validation lives in one place so the screens, the command line and the tests all follow the same rules.
@@ -293,10 +295,14 @@ final class JobParams {
 	 * @param array      $in  Input.
 	 * @param JobContext $ctx Services.
 	 * @return array
+	 * @throws \InvalidArgumentException When the password is too short.
 	 */
 	private static function protection( array $in, JobContext $ctx ) {
 		$out = array();
 		if ( isset( $in['password'] ) && '' !== (string) $in['password'] ) {
+			if ( mb_strlen( (string) $in['password'], 'UTF-8' ) < 8 ) {
+				throw new \InvalidArgumentException( __( 'Use at least 8 characters for the package password.', 'estasoft-migrate' ) );
+			}
 			$out['passphrase_enc'] = Secrets::seal( (string) $in['password'], $ctx->secret );
 		} elseif ( ! empty( $in['protect_with_site_key'] ) && self::truthy( $in['protect_with_site_key'] ) ) {
 			$out['protect_with_site_key'] = true;

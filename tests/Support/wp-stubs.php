@@ -52,3 +52,13 @@ if ( ! function_exists( '_n' ) ) {
 		return 1 === (int) $number ? $single : $plural;
 	}
 }
+if ( ! function_exists( 'esc_html' ) ) {
+	function esc_html( $text ) { // phpcs:ignore
+		return htmlspecialchars( (string) $text, ENT_QUOTES, 'UTF-8' );
+	}
+}
+if ( ! function_exists( 'esc_html__' ) ) {
+	function esc_html__( $text ) { // phpcs:ignore
+		return esc_html( $text );
+	}
+}

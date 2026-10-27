@@ -9,6 +9,7 @@ namespace Estasoft\Migrate\Remote;
 
 use Estasoft\Migrate\Engine\Budget;
 use Estasoft\Migrate\Engine\Job;
+use Estasoft\Migrate\Engine\JobConflicts;
 use Estasoft\Migrate\Engine\JobContext;
 use Estasoft\Migrate\Engine\JobRunner;
 use Estasoft\Migrate\Engine\SiteInfo;
@@ -18,7 +19,9 @@ use Estasoft\Migrate\Sanitizer\Profiles;
 use Estasoft\Migrate\Settings;
 use Estasoft\Migrate\Storage;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
+
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are plain text for JSON and textContent; PHP escapes them with esc_html() where it prints them.
 
 /**
  * Pure PHP: gets the request pieces, returns the response pieces. The WordPress glue
@@ -107,6 +110,17 @@ class Server {
 		$nonce   = (string) ( $headers['x-estm-nonce'] ?? '' );
 		try {
 			$matched = $this->authenticate( $action, $body, $headers, $ip, $https );
+			if ( in_array( $action, array( 'put_init', 'import_start', 'export_start', 'drop_package' ), true ) ) {
+				// A trace of who started something on this site: the caller's address and which of the keys was used.
+				$this->ctx->logger->info(
+					sprintf(
+						'Incoming request %1$s from %2$s with key %3$s.',
+						$action,
+						$ip,
+						Settings::key_id( $matched )
+					)
+				);
+			}
 			$payload = '' === $body ? array() : json_decode( $body, true );
 			if ( ! is_array( $payload ) ) {
 				throw new RemoteException( 'estm_invalid', __( 'The request could not be read.', 'estasoft-migrate' ), 400 );
@@ -114,6 +128,9 @@ class Server {
 			$data = $this->dispatch( $action, $payload, $matched );
 			return $this->reply( 200, array_merge( array( 'ok' => true ), $data ), $matched, $nonce );
 		} catch ( RemoteException $e ) {
+			if ( in_array( $e->error_code, array( 'estm_bad_key', 'estm_bad_sig', 'estm_ip', 'estm_replay' ), true ) ) {
+				$this->ctx->logger->warning( sprintf( 'Incoming request %1$s from %2$s was refused (%3$s).', $action, $ip, $e->error_code ) );
+			}
 			$out = array(
 				'ok'      => false,
 				'code'    => $e->error_code,
@@ -334,6 +351,9 @@ class Server {
 		if ( $size < 1 ) {
 			throw new RemoteException( 'estm_invalid', __( 'The package is empty.', 'estasoft-migrate' ), 400 );
 		}
+		if ( $size > Storage::max_package_bytes() ) {
+			throw new RemoteException( 'estm_invalid', __( 'The package is larger than the other site accepts.', 'estasoft-migrate' ), 413 );
+		}
 		if ( ! $this->ctx->storage->is_writable() ) {
 			throw new RemoteException( 'estm_no_space', __( 'The other site cannot write to its storage folder.', 'estasoft-migrate' ), 507 );
 		}
@@ -423,6 +443,12 @@ class Server {
 			throw new RemoteException( 'estm_bad_part', __( 'A part was damaged on the way.', 'estasoft-migrate' ), 422, array(), true );
 		}
 
+		// A part may not run past the size announced when the transfer started.
+		$expected = (int) ( ( (array) $this->ctx->storage->read_meta( $id ) )['expected'] ?? 0 );
+		if ( $expected > 0 && $offset + strlen( $raw ) > $expected ) {
+			throw new RemoteException( 'estm_invalid', __( 'The part is larger than the package announced.', 'estasoft-migrate' ), 413 );
+		}
+
 		$path = $this->ctx->storage->package_path( $id );
 		clearstatcache( true, $path );
 		$have = (int) filesize( $path );
@@ -493,6 +519,18 @@ class Server {
 	 */
 	private function create_job( $type, $title, array $params ) {
 		$params['_remote'] = true;
+		$busy              = JobConflicts::find( $this->runner_store()->active(), $type, $params );
+		if ( $busy ) {
+			throw new RemoteException(
+				'estm_busy',
+				sprintf(
+					/* translators: %s: title of the job that is running */
+					__( 'Another job is still in progress on this site: %s.', 'estasoft-migrate' ),
+					$busy->title
+				),
+				409
+			);
+		}
 		return $this->runner->create( $type, $title, $params );
 	}
 

@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate\Engine;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * The message says what happened, the details say what was not changed and what to do.

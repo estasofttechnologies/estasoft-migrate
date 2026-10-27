@@ -7,7 +7,11 @@
 
 namespace Estasoft\Migrate\Db;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+use Estasoft\Migrate\Engine\Cursor;
+
+defined( 'ABSPATH' ) || exit;
+
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are plain text for JSON and textContent; PHP escapes them with esc_html() where it prints them.
 
 /**
  * Builds the SELECT, INSERT and UPDATE statements; drivers only run SQL and describe tables.
@@ -138,8 +142,9 @@ abstract class AbstractDatabase implements Database {
 			$cols = Identifier::quote_list( $key_columns );
 			if ( null !== $after ) {
 				$values = array();
-				foreach ( array_values( $after ) as $i => $v ) {
-					$values[] = $this->quote( $v );
+				foreach ( array_values( $after ) as $v ) {
+					// Raw bytes (a binary key) go in as a hex literal: they are not text in any character set.
+					$values[] = Cursor::is_text( (string) $v ) ? $this->quote( $v ) : "X'" . bin2hex( (string) $v ) . "'";
 				}
 				$sql .= count( $key_columns ) > 1
 					? " WHERE ({$cols}) > (" . implode( ',', $values ) . ')'

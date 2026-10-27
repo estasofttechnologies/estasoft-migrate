@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Owns the storage directory and the small JSON file kept next to every package.
@@ -34,6 +34,20 @@ class Storage {
 	 * @var Settings|null
 	 */
 	private $settings;
+
+	/**
+	 * Web address of the storage folder, for tests. Empty: worked out from the uploads address.
+	 *
+	 * @var string
+	 */
+	public $public_url = '';
+
+	/**
+	 * Fetches an address and returns array( 'code' => int, 'body' => string ), or null when that is not possible. Tests replace it.
+	 *
+	 * @var callable|null
+	 */
+	public $http = null;
 
 	/**
 	 * Constructor.
@@ -91,6 +105,136 @@ class Storage {
 				file_put_contents( $file, $content );
 			}
 		}
+	}
+
+	/**
+	 * Largest package this site agrees to receive.
+	 *
+	 * @return int Bytes.
+	 */
+	public static function max_package_bytes() {
+		$max = 64 * 1024 * 1024 * 1024;
+		if ( function_exists( 'apply_filters' ) ) {
+			/**
+			 * Largest package, in bytes, that this site accepts from the browser or from another site.
+			 *
+			 * @param int $max Bytes. The default is 64 GB.
+			 */
+			$max = (int) apply_filters( 'estasoft_migrate_max_package_size', $max );
+		}
+		return max( 1048576, $max );
+	}
+
+	/**
+	 * Can a file in the package folder be fetched by its address, without signing in?
+	 *
+	 * Guard files only help when the web server reads them (nginx never reads .htaccess), so the folder is tested the way
+	 * a stranger would reach it: a small file with a random name is requested over HTTP, then removed. A good answer is kept
+	 * for hours; a bad one for ten minutes, so a person who has just fixed the server does not wait to see it.
+	 *
+	 * @param bool $fresh Ignore the kept answer.
+	 * @param bool $probe Make the request when there is no kept answer. False reads the kept answer only.
+	 * @return bool|null True when the file could not be fetched, false when it could, null when this could not be tested.
+	 */
+	public function direct_access_blocked( $fresh = false, $probe = true ) {
+		$tag = md5( $this->dir() );
+		if ( ! $fresh && function_exists( 'get_transient' ) ) {
+			$kept = get_transient( 'estm_direct_access' );
+			if ( is_array( $kept ) && ( $kept['tag'] ?? '' ) === $tag && array_key_exists( 'blocked', $kept ) ) {
+				return $kept['blocked'];
+			}
+		}
+		if ( ! $probe && ! $fresh ) {
+			return null;
+		}
+		$blocked = $this->probe_direct_access();
+		if ( function_exists( 'set_transient' ) ) {
+			set_transient(
+				'estm_direct_access',
+				array(
+					'tag'     => $tag,
+					'blocked' => $blocked,
+				),
+				true === $blocked ? 6 * HOUR_IN_SECONDS : ( null === $blocked ? HOUR_IN_SECONDS : 10 * MINUTE_IN_SECONDS )
+			);
+		}
+		return $blocked;
+	}
+
+	/**
+	 * Request a throw-away file from the storage folder.
+	 *
+	 * @return bool|null See direct_access_blocked().
+	 */
+	private function probe_direct_access() {
+		$base = $this->base_url();
+		if ( '' === $base || ! $this->is_writable() ) {
+			return null;
+		}
+		$name = 'probe-' . strtolower( wp_generate_password( 16, false, false ) ) . '.txt';
+		$body = strtolower( wp_generate_password( 24, false, false ) );
+		$file = $this->dir() . '/' . $name;
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+		if ( false === file_put_contents( $file, $body ) ) {
+			return null;
+		}
+		try {
+			$reply = $this->http ? call_user_func( $this->http, $base . '/' . $name ) : self::fetch( $base . '/' . $name );
+		} finally {
+			wp_delete_file( $file );
+		}
+		if ( ! is_array( $reply ) || ! isset( $reply['code'] ) ) {
+			return null;
+		}
+		$code = (int) $reply['code'];
+		if ( $code < 100 || $code >= 500 ) {
+			return null; // The server failed; that says nothing about the folder.
+		}
+		return ! ( 200 === $code && false !== strpos( (string) ( $reply['body'] ?? '' ), $body ) );
+	}
+
+	/**
+	 * Web address of the storage folder.
+	 *
+	 * @return string
+	 */
+	private function base_url() {
+		if ( '' !== $this->public_url ) {
+			return rtrim( $this->public_url, '/' );
+		}
+		if ( ! function_exists( 'wp_upload_dir' ) || null !== $this->dir && null === $this->settings ) {
+			return '';
+		}
+		$uploads = wp_upload_dir( null, false );
+		return empty( $uploads['baseurl'] ) ? '' : rtrim( $uploads['baseurl'], '/' ) . '/' . basename( $this->dir() );
+	}
+
+	/**
+	 * Fetch an address from this server, without following redirects.
+	 *
+	 * @param string $url Address.
+	 * @return array|null
+	 */
+	private static function fetch( $url ) {
+		if ( ! function_exists( 'wp_remote_get' ) ) {
+			return null;
+		}
+		$reply = wp_remote_get(
+			$url,
+			array(
+				'timeout'             => 3,
+				'redirection'         => 0,
+				'limit_response_size' => 4096,
+				'sslverify'           => (bool) apply_filters( 'https_local_ssl_verify', false ), // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- A core filter.
+			)
+		);
+		if ( is_wp_error( $reply ) ) {
+			return null;
+		}
+		return array(
+			'code' => (int) wp_remote_retrieve_response_code( $reply ),
+			'body' => (string) wp_remote_retrieve_body( $reply ),
+		);
 	}
 
 	/**

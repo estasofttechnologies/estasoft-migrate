@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate\Sanitizer;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Works on the stored value of the active_plugins option, so it also works on a database that

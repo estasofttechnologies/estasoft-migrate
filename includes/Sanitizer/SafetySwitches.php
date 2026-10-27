@@ -10,7 +10,7 @@ namespace Estasoft\Migrate\Sanitizer;
 use Estasoft\Migrate\Db\Database;
 use Estasoft\Migrate\Db\Identifier;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Makes a copy safe to run: no mail to real people, no search engine indexing, no live payments,

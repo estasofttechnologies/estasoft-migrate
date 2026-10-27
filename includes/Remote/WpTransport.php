@@ -9,6 +9,8 @@ namespace Estasoft\Migrate\Remote;
 
 defined( 'ABSPATH' ) || exit;
 
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are plain text for JSON and textContent; PHP escapes them with esc_html() where it prints them.
+
 /**
  * Redirects are not followed: a POST that is redirected loses its body, so the person is told the
  * final address instead.
