@@ -1,6 +1,4 @@
-includes:
-  - vendor/szepeviktor/phpstan-wordpress/extension.neon
-
+# The WordPress extension (szepeviktor/phpstan-wordpress) is loaded by phpstan/extension-installer; do not include it here too.
 parameters:
   level: 5
   phpVersion: 70400
