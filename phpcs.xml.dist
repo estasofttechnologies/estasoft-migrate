@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<ruleset name="Estasoft Migration and Database Sanitizer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/squizlabs/PHP_CodeSniffer/master/phpcs.xsd">
+	<description>Coding standards for Estasoft Migration &amp; Database Sanitizer: WordPress-Extra and WordPress-Docs, PHP 7.4+, WordPress 5.8+.</description>
+
+	<file>estasoft-migrate.php</file>
+	<file>uninstall.php</file>
+	<file>includes</file>
+	<file>views</file>
+
+	<arg name="extensions" value="php"/>
+	<arg name="colors"/>
+	<arg value="ps"/>
+	<arg name="parallel" value="8"/>
+
+	<rule ref="WordPress-Extra"/>
+	<rule ref="WordPress-Docs"/>
+
+	<config name="minimum_wp_version" value="5.8"/>
+	<config name="testVersion" value="7.4-"/>
+
+	<!-- Text domain and global prefixes. -->
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="estasoft-migrate"/>
+			</property>
+		</properties>
+	</rule>
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<property name="prefixes" type="array">
+				<element value="estasoft_migrate"/>
+				<element value="Estasoft\Migrate"/>
+				<element value="ESTASOFT_MIGRATE"/>
+				<element value="estm"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- The classes live in an autoloaded namespace (PSR-4), so file names are class names, not class-foo.php. -->
+	<rule ref="WordPress.Files.FileName.InvalidClassFileName"><severity>0</severity></rule>
+	<rule ref="WordPress.Files.FileName.NotHyphenatedLowercase"><severity>0</severity></rule>
+
+	<!--
+		Deliberate exceptions, each with the reason:
+		- ExceptionNotEscaped: exception messages are caught and sent to the screen as JSON or written to the log.
+		  They are never printed as HTML.
+		- base64: used to carry binary values inside the JSON of the signed site-to-site protocol, not to hide code.
+		- FunctionCommentThrowTag: the engine uses exceptions to signal a retry, so most methods can throw; documenting
+		  every one is noise.
+		- NoReservedKeywordParameterNames and UnusedFunctionParameter: parameter names like $default and parameters that
+		  an interface or an overridable base method requires.
+	-->
+	<rule ref="WordPress.Security.EscapeOutput.ExceptionNotEscaped"><severity>0</severity></rule>
+	<rule ref="WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode"><severity>0</severity></rule>
+	<rule ref="WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_decode"><severity>0</severity></rule>
+	<rule ref="Squiz.Commenting.FunctionCommentThrowTag"><severity>0</severity></rule>
+	<rule ref="Universal.NamingConventions.NoReservedKeywordParameterNames"><severity>0</severity></rule>
+	<rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"><severity>0</severity></rule>
+
+	<!-- Variables in views are set by the caller. -->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound">
+		<exclude-pattern>views/*</exclude-pattern>
+	</rule>
+</ruleset>

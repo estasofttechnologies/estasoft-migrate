@@ -1,0 +1,2977 @@
+# Copyright (C) 2026 ESTASOFT TECHNOLOGIES
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Estasoft Migration & Database Sanitizer 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/estasoft-migrate\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-10-27T20:13:52+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: estasoft-migrate\n"
+
+#. Plugin Name of the plugin
+#: estasoft-migrate.php
+#: views/app.php:20
+msgid "Estasoft Migration & Database Sanitizer"
+msgstr ""
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: estasoft-migrate.php
+msgid "https://estasoft.com/"
+msgstr ""
+
+#. Description of the plugin
+#: estasoft-migrate.php
+msgid "Zero-downtime WordPress migration with resumable chunked database transfer, serialization-safe search and replace, and a rule-based database sanitizer. 100% free."
+msgstr ""
+
+#. Author of the plugin
+#: estasoft-migrate.php
+msgid "ESTASOFT TECHNOLOGIES"
+msgstr ""
+
+#. translators: 1: required PHP version, 2: current PHP version
+#: estasoft-migrate.php:44
+#, php-format
+msgid "Estasoft Migration & Database Sanitizer needs PHP %1$s or newer. This server runs PHP %2$s, so the plugin is switched off."
+msgstr ""
+
+#: includes/Admin/Admin.php:63
+#: includes/Admin/Admin.php:64
+msgid "Overview"
+msgstr ""
+
+#: includes/Admin/Admin.php:68
+#: includes/Admin/Admin.php:69
+#: assets/js/screens/progress.js:85
+msgid "New migration"
+msgstr ""
+
+#: includes/Admin/Admin.php:73
+msgid "Pre-flight check"
+msgstr ""
+
+#: includes/Admin/Admin.php:78
+#: assets/js/screens/progress.js:27
+#: assets/js/screens/progress.js:50
+#: assets/js/screens/progress.js:60
+#: assets/js/screens/progress.js:75
+#: assets/js/screens/progress.js:264
+msgid "Progress"
+msgstr ""
+
+#: includes/Admin/Admin.php:83
+#: includes/Admin/Admin.php:84
+msgid "Sanitizer"
+msgstr ""
+
+#: includes/Admin/Admin.php:88
+#: includes/Admin/Admin.php:89
+msgid "Search & replace"
+msgstr ""
+
+#: includes/Admin/Admin.php:93
+msgid "Packages & snapshots"
+msgstr ""
+
+#: includes/Admin/Admin.php:94
+#: assets/js/screens/progress.js:913
+msgid "Packages"
+msgstr ""
+
+#: includes/Admin/Admin.php:98
+#: includes/Admin/Admin.php:99
+#: assets/js/screens/logs.js:219
+msgid "Logs"
+msgstr ""
+
+#: includes/Admin/Admin.php:103
+#: includes/Admin/Admin.php:104
+#: includes/Admin/Admin.php:316
+msgid "Settings"
+msgstr ""
+
+#: includes/Admin/Admin.php:147
+#: includes/Admin/Admin.php:148
+#: includes/Admin/Admin.php:158
+msgid "Estasoft Migrate"
+msgstr ""
+
+#: includes/Admin/Admin.php:297
+msgid "You do not have permission to use Estasoft Migrate."
+msgstr ""
+
+#: includes/Admin/Admin.php:317
+msgid "Open"
+msgstr ""
+
+#: includes/Admin/Downloads.php:44
+msgid "You do not have permission to download this."
+msgstr ""
+
+#: includes/Admin/Downloads.php:47
+msgid "This download link has expired. Go back, reload the page and try again."
+msgstr ""
+
+#: includes/Admin/Downloads.php:62
+msgid "Download not available"
+msgstr ""
+
+#: includes/Cli/Command.php:172
+msgid "Nothing was changed. This is only a preview."
+msgstr ""
+
+#: includes/Cli/Command.php:225
+msgid "This replaces the database of this site with the contents of the package. Continue?"
+msgstr ""
+
+#: includes/Cli/Command.php:259
+msgid "That is not a rollback snapshot. Run “wp estasoft-migrate snapshots” for the list."
+msgstr ""
+
+#: includes/Cli/Command.php:261
+msgid "This puts the database back to the state in the snapshot. Changes made since then are lost. Continue?"
+msgstr ""
+
+#: includes/Cli/Command.php:322
+msgid "This changes the database. A rollback snapshot is saved first. Continue?"
+msgstr ""
+
+#: includes/Cli/Command.php:343
+msgid "This was a dry run. Add --apply to write the changes."
+msgstr ""
+
+#: includes/Cli/Command.php:388
+msgid "Blocked: fix the items marked BLOCKED first."
+msgstr ""
+
+#: includes/Cli/Command.php:390
+msgid "Ready, with warnings."
+msgstr ""
+
+#: includes/Cli/Command.php:390
+msgid "Ready."
+msgstr ""
+
+#. translators: %s: address
+#: includes/Cli/Command.php:424
+#, php-format
+msgid "This replaces the database of %s with this site's database. Continue?"
+msgstr ""
+
+#: includes/Cli/Command.php:453
+msgid "This replaces the database of this site with the other site's database. Continue?"
+msgstr ""
+
+#: includes/Cli/Command.php:473
+#: includes/Engine/Tasks/VerifyTask.php:164
+#: assets/js/screens/progress.js:858
+msgid "The package is complete and undamaged."
+msgstr ""
+
+#: includes/Cli/Command.php:607
+#: assets/js/screens/progress.js:1106
+msgid "The job was cancelled."
+msgstr ""
+
+#: includes/Cli/Command.php:705
+msgid "Delete this package? It cannot be brought back."
+msgstr ""
+
+#: includes/Cli/Command.php:711
+msgid "Deleted."
+msgstr ""
+
+#. translators: %s: address
+#: includes/Cli/Command.php:737
+#, php-format
+msgid "Address: %s"
+msgstr ""
+
+#: includes/Cli/Command.php:739
+msgid "This site does not accept incoming migrations yet. Turn it on in Settings, or run: wp estasoft-migrate key --accept-incoming=on"
+msgstr ""
+
+#. translators: %d: job id
+#: includes/Cli/Command.php:828
+#, php-format
+msgid "The job is paused. Continue with: wp estasoft-migrate resume %d"
+msgstr ""
+
+#. translators: 1: job id, 2: reason
+#: includes/Cli/Command.php:831
+#, php-format
+msgid "The job did not finish (#%1$d). %2$s Fix the cause, then run: wp estasoft-migrate resume %1$d"
+msgstr ""
+
+#. translators: 1: tables, 2: rows, 3: size
+#: includes/Cli/Command.php:850
+#, php-format
+msgid "Package created: %1$d tables, %2$s rows, %3$s."
+msgstr ""
+
+#: includes/Cli/Command.php:853
+msgid "Protected with the password you gave."
+msgstr ""
+
+#: includes/Cli/Command.php:853
+msgid "Protected with this site's key."
+msgstr ""
+
+#. translators: 1: tables, 2: rows
+#: includes/Cli/Command.php:860
+#, php-format
+msgid "Restored %1$d tables, %2$s rows."
+msgstr ""
+
+#. translators: 1: tables, 2: rows
+#: includes/Cli/Command.php:862
+#, php-format
+msgid "Imported %1$d tables, %2$s rows."
+msgstr ""
+
+#. translators: %s: snapshot id
+#: includes/Cli/Command.php:865
+#, php-format
+msgid "Rollback snapshot: %s (restore with: wp estasoft-migrate restore <id>)"
+msgstr ""
+
+#. translators: 1: address, 2: tables, 3: rows
+#: includes/Cli/Command.php:869
+#, php-format
+msgid "Pushed to %1$s: %2$d tables, %3$s rows."
+msgstr ""
+
+#. translators: 1: matches, 2: rows, 3: rows scanned
+#: includes/Cli/Command.php:873
+#, php-format
+msgid "%1$s matches in %2$s rows (of %3$s scanned)."
+msgstr ""
+
+#: includes/Cli/Command.php:907
+msgid "The file cannot be read."
+msgstr ""
+
+#. translators: %s: path
+#: includes/Cli/Command.php:1009
+#, php-format
+msgid "Cannot read %s"
+msgstr ""
+
+#: includes/Engine/JobParams.php:48
+msgid "Check package"
+msgstr ""
+
+#: includes/Engine/JobParams.php:50
+#: includes/Rest/Api.php:273
+msgid "Unknown job type."
+msgstr ""
+
+#: includes/Engine/JobParams.php:73
+msgid "Sanitized copy"
+msgstr ""
+
+#: includes/Engine/JobParams.php:73
+msgid "Export"
+msgstr ""
+
+#: includes/Engine/JobParams.php:102
+msgid "Restore snapshot"
+msgstr ""
+
+#: includes/Engine/JobParams.php:102
+msgid "Import package"
+msgstr ""
+
+#: includes/Engine/JobParams.php:117
+#: includes/Engine/Tasks/SearchReplaceTask.php:46
+msgid "Enter the text to search for."
+msgstr ""
+
+#: includes/Engine/JobParams.php:125
+msgid "The search pattern is not a valid regular expression."
+msgstr ""
+
+#: includes/Engine/JobParams.php:141
+msgid "Search and replace preview"
+msgstr ""
+
+#: includes/Engine/JobParams.php:141
+msgid "Search and replace"
+msgstr ""
+
+#: includes/Engine/JobParams.php:170
+msgid "Push to another site"
+msgstr ""
+
+#: includes/Engine/JobParams.php:201
+#: includes/Engine/JobParams.php:340
+#: includes/Rest/Api.php:1346
+#: includes/Rest/Api.php:1360
+msgid "Choose one of the sanitizer profiles."
+msgstr ""
+
+#: includes/Engine/JobParams.php:211
+msgid "Pull from another site"
+msgstr ""
+
+#: includes/Engine/JobParams.php:226
+#: includes/Rest/Api.php:1195
+msgid "Enter the full address of the other site, for example https://example.com"
+msgstr ""
+
+#: includes/Engine/JobParams.php:229
+msgid "Enter the connection key from the other site’s Settings screen."
+msgstr ""
+
+#: includes/Engine/JobParams.php:232
+#: includes/Rest/Api.php:1198
+msgid "That does not look like a connection key. Keys start with esm_."
+msgstr ""
+
+#: includes/Engine/JobParams.php:251
+#: includes/Engine/Tasks/ImportTask.php:62
+#: includes/Engine/Tasks/VerifyTask.php:40
+#: includes/Preflight/Checker.php:616
+msgid "The package file could not be found."
+msgstr ""
+
+#. translators: %s: table name
+#: includes/Engine/JobParams.php:277
+#, php-format
+msgid "The table %s does not exist on this site."
+msgstr ""
+
+#: includes/Engine/JobRunner.php:156
+msgid "Started."
+msgstr ""
+
+#. translators: %d: attempt number
+#: includes/Engine/JobRunner.php:216
+#, php-format
+msgid "A temporary problem interrupted the job. Trying again (attempt %d)."
+msgstr ""
+
+#: includes/Engine/JobRunner.php:231
+#: includes/Engine/Tasks/ExportTask.php:72
+#: includes/Engine/Tasks/ImportTask.php:64
+#: includes/Engine/Tasks/ImportTask.php:73
+#: includes/Engine/Tasks/ImportTask.php:84
+#: includes/Engine/Tasks/ImportTask.php:114
+#: includes/Engine/Tasks/ImportTask.php:259
+#: includes/Engine/Tasks/ImportTask.php:329
+#: includes/Engine/Tasks/ImportTask.php:341
+#: includes/Engine/Tasks/ImportTask.php:443
+#: includes/Engine/Tasks/PullTask.php:226
+msgid "Your site was not changed."
+msgstr ""
+
+#: includes/Engine/JobRunner.php:232
+msgid "Check the package, then retry."
+msgstr ""
+
+#: includes/Engine/JobRunner.php:236
+msgid "Rows already handled are safe. The job stopped at the last saved position."
+msgstr ""
+
+#: includes/Engine/JobRunner.php:237
+msgid "Retry the job. If it fails again, check the database error in the log."
+msgstr ""
+
+#. translators: %s: error message
+#: includes/Engine/JobRunner.php:242
+#, php-format
+msgid "Unexpected error: %s"
+msgstr ""
+
+#: includes/Engine/JobRunner.php:336
+msgid "Retrying from the last saved position."
+msgstr ""
+
+#: includes/Engine/JobRunner.php:354
+msgid "Cancelled."
+msgstr ""
+
+#: includes/Engine/Tasks/ExportTask.php:70
+msgid "The storage folder is not writable, so the package cannot be created."
+msgstr ""
+
+#: includes/Engine/Tasks/ExportTask.php:73
+#: includes/Engine/Tasks/PullTask.php:48
+msgid "Make wp-content/uploads writable by the web server, then try again."
+msgstr ""
+
+#: includes/Engine/Tasks/ExportTask.php:81
+msgid "There are no tables to export."
+msgstr ""
+
+#: includes/Engine/Tasks/ExportTask.php:82
+msgid "Choose at least one table."
+msgstr ""
+
+#. translators: 1: number of tables, 2: package file id
+#: includes/Engine/Tasks/ExportTask.php:180
+#, php-format
+msgid "Exporting %1$d table into package %2$s."
+msgid_plural "Exporting %1$d tables into package %2$s."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: 1: row count, 2: size
+#: includes/Engine/Tasks/ExportTask.php:486
+#, php-format
+msgid "Package ready: %1$s rows, %2$s."
+msgstr ""
+
+#: includes/Engine/Tasks/ExportTask.php:541
+msgid "Package ready."
+msgstr ""
+
+#. translators: 1: table name, 2: number of tables done, 3: number of tables
+#: includes/Engine/Tasks/ExportTask.php:547
+#, php-format
+msgid "Exporting %1$s (table %2$d of %3$d)."
+msgstr ""
+
+#: includes/Engine/Tasks/ExportTask.php:553
+msgid "Finishing the package."
+msgstr ""
+
+#: includes/Engine/Tasks/ExportTask.php:588
+msgid "Copying tables"
+msgstr ""
+
+#: includes/Engine/Tasks/ExportTask.php:593
+msgid "Sealing the package"
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:65
+msgid "Upload the package again or choose another one on the Packages screen."
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:73
+msgid "This file does not start with a package manifest, so it cannot be imported."
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:83
+msgid "This package comes from a WordPress multisite network. Multisite is not supported yet."
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:114
+msgid "The package has no tables to import."
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:161
+msgid "an unknown site"
+msgstr ""
+
+#. translators: 1: number of tables, 2: package id, 3: source address
+#: includes/Engine/Tasks/ImportTask.php:167
+#, php-format
+msgid "Importing %1$d table from package %2$s (made on %3$s)."
+msgid_plural "Importing %1$d tables from package %2$s (made on %3$s)."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/Engine/Tasks/ImportTask.php:248
+msgid "Check the package, then try again."
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:250
+msgid "Start the import again and enter the password used when the package was made."
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:252
+msgid "Upload or download the package again. It looks incomplete."
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:254
+msgid "The file was damaged in transit. Upload or download it again."
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:327
+msgid "The package is incomplete: its closing block is missing."
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:330
+#: includes/Engine/Tasks/VerifyTask.php:99
+msgid "Upload or download the package again."
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:443
+msgid "The package ended before its closing block."
+msgstr ""
+
+#. translators: 1: table name, 2: database message
+#: includes/Engine/Tasks/ImportTask.php:519
+#, php-format
+msgid "The table %1$s could not be created on this server: %2$s"
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:524
+msgid "Your site was not changed. Only a temporary copy was affected."
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:525
+msgid "The database versions may differ. Try again with a collation chosen in the import options."
+msgstr ""
+
+#. translators: 1: table name, 2: database message
+#: includes/Engine/Tasks/ImportTask.php:574
+#, php-format
+msgid "A batch of rows for %1$s could not be imported: %2$s"
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:579
+msgid "Your live site was not changed. Rows already staged are kept."
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:580
+msgid "Retry the failed batch. If it fails again, raise max_allowed_packet or check the database error in the log."
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:622
+#: includes/Engine/Tasks/ImportTask.php:632
+#: includes/Engine/Tasks/ImportTask.php:674
+msgid "Your live site was not changed."
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:623
+#: includes/Engine/Tasks/ImportTask.php:675
+msgid "Retry the import."
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:633
+msgid "Retry the import. If it happens again, the package may be damaged."
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:928
+#: includes/Engine/Tasks/VerifyTask.php:165
+msgid "Checking the package."
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:930
+msgid "Saving a rollback snapshot of the current tables."
+msgstr ""
+
+#. translators: %s: table name
+#: includes/Engine/Tasks/ImportTask.php:935
+#, php-format
+msgid "Importing %s into a temporary copy."
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:937
+msgid "Importing tables into temporary copies."
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:939
+msgid "Switching to the imported tables."
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:941
+#: includes/Engine/Tasks/PullTask.php:409
+#: includes/Engine/Tasks/PushTask.php:433
+msgid "Finishing up."
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:943
+msgid "Import complete."
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:983
+msgid "Check the package"
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:984
+msgid "Save a rollback snapshot"
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:985
+msgid "Import into temporary tables"
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:986
+msgid "Switch tables"
+msgstr ""
+
+#: includes/Engine/Tasks/ImportTask.php:987
+#: includes/Engine/Tasks/PullTask.php:440
+#: includes/Engine/Tasks/PushTask.php:464
+msgid "Finish up"
+msgstr ""
+
+#: includes/Engine/Tasks/PullTask.php:45
+msgid "The storage folder is not writable, so the package cannot be downloaded."
+msgstr ""
+
+#: includes/Engine/Tasks/PullTask.php:47
+#: includes/Engine/Tasks/SearchReplaceTask.php:46
+#: includes/Engine/Tasks/SearchReplaceTask.php:51
+msgid "Nothing was changed."
+msgstr ""
+
+#: includes/Engine/Tasks/PullTask.php:146
+msgid "Your site was not changed. Nothing was changed on the other site either."
+msgstr ""
+
+#: includes/Engine/Tasks/PullTask.php:156
+msgid "The package password sent by the other site could not be read."
+msgstr ""
+
+#: includes/Engine/Tasks/PullTask.php:176
+msgid "The other site finished but did not report a package."
+msgstr ""
+
+#: includes/Engine/Tasks/PullTask.php:233
+#: includes/Rest/Api.php:953
+msgid "The package file could not be created."
+msgstr ""
+
+#: includes/Engine/Tasks/PullTask.php:255
+msgid "A part of the package was damaged on the way."
+msgstr ""
+
+#: includes/Engine/Tasks/PullTask.php:258
+msgid "The other site sent an empty part."
+msgstr ""
+
+#: includes/Engine/Tasks/PullTask.php:261
+msgid "The package on the other site changed while it was being downloaded."
+msgstr ""
+
+#: includes/Engine/Tasks/PullTask.php:265
+msgid "This site ran out of disk space while downloading the package."
+msgstr ""
+
+#. translators: %s: address
+#: includes/Engine/Tasks/PullTask.php:331
+#, php-format
+msgid "Pulled %s into this site."
+msgstr ""
+
+#. translators: 1: address, 2: what the other site is doing
+#: includes/Engine/Tasks/PullTask.php:402
+#, php-format
+msgid "%1$s is building the package. %2$s"
+msgstr ""
+
+#. translators: 1: received, 2: total
+#: includes/Engine/Tasks/PullTask.php:405
+#, php-format
+msgid "Downloading the package: %1$s of %2$s."
+msgstr ""
+
+#. translators: %s: address
+#: includes/Engine/Tasks/PullTask.php:412
+#, php-format
+msgid "Pulled %s."
+msgstr ""
+
+#: includes/Engine/Tasks/PullTask.php:437
+msgid "The other site builds the package"
+msgstr ""
+
+#: includes/Engine/Tasks/PullTask.php:438
+msgid "Download it"
+msgstr ""
+
+#: includes/Engine/Tasks/PullTask.php:439
+msgid "Import it here"
+msgstr ""
+
+#. translators: 1: row count, 2: package size
+#: includes/Engine/Tasks/PushTask.php:158
+#, php-format
+msgid "Package ready: %1$s rows, %2$s. Sending it now."
+msgstr ""
+
+#: includes/Engine/Tasks/PushTask.php:179
+msgid "The other site was not changed. Your site was not changed either."
+msgstr ""
+
+#: includes/Engine/Tasks/PushTask.php:211
+msgid "The package file could not be read."
+msgstr ""
+
+#: includes/Engine/Tasks/PushTask.php:221
+msgid "The package file ended earlier than expected."
+msgstr ""
+
+#: includes/Engine/Tasks/PushTask.php:282
+msgid "Your site was not changed. The other site keeps a rollback snapshot of what it had before."
+msgstr ""
+
+#. translators: 1: row count, 2: address
+#: includes/Engine/Tasks/PushTask.php:355
+#, php-format
+msgid "Pushed %1$s rows to %2$s."
+msgstr ""
+
+#. translators: 1: sent, 2: total, 3: address
+#: includes/Engine/Tasks/PushTask.php:427
+#, php-format
+msgid "Sending the package to %3$s: %1$s of %2$s."
+msgstr ""
+
+#. translators: 1: address, 2: what the other site is doing
+#: includes/Engine/Tasks/PushTask.php:431
+#, php-format
+msgid "%1$s is importing. %2$s"
+msgstr ""
+
+#. translators: %s: address
+#: includes/Engine/Tasks/PushTask.php:436
+#, php-format
+msgid "Pushed to %s."
+msgstr ""
+
+#: includes/Engine/Tasks/PushTask.php:461
+msgid "Build the package"
+msgstr ""
+
+#: includes/Engine/Tasks/PushTask.php:462
+msgid "Send it to the other site"
+msgstr ""
+
+#: includes/Engine/Tasks/PushTask.php:463
+msgid "The other site imports it"
+msgstr ""
+
+#: includes/Engine/Tasks/RemoteTask.php:65
+msgid "The address or the connection key of the other site is missing."
+msgstr ""
+
+#: includes/Engine/Tasks/RemoteTask.php:67
+#: includes/Engine/Tasks/RemoteTask.php:142
+msgid "Nothing was changed on either site."
+msgstr ""
+
+#: includes/Engine/Tasks/RemoteTask.php:68
+msgid "Start the migration again and enter both."
+msgstr ""
+
+#: includes/Engine/Tasks/RemoteTask.php:113
+msgid "Check the connection details, then start again."
+msgstr ""
+
+#: includes/Engine/Tasks/RemoteTask.php:116
+msgid "Free some disk space on that site, then retry."
+msgstr ""
+
+#: includes/Engine/Tasks/RemoteTask.php:119
+msgid "Retry in a few minutes."
+msgstr ""
+
+#: includes/Engine/Tasks/RemoteTask.php:119
+msgid "Check the Logs screen on both sites for details."
+msgstr ""
+
+#: includes/Engine/Tasks/RemoteTask.php:148
+msgid "The other site is a WordPress multisite network, which this version cannot migrate."
+msgstr ""
+
+#: includes/Engine/Tasks/RemoteTask.php:154
+#: includes/Remote/Server.php:338
+msgid "The other site cannot write to its storage folder."
+msgstr ""
+
+#: includes/Engine/Tasks/RemoteTask.php:157
+msgid "Make wp-content/uploads writable on that site."
+msgstr ""
+
+#. translators: 1: local version, 2: other version
+#: includes/Engine/Tasks/RemoteTask.php:168
+#, php-format
+msgid "The two sites run different major versions of Estasoft Migration (%1$s and %2$s). Update the plugin on both."
+msgstr ""
+
+#. translators: %s: address
+#: includes/Engine/Tasks/RemoteTask.php:179
+#, php-format
+msgid "Connected to %s."
+msgstr ""
+
+#. translators: %s: message from the other site
+#: includes/Engine/Tasks/RemoteTask.php:227
+#, php-format
+msgid "The other site stopped the job: %s"
+msgstr ""
+
+#: includes/Engine/Tasks/RemoteTask.php:228
+msgid "no reason was given."
+msgstr ""
+
+#: includes/Engine/Tasks/RemoteTask.php:232
+msgid "Open the Logs screen on the other site for details, fix the cause and start again."
+msgstr ""
+
+#: includes/Engine/Tasks/SearchReplaceTask.php:56
+msgid "There are no tables to search."
+msgstr ""
+
+#. translators: 1: dry run or live run, 2: number of tables
+#: includes/Engine/Tasks/SearchReplaceTask.php:95
+#, php-format
+msgid "%1$s: searching %2$d table."
+msgid_plural "%1$s: searching %2$d tables."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/Engine/Tasks/SearchReplaceTask.php:475
+msgid "Dry run finished. Nothing was written."
+msgstr ""
+
+#: includes/Engine/Tasks/SearchReplaceTask.php:475
+msgid "Replacement finished."
+msgstr ""
+
+#: includes/Engine/Tasks/SearchReplaceTask.php:478
+msgid "Saving a rollback snapshot first."
+msgstr ""
+
+#. translators: %s: table name
+#: includes/Engine/Tasks/SearchReplaceTask.php:483
+#, php-format
+msgid "Searching %s."
+msgstr ""
+
+#: includes/Engine/Tasks/VerifyTask.php:47
+msgid "This is not a usable package file."
+msgstr ""
+
+#: includes/Preflight/Checker.php:213
+#: includes/Preflight/Checker.php:216
+msgid "PHP version"
+msgstr ""
+
+#. translators: %s: version
+#: includes/Preflight/Checker.php:213
+#, php-format
+msgid "This server runs PHP %s. Estasoft Migrate needs PHP 7.4 or newer. Ask your host to switch the site to a newer PHP."
+msgstr ""
+
+#. translators: %s: version
+#: includes/Preflight/Checker.php:216
+#, php-format
+msgid "PHP %s on this site."
+msgstr ""
+
+#: includes/Preflight/Checker.php:228
+#: includes/Preflight/Checker.php:233
+#: includes/Preflight/Checker.php:236
+msgid "Database server"
+msgstr ""
+
+#: includes/Preflight/Checker.php:228
+msgid "Only MySQL and MariaDB are supported."
+msgstr ""
+
+#. translators: 1: server, 2: version
+#: includes/Preflight/Checker.php:233
+#, php-format
+msgid "%1$s %2$s is old. It should work, but newer versions are better tested."
+msgstr ""
+
+#. translators: 1: server, 2: version
+#: includes/Preflight/Checker.php:236
+#, php-format
+msgid "%1$s %2$s is supported."
+msgstr ""
+
+#: includes/Preflight/Checker.php:246
+msgid "Single site"
+msgstr ""
+
+#: includes/Preflight/Checker.php:246
+msgid "This is a WordPress multisite network. This version migrates single sites only."
+msgstr ""
+
+#: includes/Preflight/Checker.php:258
+#: includes/Preflight/Checker.php:263
+#: includes/Preflight/Checker.php:265
+#: includes/Preflight/Checker.php:267
+msgid "Memory limit"
+msgstr ""
+
+#: includes/Preflight/Checker.php:258
+msgid "No limit is set."
+msgstr ""
+
+#. translators: %s: size
+#: includes/Preflight/Checker.php:263
+#, php-format
+msgid "The memory limit is only %s. At least 64 MB is needed. Raise WP_MEMORY_LIMIT in wp-config.php or ask your host."
+msgstr ""
+
+#. translators: %s: size
+#: includes/Preflight/Checker.php:265
+#, php-format
+msgid "The memory limit is %s. Estasoft Migrate will use smaller batches. 128 MB or more is faster."
+msgstr ""
+
+#. translators: %s: size
+#: includes/Preflight/Checker.php:267
+#, php-format
+msgid "%s. At least 128 MB is recommended."
+msgstr ""
+
+#: includes/Preflight/Checker.php:279
+msgid "Maximum execution time"
+msgstr ""
+
+#: includes/Preflight/Checker.php:279
+msgid "No limit."
+msgstr ""
+
+#. translators: %d: seconds
+#: includes/Preflight/Checker.php:279
+#, php-format
+msgid "%d seconds."
+msgstr ""
+
+#. translators: %d: seconds
+#: includes/Preflight/Checker.php:285
+#, php-format
+msgid "Maximum execution time is %d seconds"
+msgstr ""
+
+#. translators: %d: seconds
+#: includes/Preflight/Checker.php:286
+msgid "Estasoft Migrate will use small batches that finish inside the limit and resume on their own. The run takes a little longer."
+msgstr ""
+
+#: includes/Preflight/Checker.php:301
+msgid "Package folder"
+msgstr ""
+
+#: includes/Preflight/Checker.php:301
+msgid "The folder for packages is not writable. Make wp-content/uploads writable by the web server."
+msgstr ""
+
+#: includes/Preflight/Checker.php:309
+msgid "Package folder is writable and protected"
+msgstr ""
+
+#: includes/Preflight/Checker.php:311
+msgid "Direct downloads are blocked; packages are served only to signed-in administrators."
+msgstr ""
+
+#: includes/Preflight/Checker.php:312
+msgid "The folder could not be fully protected. On nginx, deny access to the folder in the server settings."
+msgstr ""
+
+#: includes/Preflight/Checker.php:330
+#: includes/Preflight/Checker.php:334
+msgid "Free disk space"
+msgstr ""
+
+#. translators: 1: free, 2: needed
+#: includes/Preflight/Checker.php:330
+#, php-format
+msgid "Only %1$s is free, and about %2$s is needed for the package and the rollback snapshot. Free some space or exclude large tables."
+msgstr ""
+
+#: includes/Preflight/Checker.php:332
+msgid "Free disk space is tight"
+msgstr ""
+
+#. translators: 1: free, 2: needed
+#: includes/Preflight/Checker.php:332
+#, php-format
+msgid "%1$s free; about %2$s is needed. It should fit, but there is little to spare."
+msgstr ""
+
+#. translators: 1: free, 2: needed
+#: includes/Preflight/Checker.php:334
+#, php-format
+msgid "%1$s free here. The run needs about %2$s, including the snapshot."
+msgstr ""
+
+#: includes/Preflight/Checker.php:350
+msgid "Encryption"
+msgstr ""
+
+#: includes/Preflight/Checker.php:352
+msgid "Password protection needs the PHP sodium extension, which this server does not have. Ask your host to enable it, or continue without a password."
+msgstr ""
+
+#: includes/Preflight/Checker.php:353
+msgid "The PHP sodium extension is missing, so packages cannot be encrypted. Snapshots and packages are stored unencrypted in the protected folder."
+msgstr ""
+
+#: includes/Preflight/Checker.php:357
+msgid "Compression"
+msgstr ""
+
+#: includes/Preflight/Checker.php:357
+msgid "PHP zlib is missing, so packages are not compressed and will be larger."
+msgstr ""
+
+#: includes/Preflight/Checker.php:373
+msgid "WP-Cron is switched off"
+msgstr ""
+
+#: includes/Preflight/Checker.php:373
+msgid "The job keeps running while the Progress screen is open. To let it continue on its own, enable WP-Cron, install Action Scheduler, or run it with WP-CLI."
+msgstr ""
+
+#: includes/Preflight/Checker.php:385
+msgid "Database packet size is small"
+msgstr ""
+
+#. translators: %s: size
+#: includes/Preflight/Checker.php:385
+#, php-format
+msgid "max_allowed_packet is %s. Rows are written in smaller groups, which is slower. Rows larger than this cannot be copied."
+msgstr ""
+
+#: includes/Preflight/Checker.php:410
+msgid "Large tables"
+msgstr ""
+
+#. translators: 1: table, 2: row count, 3: chunk count, 4: chunk size
+#: includes/Preflight/Checker.php:413
+#, php-format
+msgid "%1$s has about %2$s rows. It will be copied in about %3$s chunks of up to %4$s rows, so no single request runs for long."
+msgstr ""
+
+#. translators: %d: number of tables
+#: includes/Preflight/Checker.php:443
+#, php-format
+msgid "%d table has no primary key"
+msgid_plural "%d tables have no primary key"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: table names
+#: includes/Preflight/Checker.php:445
+#, php-format
+msgid "Rows cannot be updated safely without a key, so these tables are skipped: %s"
+msgstr ""
+
+#. translators: %s: table names
+#: includes/Preflight/Checker.php:446
+#, php-format
+msgid "They are copied in order with a slower method and are fine to migrate: %s"
+msgstr ""
+
+#: includes/Preflight/Checker.php:465
+msgid "Another job is running"
+msgstr ""
+
+#. translators: %s: job title
+#: includes/Preflight/Checker.php:466
+#, php-format
+msgid "Wait for it to finish, or cancel it: %s"
+msgstr ""
+
+#: includes/Preflight/Checker.php:470
+msgid "Nothing else is running"
+msgstr ""
+
+#: includes/Preflight/Checker.php:470
+msgid "No other migration or search and replace job is active."
+msgstr ""
+
+#: includes/Preflight/Checker.php:488
+#: includes/Preflight/Checker.php:498
+msgid "Connection to the other site"
+msgstr ""
+
+#: includes/Preflight/Checker.php:488
+msgid "Enter the address and the connection key of the other site."
+msgstr ""
+
+#: includes/Preflight/Checker.php:508
+msgid "Secure connection"
+msgstr ""
+
+#: includes/Preflight/Checker.php:508
+msgid "The connection is not secure"
+msgstr ""
+
+#. translators: 1: seconds of clock difference, 2: milliseconds
+#: includes/Preflight/Checker.php:510
+#, php-format
+msgid "HTTPS. Connection key accepted, clock difference %1$d seconds, answered in %2$d ms."
+msgstr ""
+
+#. translators: 1: seconds of clock difference, 2: milliseconds
+#: includes/Preflight/Checker.php:511
+msgid "The address starts with http://. Data is signed and packages are encrypted, but use https:// if the other site has it."
+msgstr ""
+
+#: includes/Preflight/Checker.php:514
+msgid "Clocks differ"
+msgstr ""
+
+#. translators: %d: seconds
+#: includes/Preflight/Checker.php:514
+#, php-format
+msgid "The two sites differ by %d seconds. Requests are refused above five minutes, so set the time correctly on one of them."
+msgstr ""
+
+#: includes/Preflight/Checker.php:518
+msgid "Other site is a multisite network"
+msgstr ""
+
+#: includes/Preflight/Checker.php:518
+msgid "This version migrates single sites only."
+msgstr ""
+
+#: includes/Preflight/Checker.php:521
+msgid "Other site cannot store packages"
+msgstr ""
+
+#: includes/Preflight/Checker.php:521
+msgid "Its uploads folder is not writable."
+msgstr ""
+
+#: includes/Preflight/Checker.php:530
+msgid "PHP versions"
+msgstr ""
+
+#. translators: %s: version
+#: includes/Preflight/Checker.php:531
+#, php-format
+msgid "PHP %s on both sites."
+msgstr ""
+
+#. translators: 1: version, 2: version
+#: includes/Preflight/Checker.php:531
+#, php-format
+msgid "PHP %1$s here and %2$s on the other site."
+msgstr ""
+
+#: includes/Preflight/Checker.php:540
+msgid "Database servers"
+msgstr ""
+
+#. translators: 1: server and version, 2: server and version
+#: includes/Preflight/Checker.php:541
+#, php-format
+msgid "%1$s here and %2$s on the other site. Both are supported."
+msgstr ""
+
+#: includes/Preflight/Checker.php:554
+#: includes/Preflight/Checker.php:679
+msgid "Charset and collation differ"
+msgstr ""
+
+#. translators: 1: collation, 2: server and version, 3: replacement
+#: includes/Preflight/Checker.php:557
+#, php-format
+msgid "The source uses %1$s, which %2$s does not have. Tables will be converted to %3$s automatically."
+msgstr ""
+
+#. translators: 1: prefix, 2: prefix
+#: includes/Preflight/Checker.php:571
+#: includes/Preflight/Checker.php:667
+#, php-format
+msgid "Table prefix differs: %1$s and %2$s"
+msgstr ""
+
+#. translators: %s: prefix
+#: includes/Preflight/Checker.php:571
+#: includes/Preflight/Checker.php:668
+#, php-format
+msgid "Table names, and option and user meta keys that contain the prefix, will be rewritten to %s."
+msgstr ""
+
+#: includes/Preflight/Checker.php:577
+msgid "Other site is low on disk space"
+msgstr ""
+
+#. translators: 1: free, 2: needed
+#: includes/Preflight/Checker.php:577
+#, php-format
+msgid "It has %1$s free and needs about %2$s for the package and its rollback snapshot."
+msgstr ""
+
+#: includes/Preflight/Checker.php:581
+msgid "WP-Cron is off on the other site"
+msgstr ""
+
+#: includes/Preflight/Checker.php:581
+msgid "This site drives the other site step by step while the Progress screen is open, so the job still finishes. Keep the page open."
+msgstr ""
+
+#: includes/Preflight/Checker.php:616
+#: includes/Preflight/Checker.php:623
+#: includes/Preflight/Checker.php:630
+#: assets/js/screens/progress.js:778
+#: assets/js/screens/progress.js:860
+msgid "Package"
+msgstr ""
+
+#. translators: 1: size, 2: date
+#: includes/Preflight/Checker.php:633
+#, php-format
+msgid "%1$s, made %2$s UTC."
+msgstr ""
+
+#: includes/Preflight/Checker.php:652
+msgid "Addresses will be updated"
+msgstr ""
+
+#. translators: 1: old address, 2: new address
+#: includes/Preflight/Checker.php:655
+#, php-format
+msgid "Links to %1$s become links to %2$s, including inside serialized and JSON data."
+msgstr ""
+
+#: includes/Preflight/Checker.php:672
+msgid "Package comes from a multisite network"
+msgstr ""
+
+#: includes/Preflight/Checker.php:672
+msgid "This version imports single sites only."
+msgstr ""
+
+#. translators: 1: collation, 2: replacement
+#: includes/Preflight/Checker.php:682
+#, php-format
+msgid "The package uses %1$s, which this database does not have. Tables will be converted to %2$s automatically."
+msgstr ""
+
+#: includes/Preflight/Checker.php:699
+msgid "Package is encrypted"
+msgstr ""
+
+#: includes/Preflight/Checker.php:701
+msgid "This server has no PHP sodium extension, so it cannot open it."
+msgstr ""
+
+#: includes/Preflight/Checker.php:713
+msgid "Package password needed"
+msgstr ""
+
+#: includes/Preflight/Checker.php:713
+msgid "Enter the password that was used when the package was made."
+msgstr ""
+
+#: includes/Preflight/Checker.php:718
+msgid "Package belongs to another site"
+msgstr ""
+
+#: includes/Preflight/Checker.php:718
+msgid "The password is not correct"
+msgstr ""
+
+#: includes/Preflight/Checker.php:720
+msgid "It was locked with the connection key of the site that made it. Export it again with a password to use it on another site."
+msgstr ""
+
+#: includes/Preflight/Checker.php:721
+msgid "Check the password and try again."
+msgstr ""
+
+#: includes/Preflight/Checker.php:728
+msgid "The password is correct. The package is decrypted while it is read."
+msgstr ""
+
+#: includes/Preflight/Checker.php:764
+msgid "Rollback snapshot"
+msgstr ""
+
+#: includes/Preflight/Checker.php:764
+msgid "The tables are saved first, so the change can be undone from Packages."
+msgstr ""
+
+#: includes/Preflight/Checker.php:764
+msgid "No snapshot will be saved. The change cannot be undone."
+msgstr ""
+
+#: includes/Remote/Client.php:99
+msgid "Enter the full address of the other site, starting with https://"
+msgstr ""
+
+#: includes/Remote/Client.php:102
+msgid "Enter the connection key from the other site."
+msgstr ""
+
+#: includes/Remote/Client.php:161
+msgid "The answer was not signed with your connection key. It may not come from the site you meant, or something between the two sites changed it."
+msgstr ""
+
+#: includes/Remote/Client.php:179
+msgid "The other site is not accepting migrations yet. On that site open Estasoft Migration → Settings and turn on “Accept incoming migrations”."
+msgstr ""
+
+#: includes/Remote/Client.php:181
+msgid "The other site did not accept the connection key. Copy the key again from its Settings screen."
+msgstr ""
+
+#: includes/Remote/Client.php:183
+msgid "The other site could not confirm the request. Check the connection key, and that nothing between the two sites changes the data."
+msgstr ""
+
+#. translators: %d: number of minutes
+#: includes/Remote/Client.php:188
+#, php-format
+msgid "The clocks of the two sites differ by about %d minute. Correct the time on one of them and try again."
+msgid_plural "The clocks of the two sites differ by about %d minutes. Correct the time on one of them and try again."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/Remote/Client.php:197
+msgid "The other site reported an error."
+msgstr ""
+
+#. translators: %s: address the other site redirects to
+#: includes/Remote/Client.php:215
+#, php-format
+msgid "The address redirects to %s. Use that address instead (check http or https, and with or without www)."
+msgstr ""
+
+#: includes/Remote/Client.php:218
+msgid "The address redirects somewhere else. Use the final address of the other site (check http or https, and with or without www)."
+msgstr ""
+
+#: includes/Remote/Client.php:223
+msgid "The other site had a temporary problem. Trying again in a moment usually works."
+msgstr ""
+
+#: includes/Remote/Client.php:226
+msgid "The other site or its firewall refused the request. Ask the host to allow requests to the site address from this server, or allow them in the firewall plugin."
+msgstr ""
+
+#: includes/Remote/Client.php:230
+msgid "Estasoft Migration did not answer at this address. Check the address, and make sure the plugin is installed and active on the other site."
+msgstr ""
+
+#: includes/Remote/Server.php:112
+msgid "The request could not be read."
+msgstr ""
+
+#: includes/Remote/Server.php:136
+msgid "The other site could not complete the request."
+msgstr ""
+
+#: includes/Remote/Server.php:180
+msgid "This site is not accepting migrations."
+msgstr ""
+
+#: includes/Remote/Server.php:183
+msgid "Too many failed attempts. Try again in a few minutes."
+msgstr ""
+
+#: includes/Remote/Server.php:186
+msgid "This site only accepts migrations over a secure (https) connection."
+msgstr ""
+
+#. translators: %s: IP address
+#: includes/Remote/Server.php:193
+#, php-format
+msgid "This site does not accept migrations from the address %s. Add it to the allowed addresses in Settings, or clear that list."
+msgstr ""
+
+#: includes/Remote/Server.php:200
+msgid "The two sites run versions of Estasoft Migration that cannot talk to each other. Update the plugin on both."
+msgstr ""
+
+#: includes/Remote/Server.php:213
+msgid "The connection key was not accepted."
+msgstr ""
+
+#: includes/Remote/Server.php:218
+msgid "The clocks of the two sites differ too much."
+msgstr ""
+
+#: includes/Remote/Server.php:224
+msgid "The request signature did not match."
+msgstr ""
+
+#: includes/Remote/Server.php:227
+msgid "This request was already received."
+msgstr ""
+
+#: includes/Remote/Server.php:264
+msgid "Unknown request."
+msgstr ""
+
+#: includes/Remote/Server.php:335
+msgid "The package is empty."
+msgstr ""
+
+#. translators: 1: needed space, 2: free space
+#: includes/Remote/Server.php:346
+#, php-format
+msgid "The other site does not have enough disk space: %1$s needed, %2$s free."
+msgstr ""
+
+#: includes/Remote/Server.php:358
+msgid "The other site could not create the package file."
+msgstr ""
+
+#: includes/Remote/Server.php:394
+msgid "The package was not found on the other site."
+msgstr ""
+
+#: includes/Remote/Server.php:399
+msgid "The package is not ready for this step."
+msgstr ""
+
+#: includes/Remote/Server.php:417
+msgid "The part could not be read."
+msgstr ""
+
+#: includes/Remote/Server.php:420
+msgid "The part is too large for the other site."
+msgstr ""
+
+#: includes/Remote/Server.php:423
+msgid "A part was damaged on the way."
+msgstr ""
+
+#: includes/Remote/Server.php:430
+msgid "A part is missing."
+msgstr ""
+
+#: includes/Remote/Server.php:439
+msgid "A part does not match what was already received."
+msgstr ""
+
+#: includes/Remote/Server.php:446
+msgid "The other site could not write the package."
+msgstr ""
+
+#: includes/Remote/Server.php:452
+msgid "The other site ran out of disk space while receiving the package."
+msgstr ""
+
+#: includes/Remote/Server.php:471
+msgid "The package arrived incomplete."
+msgstr ""
+
+#: includes/Remote/Server.php:518
+msgid "The package password could not be read."
+msgstr ""
+
+#: includes/Remote/Server.php:529
+msgid "Import received package"
+msgstr ""
+
+#: includes/Remote/Server.php:569
+msgid "Export for another site"
+msgstr ""
+
+#: includes/Remote/Server.php:602
+msgid "The job was not found on the other site."
+msgstr ""
+
+#: includes/Remote/Server.php:690
+msgid "This package is not available for download."
+msgstr ""
+
+#. translators: %s: technical error message
+#: includes/Remote/WpTransport.php:44
+#, php-format
+msgid "The other site could not be reached: %s"
+msgstr ""
+
+#. translators: %s: technical error message
+#: includes/Remote/WpTransport.php:51
+#, php-format
+msgid "A secure connection to the other site could not be made (%s). Check that its SSL certificate is valid."
+msgstr ""
+
+#: includes/Remote/WpTransport.php:56
+msgid "The other site did not answer in time."
+msgstr ""
+
+#: includes/Rest/Api.php:235
+msgid "Choose what to do first."
+msgstr ""
+
+#: includes/Rest/Api.php:278
+msgid "Packages are set to be encrypted. Enter a password for this package, or turn off encryption in Settings."
+msgstr ""
+
+#. translators: %s: title of the job that is running
+#: includes/Rest/Api.php:294
+#, php-format
+msgid "Another job is still in progress: %s. Wait for it to finish, or cancel it first."
+msgstr ""
+
+#: includes/Rest/Api.php:370
+msgid "This job is not running."
+msgstr ""
+
+#: includes/Rest/Api.php:376
+msgid "This job is not paused."
+msgstr ""
+
+#: includes/Rest/Api.php:383
+msgid "This job has already finished."
+msgstr ""
+
+#: includes/Rest/Api.php:389
+msgid "Only a failed job can be retried."
+msgstr ""
+
+#: includes/Rest/Api.php:394
+msgid "Unknown action."
+msgstr ""
+
+#: includes/Rest/Api.php:408
+msgid "Cancel the job before removing it."
+msgstr ""
+
+#: includes/Rest/Api.php:424
+msgid "That job no longer exists."
+msgstr ""
+
+#: includes/Rest/Api.php:903
+#: includes/Rest/Api.php:1118
+msgid "That package no longer exists."
+msgstr ""
+
+#. translators: %s: job title
+#: includes/Rest/Api.php:911
+#, php-format
+msgid "This package is being used by a job that is still in progress: %s."
+msgstr ""
+
+#: includes/Rest/Api.php:931
+msgid "The file is empty."
+msgstr ""
+
+#: includes/Rest/Api.php:934
+msgid "The package folder is not writable."
+msgstr ""
+
+#. translators: 1: needed, 2: free
+#: includes/Rest/Api.php:942
+#, php-format
+msgid "Not enough disk space: %1$s needed, %2$s free."
+msgstr ""
+
+#: includes/Rest/Api.php:986
+msgid "The piece could not be read."
+msgstr ""
+
+#: includes/Rest/Api.php:991
+msgid "A piece is missing."
+msgstr ""
+
+#: includes/Rest/Api.php:998
+msgid "The package could not be written."
+msgstr ""
+
+#: includes/Rest/Api.php:1004
+msgid "The server ran out of disk space while receiving the package."
+msgstr ""
+
+#: includes/Rest/Api.php:1022
+msgid "The file arrived incomplete. Try the upload again."
+msgstr ""
+
+#: includes/Rest/Api.php:1100
+msgid "That upload no longer exists. Start it again."
+msgstr ""
+
+#: includes/Rest/Api.php:1104
+msgid "That package is not being uploaded."
+msgstr ""
+
+#: includes/Rest/Api.php:1122
+msgid "That package is not finished yet."
+msgstr ""
+
+#. translators: %s: error message
+#: includes/Rest/Router.php:101
+#, php-format
+msgid "Something went wrong: %s"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:28
+#: assets/js/screens/progress.js:160
+msgid "Staging"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:29
+msgid "A safe copy for testing. Fake personal data, passwords reset, outgoing email blocked."
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:37
+#: assets/js/screens/progress.js:161
+msgid "Developer handoff"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:38
+msgid "Keeps content and structure. Removes customer data, free text and secrets."
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:43
+#: assets/js/screens/progress.js:162
+msgid "GDPR-safe copy"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:44
+msgid "Anonymizes everything that could identify a person, including free text."
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:106
+#: assets/js/screens/progress.js:169
+msgid "Names"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:107
+msgid "Display names, first and last names"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:108
+msgid "Replaced with a fake name"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:109
+msgid "Sara Whitfield → Alex Moreno"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:113
+#: assets/js/screens/progress.js:170
+msgid "Email addresses"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:114
+msgid "Users, comments, WooCommerce billing"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:115
+msgid "Replaced with an address on a reserved test domain"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:116
+msgid "sara.w@mail.test → user4821@example.invalid"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:120
+#: assets/js/screens/progress.js:171
+msgid "Phone numbers"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:121
+#: includes/Sanitizer/Profiles.php:128
+msgid "WooCommerce billing and shipping"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:122
+msgid "Digits replaced, format kept"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:123
+msgid "+44 7700 900123 → +44 7700 900456"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:127
+#: assets/js/screens/progress.js:172
+msgid "Street addresses"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:129
+msgid "Fake street, same town and country"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:130
+msgid "12 Oak Lane, Leeds → 48 Pine Road, Leeds"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:134
+#: assets/js/screens/progress.js:173
+msgid "IP addresses"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:135
+msgid "Comments and orders"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:136
+msgid "Last part set to zero"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:137
+msgid "203.0.113.57 → 203.0.113.0"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:141
+#: assets/js/screens/progress.js:174
+msgid "Passwords and sessions"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:142
+msgid "Users, session tokens, application passwords"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:143
+msgid "Passwords reset to random values, sessions removed"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:144
+msgid "old hash → new random hash"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:148
+#: assets/js/screens/progress.js:175
+msgid "Keys and secrets"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:149
+msgid "Payment, SMTP and analytics settings, transients"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:150
+msgid "Emptied"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:151
+msgid "api_key a81f… → (empty)"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:155
+#: assets/js/screens/progress.js:176
+msgid "Free text"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:156
+msgid "Order notes and comment text"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:157
+msgid "Removed, because it can hold personal details"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:158
+msgid "Call me on 0750… → (removed)"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:172
+msgid "Block outgoing email"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:173
+msgid "The copy cannot email real customers or users."
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:177
+msgid "Discourage search engines"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:178
+msgid "Turns on the WordPress setting that asks search engines not to index the site."
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:182
+msgid "Deactivate payment gateway plugins"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:183
+msgid "Live payments cannot be taken on a copy."
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:187
+msgid "Deactivate SMTP and analytics plugins"
+msgstr ""
+
+#: includes/Sanitizer/Profiles.php:188
+msgid "No mail relay or visitor tracking from a copy."
+msgstr ""
+
+#: includes/Sanitizer/SafetySwitches.php:78
+msgid "Outgoing email is blocked on this site by Estasoft Migration & Database Sanitizer, so no real person receives messages from this copy."
+msgstr ""
+
+#: includes/Sanitizer/SafetySwitches.php:80
+msgid "Change this"
+msgstr ""
+
+#: includes/Sanitizer/SafetySwitches.php:101
+msgid "Outgoing email is blocked."
+msgstr ""
+
+#: includes/Sanitizer/SafetySwitches.php:105
+msgid "Search engines are asked not to index the site."
+msgstr ""
+
+#. translators: %s: plugin file
+#: includes/Sanitizer/SafetySwitches.php:123
+#, php-format
+msgid "Deactivated %s."
+msgstr ""
+
+#. translators: %s: plugin version
+#: views/app.php:25
+#, php-format
+msgid "by ESTASOFT TECHNOLOGIES · Version %s"
+msgstr ""
+
+#: views/app.php:32
+msgid "100% free · GPL v2 or later"
+msgstr ""
+
+#: views/app.php:34
+msgid "Documentation"
+msgstr ""
+
+#: views/app.php:37
+msgid "Support"
+msgstr ""
+
+#: views/app.php:42
+msgid "Loading…"
+msgstr ""
+
+#: views/app.php:47
+msgid "JavaScript is turned off."
+msgstr ""
+
+#: views/app.php:47
+msgid "These screens need JavaScript to work. Turn it on in your browser and reload the page. The command line works without it: run “wp estasoft-migrate” for the list of commands."
+msgstr ""
+
+#. translators: %s: plugin version
+#: views/app.php:56
+#, php-format
+msgid "Estasoft Migration & Database Sanitizer %s"
+msgstr ""
+
+#: views/app.php:61
+msgid "Free software, GPL v2 or later"
+msgstr ""
+
+#: assets/js/screens/logs.js:42
+msgid "Error"
+msgstr ""
+
+#: assets/js/screens/logs.js:43
+msgid "Warning"
+msgstr ""
+
+#: assets/js/screens/logs.js:44
+msgid "Debug"
+msgstr ""
+
+#: assets/js/screens/logs.js:46
+#: assets/js/screens/logs.js:112
+msgid "Info"
+msgstr ""
+
+#: assets/js/screens/logs.js:51
+msgid "queued"
+msgstr ""
+
+#: assets/js/screens/logs.js:52
+msgid "running"
+msgstr ""
+
+#: assets/js/screens/logs.js:53
+msgid "paused"
+msgstr ""
+
+#: assets/js/screens/logs.js:54
+msgid "failed"
+msgstr ""
+
+#: assets/js/screens/logs.js:55
+msgid "cancelled"
+msgstr ""
+
+#: assets/js/screens/logs.js:99
+msgid "Download log (.txt)"
+msgstr ""
+
+#: assets/js/screens/logs.js:100
+#: assets/js/screens/logs.js:652
+msgid "Clear log"
+msgstr ""
+
+#: assets/js/screens/logs.js:109
+msgid "All"
+msgstr ""
+
+#: assets/js/screens/logs.js:110
+msgid "Errors"
+msgstr ""
+
+#: assets/js/screens/logs.js:111
+msgid "Warnings"
+msgstr ""
+
+#: assets/js/screens/logs.js:120
+msgid "Log level"
+msgstr ""
+
+#: assets/js/screens/logs.js:125
+msgid "Table name or message"
+msgstr ""
+
+#: assets/js/screens/logs.js:154
+#: assets/js/screens/logs.js:187
+msgid "Job"
+msgstr ""
+
+#: assets/js/screens/logs.js:155
+msgid "Show"
+msgstr ""
+
+#: assets/js/screens/logs.js:156
+msgid "Search the log"
+msgstr ""
+
+#: assets/js/screens/logs.js:159
+msgid "Live updates"
+msgstr ""
+
+#: assets/js/screens/logs.js:160
+msgid "Refresh every 5 seconds"
+msgstr ""
+
+#: assets/js/screens/logs.js:168
+#: assets/js/screens/logs.js:382
+#: assets/js/screens/logs.js:396
+msgid "All jobs"
+msgstr ""
+
+#: assets/js/screens/logs.js:169
+msgid "Could not refresh. Trying again…"
+msgstr ""
+
+#: assets/js/screens/logs.js:178
+msgid "Log lines, newest first"
+msgstr ""
+
+#: assets/js/screens/logs.js:185
+msgid "Time"
+msgstr ""
+
+#: assets/js/screens/logs.js:186
+msgid "Level"
+msgstr ""
+
+#: assets/js/screens/logs.js:188
+msgid "Message"
+msgstr ""
+
+#: assets/js/screens/logs.js:194
+msgid "Show more"
+msgstr ""
+
+#: assets/js/screens/logs.js:210
+msgid "Logs are kept on this site only and never sent to ESTASOFT TECHNOLOGIES. Passwords, keys and personal data are never written to a log."
+msgstr ""
+
+#: assets/js/screens/logs.js:220
+msgid "Every job writes a plain-language log. Errors say what happened, what was not changed and what to do next."
+msgstr ""
+
+#. translators: %d: number of new log lines
+#: assets/js/screens/logs.js:312
+#, js-format
+msgid "%d new log line."
+msgid_plural "%d new log lines."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: 1: job number, 2: job title, 3: date and time
+#: assets/js/screens/logs.js:342
+#, js-format
+msgid "#%1$s %2$s, %3$s"
+msgstr ""
+
+#. translators: %s: job number
+#: assets/js/screens/logs.js:388
+#: assets/js/screens/logs.js:402
+#, js-format
+msgid "Job #%s"
+msgstr ""
+
+#. translators: 1: job number, 2: job title
+#: assets/js/screens/logs.js:399
+#, js-format
+msgid "#%1$s %2$s"
+msgstr ""
+
+#. translators: %s: number of log lines
+#: assets/js/screens/logs.js:456
+#, js-format
+msgid "%s entry shown"
+msgid_plural "%s entries shown"
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/js/screens/logs.js:465
+msgid "System"
+msgstr ""
+
+#: assets/js/screens/logs.js:483
+msgid "Details"
+msgstr ""
+
+#: assets/js/screens/logs.js:505
+msgid "Nothing matches"
+msgstr ""
+
+#: assets/js/screens/logs.js:506
+msgid "No log line fits the level and search you chose. Try “All” or a shorter search."
+msgstr ""
+
+#: assets/js/screens/logs.js:508
+msgid "No log lines for this job"
+msgstr ""
+
+#: assets/js/screens/logs.js:509
+msgid "The log of this job is empty, or it was cleared."
+msgstr ""
+
+#: assets/js/screens/logs.js:511
+msgid "No log lines yet"
+msgstr ""
+
+#: assets/js/screens/logs.js:512
+msgid "Every job writes its steps here as it runs. Start a migration, an export or a search and replace to see them."
+msgstr ""
+
+#. translators: %s: number of log lines
+#: assets/js/screens/logs.js:520
+#, js-format
+msgid "%s log line shown."
+msgid_plural "%s log lines shown."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: number of log lines
+#: assets/js/screens/logs.js:532
+#, js-format
+msgid "Showing the newest %s line. Narrow the job, level or search to see older ones."
+msgid_plural "Showing the newest %s lines. Narrow the job, level or search to see older ones."
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/js/screens/logs.js:597
+msgid "What happened:"
+msgstr ""
+
+#. translators: 1: table name, 2: chunk number
+#: assets/js/screens/logs.js:602
+#, js-format
+msgid "%1$s, chunk %2$s"
+msgstr ""
+
+#: assets/js/screens/logs.js:604
+msgid "Where:"
+msgstr ""
+
+#: assets/js/screens/logs.js:607
+#: assets/js/screens/progress.js:627
+msgid "What was not changed:"
+msgstr ""
+
+#: assets/js/screens/logs.js:610
+#: assets/js/screens/progress.js:630
+msgid "What to do:"
+msgstr ""
+
+#: assets/js/screens/logs.js:612
+msgid "The log has no further advice for this error. Open the job to see its state, or download the log to share it with support."
+msgstr ""
+
+#. translators: %d: number of errors
+#: assets/js/screens/logs.js:616
+#, js-format
+msgid "This job logged %d error. This is the first one."
+msgid_plural "This job logged %d errors. This is the first one."
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/js/screens/logs.js:620
+msgid "Retry the job"
+msgstr ""
+
+#: assets/js/screens/logs.js:628
+msgid "Open the job"
+msgstr ""
+
+#: assets/js/screens/logs.js:630
+msgid "Show only errors"
+msgstr ""
+
+#: assets/js/screens/logs.js:638
+msgid "This job hit an error."
+msgstr ""
+
+#: assets/js/screens/logs.js:647
+msgid "The log lines of this job are deleted for good. The job, its package and its result are not affected."
+msgstr ""
+
+#: assets/js/screens/logs.js:648
+msgid "Every log line of every job is deleted for good. Jobs, packages and snapshots are not affected."
+msgstr ""
+
+#: assets/js/screens/logs.js:650
+msgid "Clear the log of this job?"
+msgstr ""
+
+#: assets/js/screens/logs.js:650
+msgid "Clear the whole log?"
+msgstr ""
+
+#. translators: 1: job number, 2: job title
+#: assets/js/screens/logs.js:651
+#, js-format
+msgid "%1$s %2$s"
+msgstr ""
+
+#: assets/js/screens/logs.js:653
+msgid "Keep it"
+msgstr ""
+
+#: assets/js/screens/logs.js:660
+msgid "Log cleared."
+msgstr ""
+
+#: assets/js/screens/progress.js:27
+msgid "Loading the job…"
+msgstr ""
+
+#: assets/js/screens/progress.js:60
+msgid "Live progress of the job that is running now."
+msgstr ""
+
+#: assets/js/screens/progress.js:64
+msgid "No job to show"
+msgstr ""
+
+#: assets/js/screens/progress.js:65
+msgid "When you start a migration, an export, a sanitized copy or a search and replace, you can follow it here."
+msgstr ""
+
+#: assets/js/screens/progress.js:66
+msgid "Start a migration"
+msgstr ""
+
+#: assets/js/screens/progress.js:79
+msgid "That job no longer exists"
+msgstr ""
+
+#: assets/js/screens/progress.js:80
+msgid "It may have been removed. Open the logs to see what ran before, or start a new job."
+msgstr ""
+
+#: assets/js/screens/progress.js:84
+#: assets/js/screens/progress.js:1061
+msgid "Open logs"
+msgstr ""
+
+#. translators: %s: address of the other site
+#: assets/js/screens/progress.js:149
+#, js-format
+msgid "Push to %s"
+msgstr ""
+
+#. translators: %s: address of the other site
+#: assets/js/screens/progress.js:153
+#, js-format
+msgid "Pull from %s"
+msgstr ""
+
+#: assets/js/screens/progress.js:209
+#: assets/js/screens/progress.js:382
+msgid "Pause"
+msgstr ""
+
+#: assets/js/screens/progress.js:210
+#: assets/js/screens/progress.js:384
+#: assets/js/screens/progress.js:1260
+msgid "Cancel job"
+msgstr ""
+
+#: assets/js/screens/progress.js:211
+msgid "Open log"
+msgstr ""
+
+#: assets/js/screens/progress.js:222
+#: assets/js/screens/progress.js:233
+msgid "Overall progress"
+msgstr ""
+
+#: assets/js/screens/progress.js:226
+#: assets/js/screens/progress.js:440
+msgid "Rows copied"
+msgstr ""
+
+#: assets/js/screens/progress.js:227
+msgid "Elapsed"
+msgstr ""
+
+#: assets/js/screens/progress.js:228
+msgid "Speed"
+msgstr ""
+
+#: assets/js/screens/progress.js:229
+msgid "Batch size"
+msgstr ""
+
+#: assets/js/screens/progress.js:249
+#: assets/js/screens/progress.js:532
+#: assets/js/screens/progress.js:846
+msgid "Matches"
+msgstr ""
+
+#: assets/js/screens/progress.js:252
+#: assets/js/screens/progress.js:279
+#: assets/js/screens/progress.js:781
+#: assets/js/screens/progress.js:798
+#: assets/js/screens/progress.js:810
+#: assets/js/screens/progress.js:823
+msgid "Tables"
+msgstr ""
+
+#: assets/js/screens/progress.js:262
+msgid "Table"
+msgstr ""
+
+#: assets/js/screens/progress.js:263
+#: assets/js/screens/progress.js:780
+#: assets/js/screens/progress.js:799
+#: assets/js/screens/progress.js:811
+#: assets/js/screens/progress.js:824
+msgid "Rows"
+msgstr ""
+
+#: assets/js/screens/progress.js:266
+msgid "Status"
+msgstr ""
+
+#: assets/js/screens/progress.js:285
+#: assets/js/screens/progress.js:302
+msgid "Live log"
+msgstr ""
+
+#: assets/js/screens/progress.js:286
+#: assets/js/screens/progress.js:1121
+msgid "Waiting for the first log line…"
+msgstr ""
+
+#: assets/js/screens/progress.js:288
+msgid "Jump to latest"
+msgstr ""
+
+#: assets/js/screens/progress.js:303
+msgid "Open full log"
+msgstr ""
+
+#: assets/js/screens/progress.js:311
+msgid "How this run is protected"
+msgstr ""
+
+#. translators: 1: kind of job, 2: date and time, 3: how long it took
+#: assets/js/screens/progress.js:353
+#, js-format
+msgid "%1$s · Finished %2$s · took %3$s."
+msgstr ""
+
+#. translators: 1: kind of job, 2: date and time
+#: assets/js/screens/progress.js:356
+#, js-format
+msgid "%1$s · Stopped %2$s because of an error."
+msgstr ""
+
+#. translators: 1: kind of job, 2: date and time
+#: assets/js/screens/progress.js:359
+#, js-format
+msgid "%1$s · Cancelled %2$s."
+msgstr ""
+
+#: assets/js/screens/progress.js:363
+msgid "Keep this page open: the job moves forward while it is open. If you leave, it stays where it is and carries on when you come back."
+msgstr ""
+
+#: assets/js/screens/progress.js:365
+msgid "You can leave this page. The job keeps running and resumes from the last saved position if the server restarts."
+msgstr ""
+
+#. translators: 1: kind of job, 2: date and time, 3: what to expect when leaving the page
+#: assets/js/screens/progress.js:369
+#, js-format
+msgid "%1$s · Created %2$s. %3$s"
+msgstr ""
+
+#. translators: 1: kind of job, 2: date and time, 3: what to expect when leaving the page
+#: assets/js/screens/progress.js:372
+#, js-format
+msgid "%1$s · Started %2$s. %3$s"
+msgstr ""
+
+#: assets/js/screens/progress.js:382
+msgid "Resume"
+msgstr ""
+
+#: assets/js/screens/progress.js:384
+#: assets/js/screens/progress.js:1260
+msgid "Cancel migration"
+msgstr ""
+
+#: assets/js/screens/progress.js:396
+msgid "Pausing: waiting for the current batch to finish…"
+msgstr ""
+
+#: assets/js/screens/progress.js:397
+msgid "Cancelling: waiting for the current batch to finish…"
+msgstr ""
+
+#: assets/js/screens/progress.js:401
+msgid "Waiting to start…"
+msgstr ""
+
+#. translators: %s: time left, for example 2 min 35 s
+#: assets/js/screens/progress.js:405
+#, js-format
+msgid "About %s left"
+msgstr ""
+
+#: assets/js/screens/progress.js:407
+msgid "Estimating the time left…"
+msgstr ""
+
+#: assets/js/screens/progress.js:409
+msgid "Paused. It continues from the last saved position when you resume."
+msgstr ""
+
+#: assets/js/screens/progress.js:411
+msgid "Finished. Nothing was written."
+msgstr ""
+
+#: assets/js/screens/progress.js:411
+msgid "Finished."
+msgstr ""
+
+#: assets/js/screens/progress.js:413
+msgid "Stopped. The problem is explained below."
+msgstr ""
+
+#: assets/js/screens/progress.js:415
+msgid "Cancelled before it finished."
+msgstr ""
+
+#: assets/js/screens/progress.js:440
+#: assets/js/screens/progress.js:844
+msgid "Rows scanned"
+msgstr ""
+
+#. translators: 1: rows done, 2: rows in total
+#: assets/js/screens/progress.js:447
+#: assets/js/screens/progress.js:552
+#, js-format
+msgid "%1$s of %2$s"
+msgstr ""
+
+#. translators: %s: number of rows
+#: assets/js/screens/progress.js:454
+#, js-format
+msgid "%s row per second"
+msgid_plural "%s rows per second"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: number of rows
+#: assets/js/screens/progress.js:461
+#, js-format
+msgid "%s row, set automatically"
+msgid_plural "%s rows, set automatically"
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/js/screens/progress.js:482
+msgid "Steps"
+msgstr ""
+
+#: assets/js/screens/progress.js:487
+msgid "(done)"
+msgstr ""
+
+#: assets/js/screens/progress.js:489
+msgid "(waiting)"
+msgstr ""
+
+#: assets/js/screens/progress.js:491
+msgid "paused here"
+msgstr ""
+
+#: assets/js/screens/progress.js:491
+msgid "stopped here"
+msgstr ""
+
+#: assets/js/screens/progress.js:509
+msgid "Paused"
+msgstr ""
+
+#: assets/js/screens/progress.js:512
+#: assets/js/screens/progress.js:515
+msgid "Stopped"
+msgstr ""
+
+#: assets/js/screens/progress.js:517
+msgid "Retrying"
+msgstr ""
+
+#: assets/js/screens/progress.js:517
+msgid "Running"
+msgstr ""
+
+#: assets/js/screens/progress.js:520
+msgid "Done"
+msgstr ""
+
+#: assets/js/screens/progress.js:523
+msgid "Skipped"
+msgstr ""
+
+#: assets/js/screens/progress.js:525
+msgid "Waiting"
+msgstr ""
+
+#. translators: 1: tables done, 2: tables running, 3: tables waiting
+#: assets/js/screens/progress.js:587
+#, js-format
+msgid "%1$s done · %2$s running · %3$s waiting"
+msgstr ""
+
+#. translators: 1: tables shown, 2: tables in total
+#: assets/js/screens/progress.js:593
+#, js-format
+msgid "Showing the first %1$s of %2$s tables."
+msgstr ""
+
+#: assets/js/screens/progress.js:612
+msgid "View log"
+msgstr ""
+
+#: assets/js/screens/progress.js:635
+msgid "Retry"
+msgstr ""
+
+#: assets/js/screens/progress.js:638
+msgid "The job stopped because of an error."
+msgstr ""
+
+#: assets/js/screens/progress.js:645
+msgid "Nothing was written, so there is nothing to undo."
+msgstr ""
+
+#: assets/js/screens/progress.js:648
+msgid "Rows that were already changed stay changed. The rest were not touched, and the rollback snapshot is kept in Packages."
+msgstr ""
+
+#: assets/js/screens/progress.js:649
+msgid "Rows that were already changed stay changed. The rest were not touched."
+msgstr ""
+
+#: assets/js/screens/progress.js:652
+msgid "The unfinished package was removed. Your site was not changed."
+msgstr ""
+
+#: assets/js/screens/progress.js:655
+msgid "The package was only read, so nothing was changed."
+msgstr ""
+
+#: assets/js/screens/progress.js:657
+msgid "Temporary tables and unfinished files were removed. Nothing was half-applied."
+msgstr ""
+
+#. translators: 1: attempt number, 2: most attempts
+#: assets/js/screens/progress.js:678
+#, js-format
+msgid "Trying again automatically (attempt %1$d of %2$d). Nothing is lost: the job continues from its last saved position."
+msgstr ""
+
+#: assets/js/screens/progress.js:683
+msgid "See the details in the log"
+msgstr ""
+
+#: assets/js/screens/progress.js:685
+msgid "A temporary problem interrupted the job."
+msgstr ""
+
+#: assets/js/screens/progress.js:692
+msgid "Nothing is running now. Resume continues from the last saved position, and finished batches are not repeated."
+msgstr ""
+
+#: assets/js/screens/progress.js:692
+msgid "This job is paused."
+msgstr ""
+
+#: assets/js/screens/progress.js:695
+msgid "Start a new migration"
+msgstr ""
+
+#: assets/js/screens/progress.js:695
+msgid "This job was cancelled."
+msgstr ""
+
+#: assets/js/screens/progress.js:734
+msgid "Note"
+msgid_plural "Notes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/js/screens/progress.js:740
+msgid "Encrypted with a password"
+msgstr ""
+
+#: assets/js/screens/progress.js:743
+msgid "Encrypted with this site’s key"
+msgstr ""
+
+#: assets/js/screens/progress.js:745
+msgid "Not encrypted"
+msgstr ""
+
+#: assets/js/screens/progress.js:753
+msgid "Your previous database was saved before anything changed. If something looks wrong, you can go back to it."
+msgstr ""
+
+#: assets/js/screens/progress.js:754
+msgid "Restore previous state"
+msgstr ""
+
+#: assets/js/screens/progress.js:756
+msgid "A rollback snapshot was saved."
+msgstr ""
+
+#: assets/js/screens/progress.js:760
+msgid "Restoring a snapshot does not save another one. To go back again, restore a different snapshot from Packages."
+msgstr ""
+
+#: assets/js/screens/progress.js:760
+msgid "The state before this restore was not saved."
+msgstr ""
+
+#: assets/js/screens/progress.js:763
+msgid "Rollback snapshots were turned off for this run, so the previous state cannot be restored automatically."
+msgstr ""
+
+#: assets/js/screens/progress.js:763
+msgid "No rollback snapshot was saved."
+msgstr ""
+
+#: assets/js/screens/progress.js:776
+msgid "Sanitized package ready"
+msgstr ""
+
+#: assets/js/screens/progress.js:776
+msgid "Package ready"
+msgstr ""
+
+#: assets/js/screens/progress.js:779
+#: assets/js/screens/progress.js:862
+msgid "Size"
+msgstr ""
+
+#: assets/js/screens/progress.js:782
+msgid "Protection"
+msgstr ""
+
+#: assets/js/screens/progress.js:789
+msgid "Download package"
+msgstr ""
+
+#: assets/js/screens/progress.js:790
+msgid "Verify package"
+msgstr ""
+
+#: assets/js/screens/progress.js:792
+#: assets/js/screens/progress.js:803
+#: assets/js/screens/progress.js:816
+#: assets/js/screens/progress.js:864
+msgid "Open Packages"
+msgstr ""
+
+#: assets/js/screens/progress.js:796
+msgid "Previous state restored"
+msgstr ""
+
+#: assets/js/screens/progress.js:796
+msgid "Import finished"
+msgstr ""
+
+#: assets/js/screens/progress.js:807
+msgid "Pull finished"
+msgstr ""
+
+#: assets/js/screens/progress.js:809
+msgid "Pulled from"
+msgstr ""
+
+#: assets/js/screens/progress.js:812
+#: assets/js/screens/progress.js:825
+msgid "Package size"
+msgstr ""
+
+#: assets/js/screens/progress.js:820
+msgid "Push finished"
+msgstr ""
+
+#: assets/js/screens/progress.js:822
+msgid "Sent to"
+msgstr ""
+
+#: assets/js/screens/progress.js:830
+msgid "This site was only read. Nothing here changed. The other site did not save a rollback snapshot, because it was turned off for this run."
+msgstr ""
+
+#: assets/js/screens/progress.js:831
+msgid "This site was only read. Nothing here changed. The other site saved a rollback snapshot of what it had before, which it can restore from its Packages screen."
+msgstr ""
+
+#: assets/js/screens/progress.js:832
+msgid "The other site now has this site’s data."
+msgstr ""
+
+#: assets/js/screens/progress.js:838
+msgid "Dry run finished"
+msgstr ""
+
+#: assets/js/screens/progress.js:838
+msgid "Search and replace finished"
+msgstr ""
+
+#: assets/js/screens/progress.js:841
+msgid "This was a preview. Your data was only read, and the numbers below show what a real run would change."
+msgstr ""
+
+#: assets/js/screens/progress.js:841
+msgid "Nothing was written."
+msgstr ""
+
+#: assets/js/screens/progress.js:845
+msgid "Rows that would change"
+msgstr ""
+
+#: assets/js/screens/progress.js:845
+msgid "Rows changed"
+msgstr ""
+
+#: assets/js/screens/progress.js:847
+msgid "Inside serialized or JSON data"
+msgstr ""
+
+#: assets/js/screens/progress.js:853
+msgid "Review the matches"
+msgstr ""
+
+#: assets/js/screens/progress.js:853
+msgid "Open search & replace"
+msgstr ""
+
+#: assets/js/screens/progress.js:857
+msgid "Package checked"
+msgstr ""
+
+#: assets/js/screens/progress.js:858
+msgid "Every block was read and matched its checksum."
+msgstr ""
+
+#: assets/js/screens/progress.js:861
+msgid "Blocks checked"
+msgstr ""
+
+#: assets/js/screens/progress.js:868
+msgid "Finished"
+msgstr ""
+
+#: assets/js/screens/progress.js:881
+msgid "The sanitizer found nothing to mask with the rules you chose."
+msgstr ""
+
+#: assets/js/screens/progress.js:881
+msgid "Nothing was masked."
+msgstr ""
+
+#: assets/js/screens/progress.js:885
+msgid "What was masked"
+msgstr ""
+
+#: assets/js/screens/progress.js:886
+msgid "These values were replaced with fake ones in the package. Your live data was not changed."
+msgstr ""
+
+#: assets/js/screens/progress.js:919
+msgid "Resumes, not restarts."
+msgstr ""
+
+#: assets/js/screens/progress.js:919
+msgid "Progress is saved after every batch. After an interruption the job continues from there and finished batches are not repeated."
+msgstr ""
+
+#: assets/js/screens/progress.js:924
+msgid "Rollback first."
+msgstr ""
+
+#: assets/js/screens/progress.js:924
+msgid "Your current tables are saved as a snapshot before anything changes. You can restore it from"
+msgstr ""
+
+#: assets/js/screens/progress.js:926
+msgid "Rollback on the other site."
+msgstr ""
+
+#: assets/js/screens/progress.js:926
+msgid "It saves a snapshot of its own tables before importing, so it can go back."
+msgstr ""
+
+#: assets/js/screens/progress.js:929
+#: assets/js/screens/progress.js:931
+msgid "No rollback snapshot."
+msgstr ""
+
+#: assets/js/screens/progress.js:929
+msgid "It was turned off for this run, so the previous state cannot be restored automatically."
+msgstr ""
+
+#: assets/js/screens/progress.js:931
+msgid "It was turned off for this run, so the other site cannot restore its previous state automatically."
+msgstr ""
+
+#: assets/js/screens/progress.js:936
+msgid "Personal data is masked."
+msgstr ""
+
+#: assets/js/screens/progress.js:942
+#: assets/js/screens/progress.js:973
+msgid "Your site is only read."
+msgstr ""
+
+#: assets/js/screens/progress.js:942
+msgid "Exporting copies data into a package and never changes your database."
+msgstr ""
+
+#. translators: %s: name of the sanitizer profile
+#: assets/js/screens/progress.js:944
+#, js-format
+msgid "The “%s” profile replaces personal data in the package. Your live data is not changed."
+msgstr ""
+
+#: assets/js/screens/progress.js:946
+#: assets/js/screens/progress.js:948
+msgid "Encrypted package."
+msgstr ""
+
+#: assets/js/screens/progress.js:946
+msgid "The package is encrypted with the password you chose. Without it the package cannot be opened."
+msgstr ""
+
+#: assets/js/screens/progress.js:948
+msgid "The package is encrypted with this site’s key."
+msgstr ""
+
+#: assets/js/screens/progress.js:950
+msgid "Short steps."
+msgstr ""
+
+#: assets/js/screens/progress.js:950
+msgid "Work is split into batches that fit your server’s time limit, so a slow server does not stop the job halfway."
+msgstr ""
+
+#: assets/js/screens/progress.js:952
+msgid "Checksum saved."
+msgstr ""
+
+#: assets/js/screens/progress.js:952
+msgid "A checksum is stored with the package, so you can verify it later."
+msgstr ""
+
+#: assets/js/screens/progress.js:956
+msgid "The package is checked first."
+msgstr ""
+
+#: assets/js/screens/progress.js:956
+msgid "It is read and verified for damage before anything on your site changes."
+msgstr ""
+
+#: assets/js/screens/progress.js:958
+#: assets/js/screens/progress.js:986
+msgid "Imported into temporary tables."
+msgstr ""
+
+#: assets/js/screens/progress.js:958
+#: assets/js/screens/progress.js:986
+msgid "Your live tables are replaced only after every row has been staged, in one quick switch at the end."
+msgstr ""
+
+#: assets/js/screens/progress.js:964
+msgid "Nothing is written."
+msgstr ""
+
+#: assets/js/screens/progress.js:964
+msgid "A dry run only reads your data and counts what would change."
+msgstr ""
+
+#: assets/js/screens/progress.js:968
+msgid "Serialized and JSON data stay valid."
+msgstr ""
+
+#: assets/js/screens/progress.js:968
+msgid "Text inside serialized values and JSON is replaced together with its length markers."
+msgstr ""
+
+#: assets/js/screens/progress.js:973
+msgid "Nothing on this site changes. Data is copied into a package and sent to the other site."
+msgstr ""
+
+#. translators: %s: name of the sanitizer profile
+#: assets/js/screens/progress.js:975
+#, js-format
+msgid "The “%s” profile is applied before the data leaves this site."
+msgstr ""
+
+#: assets/js/screens/progress.js:977
+msgid "Switched at the end."
+msgstr ""
+
+#: assets/js/screens/progress.js:977
+msgid "The other site imports into temporary tables and replaces its live tables only when everything has arrived."
+msgstr ""
+
+#: assets/js/screens/progress.js:982
+msgid "The other site is only read."
+msgstr ""
+
+#: assets/js/screens/progress.js:982
+msgid "It builds a package of its data. Nothing on that site changes."
+msgstr ""
+
+#. translators: %s: name of the sanitizer profile
+#: assets/js/screens/progress.js:984
+#, js-format
+msgid "The “%s” profile is applied on the other site, before any data leaves it."
+msgstr ""
+
+#: assets/js/screens/progress.js:991
+msgid "Nothing is changed."
+msgstr ""
+
+#: assets/js/screens/progress.js:991
+msgid "The package is only read and checked against its checksums."
+msgstr ""
+
+#: assets/js/screens/progress.js:1023
+msgid "Error:"
+msgstr ""
+
+#: assets/js/screens/progress.js:1025
+msgid "Warning:"
+msgstr ""
+
+#: assets/js/screens/progress.js:1059
+msgid "Reload this page"
+msgstr ""
+
+#: assets/js/screens/progress.js:1059
+msgid "This page can no longer talk to the server."
+msgstr ""
+
+#: assets/js/screens/progress.js:1061
+msgid "This job is gone."
+msgstr ""
+
+#: assets/js/screens/progress.js:1063
+msgid "The job is not affected: it keeps going on the server, and this page keeps trying to reconnect."
+msgstr ""
+
+#: assets/js/screens/progress.js:1063
+msgid "Connection lost, retrying…"
+msgstr ""
+
+#: assets/js/screens/progress.js:1065
+msgid "This page keeps trying."
+msgstr ""
+
+#: assets/js/screens/progress.js:1065
+msgid "The server did not answer properly. Retrying…"
+msgstr ""
+
+#. translators: %s: percent done
+#: assets/js/screens/progress.js:1085
+#, js-format
+msgid "%s done."
+msgstr ""
+
+#: assets/js/screens/progress.js:1092
+msgid "The job is running."
+msgstr ""
+
+#: assets/js/screens/progress.js:1095
+msgid "The job is paused."
+msgstr ""
+
+#. translators: %s: name of the job
+#: assets/js/screens/progress.js:1099
+#, js-format
+msgid "%s finished. Nothing was written."
+msgstr ""
+
+#. translators: %s: name of the job
+#: assets/js/screens/progress.js:1099
+#, js-format
+msgid "%s finished."
+msgstr ""
+
+#. translators: %s: error message
+#: assets/js/screens/progress.js:1103
+#, js-format
+msgid "The job failed. %s"
+msgstr ""
+
+#: assets/js/screens/progress.js:1121
+msgid "This job has no log lines."
+msgstr ""
+
+#: assets/js/screens/progress.js:1169
+msgid "Pausing after the current batch."
+msgstr ""
+
+#: assets/js/screens/progress.js:1169
+msgid "Cancelling after the current batch."
+msgstr ""
+
+#: assets/js/screens/progress.js:1189
+msgid "The job did not react. Try again in a moment."
+msgstr ""
+
+#: assets/js/screens/progress.js:1235
+msgid "The job stops after the current batch. This is a dry run, so nothing was written and there is nothing to undo."
+msgstr ""
+
+#: assets/js/screens/progress.js:1238
+msgid "The job stops after the current batch. Rows that were already changed stay changed, and the rest are left untouched. The rollback snapshot is kept in Packages."
+msgstr ""
+
+#: assets/js/screens/progress.js:1239
+msgid "The job stops after the current batch. Rows that were already changed stay changed, and the rest are left untouched."
+msgstr ""
+
+#: assets/js/screens/progress.js:1242
+msgid "The job stops after the current batch. The unfinished package is deleted. Your site is not changed."
+msgstr ""
+
+#: assets/js/screens/progress.js:1245
+msgid "The check stops. The package was only read, so nothing is changed."
+msgstr ""
+
+#: assets/js/screens/progress.js:1247
+msgid "The job stops after the current batch. Temporary tables and unfinished files are removed, and nothing is half-applied. Finished work cannot be continued after a cancel."
+msgstr ""
+
+#: assets/js/screens/progress.js:1258
+msgid "Cancel this job?"
+msgstr ""
+
+#: assets/js/screens/progress.js:1261
+msgid "Keep it running"
+msgstr ""

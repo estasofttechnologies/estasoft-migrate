@@ -1,0 +1,47 @@
+/* New migration screen. Pieces the shared stylesheet does not have. Logical properties only, scoped under .estm. */
+
+/* The shared rows set their own display, which would beat the hidden attribute. */
+.estm [hidden] { display: none !important; }
+
+.estm .set .tx label { display: block; font-weight: 600; }
+.estm .set > .wide { flex: 1 1 100%; min-width: 0; }
+.estm .set .tx label span { display: inline; }
+.estm .set .ctl .select { width: auto; min-width: 190px; }
+/* wp-admin draws its own tick on checked checkboxes; the switch has its own look. */
+.estm input.switch::before,
+.estm input.switch:checked::before { content: none !important; display: none !important; }
+.estm .set .ctl .input { min-width: min(280px, 100%); }
+.estm .set .tx a { color: inherit; }
+.estm .set .tx code { overflow-wrap: anywhere; }
+
+/* Table picker */
+.estm .pick { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.estm .pick-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 12px; border-block-end: 1px solid var(--line); background: #fafafa; }
+.estm .pick-bar .pick-filter { flex: 1 1 180px; max-width: 320px; width: auto; }
+.estm .pick-bar .sub { margin-inline-start: auto; }
+.estm .pick .tbl-wrap-sm { max-height: 300px; }
+.estm .pick .tbl td:first-child,
+.estm .pick .tbl th:first-child { width: 44px; padding-inline-end: 0; }
+.estm .pick .tbl td { padding-block: 8px; }
+.estm .pick .tbl label { cursor: pointer; }
+.estm .pick-hint { margin: 0; padding: 8px 12px; border-block-start: 1px solid var(--line); }
+.estm .pick + .field-error { margin-block-start: 8px; }
+.estm .set > .wide > .field-error { margin-block-start: 8px; }
+
+/* Package protection options are real radio buttons inside a card-like label. */
+.estm .opt { position: relative; }
+.estm .opt:focus-within { outline: 2px solid var(--ink); outline-offset: 2px; }
+.estm .opt.is-disabled { opacity: .55; cursor: not-allowed; }
+.estm .opt.is-disabled:hover { background: #fff; }
+.estm .pw-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-block-start: 14px; }
+.estm .pw-grid .field-error { margin: 0; }
+
+/* A note directly above the card footer needs room. */
+.estm .card > div[aria-live] > .note { margin-block-start: 16px; }
+
+@media (max-width: 782px) {
+  .estm .pick-bar .pick-filter { max-width: none; flex-basis: 100%; }
+  .estm .pick-bar .sub { margin-inline-start: 0; flex-basis: 100%; }
+  .estm .set .ctl { flex-wrap: wrap; }
+  .estm .set .ctl .select { min-width: 0; flex: 1 1 160px; }
+}

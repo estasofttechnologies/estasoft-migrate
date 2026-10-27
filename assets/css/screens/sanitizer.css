@@ -1,0 +1,25 @@
+/* Sanitizer screen. Only what admin.css does not already have. Logical properties only. */
+
+/* A display rule in the kit (flex, grid) would otherwise win over the hidden attribute. */
+.estm [hidden] { display: none !important; }
+
+/* Save bar: always at the bottom of the screen while the page is longer than the window; it changes look when something is unsaved. */
+.estm .san-savebar { position: sticky; inset-block-end: 12px; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 14px; border: 1px solid var(--line-strong); border-radius: var(--radius); background: #fff; }
+.estm .san-savebar.dirty { border: 2px solid var(--ink); padding: 9px 13px; background: var(--tint); box-shadow: 0 6px 20px rgba(0, 0, 0, .18); }
+
+/* Setting rows in the narrow column: keep the switch beside the text. */
+.estm .san-set .tx { flex-basis: 160px; }
+
+/* Add-account panel */
+.estm .san-add { margin-block-start: 12px; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius); background: #fafafa; }
+.estm .san-add ul > li { padding-block: 4px; }
+.estm .san-add ul > li + li { border-block-start: 1px solid var(--line); padding-block-start: 8px; }
+
+/* Preview */
+.estm .san-tbl { padding-block-start: 4px; }
+.estm .san-tbl > .row { justify-content: flex-start; }
+.estm .san-ex { display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+.estm .san-col { font: 600 12.5px var(--mono); color: var(--muted); overflow-wrap: anywhere; }
+
+/* Profile card text stays regular weight next to the bold title. */
+.estm .opt .sub { font-weight: 400; }

@@ -1,0 +1,46 @@
+/* Packages and snapshots. Loaded only on this screen; everything is scoped under .estm and uses logical properties. */
+
+/* Elements that carry the hidden attribute stay hidden even when a component class sets display. */
+.estm [hidden] { display: none !important; }
+
+.estm .estm-pk-actions { display: grid; grid-template-columns: repeat(2, auto); justify-content: end; gap: 6px; }
+.estm .estm-tbl td .cell-sub.break { max-width: 220px; }
+.estm .estm-tbl td.actions { white-space: normal; }
+.estm .estm-tbl td.actions > * + * { margin-inline-start: 0; }
+.estm .estm-tbl td.estm-pk-name { min-width: 220px; max-width: 340px; }
+.estm .estm-tbl .cell-sub { margin-top: 1px; }
+.estm .estm-tbl .cell-sub.mono { font-size: 12px; }
+.estm .estm-tbl td.n { white-space: nowrap; }
+.estm .estm-c { min-width: 0; }
+.estm .estm-date { display: block; white-space: nowrap; }
+.estm .estm-pk-check { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; color: var(--muted); }
+.estm .estm-pk-actions .btn { flex: none; }
+
+/* File names and checksums are always left-to-right text, but sit at the start of the cell in either direction. */
+.estm .estm-tbl .mono { direction: ltr; unicode-bidi: isolate; width: fit-content; max-width: 100%; }
+
+/* Upload card */
+.estm .estm-up-name { font-weight: 600; }
+.estm .drop .btn { margin-inline: auto; }
+
+/* Narrow screens: every row becomes a small card with its column names in front of the values. */
+@media (max-width: 860px) {
+  .estm .estm-tbl thead { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .estm .estm-tbl,
+  .estm .estm-tbl tbody,
+  .estm .estm-tbl tr { display: block; width: 100%; }
+  .estm .estm-tbl tr { padding: 14px 16px; border-bottom: 1px solid var(--line); }
+  .estm .estm-tbl tbody tr:last-child { border-bottom: 0; }
+  .estm .estm-tbl tbody tr:hover { background: transparent; }
+  .estm .estm-tbl td { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: 4px 12px; padding: 5px 0; border: 0; text-align: start; }
+  .estm .estm-tbl tbody tr:last-child td { border: 0; }
+  .estm .estm-tbl td::before { content: attr(data-label); padding-top: 2px; font-size: 12px; font-weight: 600; color: var(--muted); }
+  .estm .estm-tbl td.estm-pk-name,
+  .estm .estm-tbl td.actions { display: block; max-width: none; min-width: 0; }
+  .estm .estm-tbl td.estm-pk-name::before,
+  .estm .estm-tbl td.actions::before { content: none; }
+  .estm .estm-tbl td.n { text-align: start; }
+  .estm .estm-tbl td.actions { padding-top: 10px; }
+  .estm .estm-pk-actions { display: flex; flex-wrap: wrap; justify-content: flex-start; }
+  .estm .estm-tbl .tbl-empty td { display: block; }
+}
