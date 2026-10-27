@@ -1,0 +1,20 @@
+# Dependencies and tool output
+/vendor/
+/node_modules/
+/build/
+/dist/
+.phpunit.result.cache
+.phpcs-cache
+composer.lock
+*.log
+
+# Local environment
+.env
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*.swp
+
+# A package made while testing by hand
+*.estm

@@ -1,0 +1,31 @@
+/* Pre-flight screen. Pieces the shared stylesheet does not have. Logical properties only, scoped under .estm. */
+
+/* The shared components set their own display, which would beat the hidden attribute. */
+.estm [hidden] { display: none !important; }
+
+/* A check row directly under a card heading would otherwise get two lines. */
+.estm .card.flush > .card-h + .check { border-block-start: 0; }
+
+/* Where the text is long, it wraps instead of pushing the layout. */
+.estm .check .tx { overflow-wrap: anywhere; }
+.estm .kv dd { overflow-wrap: anywhere; }
+
+/* Notes about starting the job sit between the text and the buttons. */
+.estm .pf-note:not(:empty) { margin-block-end: 14px; }
+.estm .pf-note .stack { gap: 8px; }
+
+/* The Passed list is a disclosure: the heading is the control. */
+.estm details.pf-passed > summary { cursor: pointer; list-style: none; }
+.estm details.pf-passed > summary::-webkit-details-marker { display: none; }
+.estm details.pf-passed > summary::after { content: "\25BE"; margin-inline-start: auto; padding-inline-start: 12px; font-size: 14px; color: var(--muted); }
+.estm details.pf-passed[open] > summary::after { content: "\25B4"; }
+.estm details.pf-passed:not([open]) > summary { border-block-end: 0; }
+.estm details.pf-passed > summary .pf-toggle { margin-inline-start: 4px; }
+.estm details.pf-passed > summary:focus-visible { outline: 2px solid var(--ink); outline-offset: -3px; }
+
+/* While the checks run the layout keeps roughly the same height. */
+.estm .tile .skeleton { max-width: 100%; }
+
+@media (max-width: 782px) {
+  .estm .check .st { flex-basis: 100%; }
+}

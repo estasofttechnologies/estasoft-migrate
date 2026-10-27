@@ -1,0 +1,20 @@
+includes:
+  - vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+  level: 5
+  phpVersion: 70400
+  paths:
+    - estasoft-migrate.php
+    - includes
+  bootstrapFiles:
+    - vendor/php-stubs/wp-cli-stubs/wp-cli-stubs.php
+    - tests/Support/phpstan-constants.php
+  ignoreErrors:
+    # Action Scheduler is optional; Scheduler checks that the functions exist before it calls them.
+    - '#Function as_(schedule_single|enqueue_async)_action not found#'
+    # wpdb keeps its connection in a protected property; WpdbDatabase reads it on purpose to reuse the same link.
+    - '#Access to protected property wpdb::\$dbh#'
+    # A flag set by reference inside a shutdown function.
+    - message: '#Negated boolean expression is always true#'
+      path: includes/Engine/JobRunner.php

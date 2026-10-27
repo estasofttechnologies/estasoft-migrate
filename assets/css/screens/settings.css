@@ -1,0 +1,27 @@
+/* Settings. Loaded only on this screen; everything is scoped under .estm and uses logical properties. */
+
+/* Elements that carry the hidden attribute stay hidden even when a component class sets display. */
+.estm [hidden] { display: none !important; }
+
+/* A row that holds a whole field (label, control, hints) instead of text on one side and a control on the other. */
+.estm .set.estm-set-block { display: block; }
+.estm .set.estm-set-block .field + .field { margin-top: 12px; }
+
+/* Keys, addresses and IP lists are always left-to-right text. */
+.estm .input.mono { direction: ltr; text-align: start; }
+
+/* Number inputs sit next to their unit. */
+.estm .set .ctl input.input[type="number"] { text-align: end; }
+
+/* Save bar: stays in view at the bottom while the form is long. */
+.estm .estm-savebar { position: sticky; inset-block-end: 0; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; padding: 12px 20px; background: #fff; border: 2px solid var(--ink); border-radius: var(--radius); box-shadow: 0 -6px 16px rgba(28, 28, 28, .08); }
+
+.estm .side .kv dd { overflow-wrap: anywhere; }
+.estm .side .kv dd .badge { vertical-align: middle; }
+
+@media (max-width: 782px) {
+  .estm .estm-savebar { padding: 8px 12px; gap: 6px 12px; }
+  .estm .estm-savebar .sub { display: none; }
+  .estm .set .ctl { flex-wrap: wrap; }
+  .estm .set .ctl .select { min-width: 0 !important; width: 100%; }
+}

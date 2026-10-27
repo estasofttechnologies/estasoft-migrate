@@ -1,0 +1,36 @@
+/* Search & replace screen. Only what admin.css does not already have. Logical properties only. */
+
+/* A display rule in the kit (flex, grid) would otherwise win over the hidden attribute. */
+.estm [hidden] { display: none !important; }
+
+/* Slots that are filled later must not leave a gap while they are empty. */
+.estm .sr-slot:empty { display: none; }
+
+/* One pair: search, replace, remove. */
+.estm .sr-pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; align-items: end; gap: 12px; }
+.estm .sr-pair .sr-off { grid-column: 1 / -1; }
+.estm .sr-pair.is-off { opacity: .6; }
+.estm .sr-pair + .sr-pair { padding-block-start: 12px; border-block-start: 1px dashed var(--line); }
+
+.estm .sr-explain { padding: 10px 14px; border-inline-start: 4px solid var(--yellow); background: #fafafa; border-start-end-radius: var(--radius); border-end-end-radius: var(--radius); color: var(--ink); overflow-wrap: anywhere; }
+.estm .sr-explain code { background: #ececec; }
+.estm .sr-explain-list { margin-block: 6px; padding-inline-start: 18px; list-style: disc; }
+
+/* Choose tables */
+.estm .sr-tpanel { padding: 14px; border: 1px solid var(--line); border-radius: var(--radius); background: #fafafa; }
+.estm .sr-tlist { max-height: 280px; overflow: auto; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+.estm .sr-trow { display: flex; align-items: center; gap: 10px; padding: 8px 12px; cursor: pointer; }
+.estm .sr-trow + .sr-trow { border-block-start: 1px solid var(--line); }
+.estm .sr-trow:hover { background: #fafafa; }
+.estm .sr-trow .sub { margin-inline-start: auto; white-space: nowrap; }
+
+/* Result */
+.estm .sr-samples { padding: 20px; border-block-start: 1px solid var(--line); gap: 12px; }
+.estm .sr-sample { display: flex; flex-direction: column; gap: 6px; }
+.estm .sr-sample + .sr-sample { padding-block-start: 12px; border-block-start: 1px solid var(--line); }
+.estm .card.flush > .note { margin: 0 20px 20px; }
+
+@media (max-width: 700px) {
+  .estm .sr-pair { grid-template-columns: minmax(0, 1fr); }
+  .estm .sr-pair .btn { justify-self: start; }
+}

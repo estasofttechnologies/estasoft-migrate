@@ -1,0 +1,44 @@
+{
+	"name": "estasoft/estasoft-migrate",
+	"description": "Estasoft Migration & Database Sanitizer: zero-downtime WordPress migration, serialization-safe search and replace, and a rule-based database sanitizer.",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"authors": [
+		{
+			"name": "ESTASOFT TECHNOLOGIES"
+		}
+	],
+	"require": {
+		"php": ">=7.4"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^9.6",
+		"wp-coding-standards/wpcs": "^3.1",
+		"phpcompatibility/phpcompatibility-wp": "^2.1",
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+		"phpstan/phpstan": "^1.11",
+		"phpstan/extension-installer": "^1.4",
+		"szepeviktor/phpstan-wordpress": "^1.3",
+		"php-stubs/wp-cli-stubs": "^2.10"
+	},
+	"scripts": {
+		"lint": "find . -path ./vendor -prune -o -path ./node_modules -prune -o -name '*.php' -print0 | xargs -0 -n1 php -l > /dev/null",
+		"cs": "phpcs",
+		"cs:fix": "phpcbf",
+		"stan": "phpstan analyse --memory-limit=1G",
+		"test": "phpunit",
+		"check": [
+			"@lint",
+			"@cs",
+			"@stan",
+			"@test"
+		]
+	},
+	"config": {
+		"sort-packages": true,
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true,
+			"phpstan/extension-installer": true
+		}
+	}
+}
