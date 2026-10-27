@@ -12,7 +12,8 @@ out="$(mktemp)"
 code="${PIPESTATUS[0]}"
 
 if [ "$code" -ne 0 ]; then
-  msg="$(tail -c 40000 "$out")"
+  # GitHub cuts an annotation at about 4,000 characters; keep the end of the output, where the summary is.
+  msg="$(tail -c 3600 "$out")"
   # Workflow commands need these characters escaped.
   msg="${msg//'%'/'%25'}"
   msg="${msg//$'\r'/'%0D'}"
