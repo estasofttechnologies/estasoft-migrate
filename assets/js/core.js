@@ -6,7 +6,7 @@
  * The conventions are written down in docs/UI.md.
  *
  * Everything that reaches the page is created with createElement/createTextNode (see ESTM.h), never
- * with innerHTML, so text that comes from the database or from another site cannot inject markup.
+ * from HTML strings, so text that comes from the database or from another site cannot inject markup.
  */
 ( function () {
 	'use strict';
