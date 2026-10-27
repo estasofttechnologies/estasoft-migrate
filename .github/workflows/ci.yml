@@ -29,7 +29,7 @@ jobs:
       - name: WordPress coding standards
         run: composer cs
       - name: PHPStan
-        run: composer stan
+        run: bin/ci-run.sh "PHPStan" composer stan
 
   unit:
     name: Unit tests (PHP ${{ matrix.php }})
@@ -90,7 +90,8 @@ jobs:
           wp core install --url=http://localhost --title=Test --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email
           echo "ESTM_WP_ROOT=$RUNNER_TEMP/wp" >> "$GITHUB_ENV"
           echo "ESTM_DEST_DB=wp_dest" >> "$GITHUB_ENV"
-      - run: vendor/bin/phpunit -c phpunit-integration.xml.dist
+      - name: Integration tests
+        run: bin/ci-run.sh "Integration tests (${{ matrix.db }})" vendor/bin/phpunit -c phpunit-integration.xml.dist
 
   scripts:
     name: JavaScript syntax
