@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate\Package;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * A package password has to survive between job slices, so it is kept with the job. It is

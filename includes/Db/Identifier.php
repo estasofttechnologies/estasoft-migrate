@@ -7,7 +7,9 @@
 
 namespace Estasoft\Migrate\Db;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
+
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are plain text for JSON and textContent; PHP escapes them with esc_html() where it prints them.
 
 /**
  * Table and column names cannot be bound as parameters, so every name is checked and quoted here.
@@ -21,7 +23,14 @@ final class Identifier {
 	 * @return bool
 	 */
 	public static function is_safe( $name ) {
-		return is_string( $name ) && 1 === preg_match( '/^[A-Za-z0-9_$\-]{1,128}$/', $name );
+		// Any letters (café_log), spaces ("Order Number") and the usual punctuation are fine: the name is always
+		// wrapped in backticks. What is refused is what cannot be part of a name inside backticks: the backtick itself,
+		// a backslash, control characters, invalid UTF-8, and a trailing space (MySQL does not allow it).
+		return is_string( $name )
+			&& strlen( $name ) >= 1
+			&& strlen( $name ) <= 192
+			&& 1 === preg_match( '/\A[^\x00-\x1f\x7f`\\\\]+\z/u', $name )
+			&& ' ' !== substr( $name, -1 );
 	}
 
 	/**

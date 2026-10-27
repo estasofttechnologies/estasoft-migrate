@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate\Package;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Raised when a package cannot be written, read or verified.

@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate\Replace;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Decoding and re-encoding a whole JSON document would change spacing, number formats and

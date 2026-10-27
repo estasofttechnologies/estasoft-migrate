@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate\Remote;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Pure functions, no WordPress needed.
@@ -37,7 +37,7 @@ final class IpMatcher {
 	}
 
 	/**
-	 * Does the address match any entry of the list? An empty list matches everything.
+	 * Does the address match any entry of the list? An empty list matches everything; a list with no readable entry matches nothing.
 	 *
 	 * @param string          $ip   Visitor address.
 	 * @param string|string[] $list Entries, as an array or one per line.
@@ -47,9 +47,21 @@ final class IpMatcher {
 		if ( is_string( $list ) ) {
 			$list = preg_split( '/[\s,]+/', trim( $list ), -1, PREG_SPLIT_NO_EMPTY );
 		}
-		$list = array_values( array_filter( (array) $list, array( __CLASS__, 'is_valid_entry' ) ) );
-		if ( ! $list ) {
+		$given = array_values(
+			array_filter(
+				array_map( 'trim', array_map( 'strval', (array) $list ) ),
+				static function ( $entry ) {
+					return '' !== $entry;
+				}
+			)
+		);
+		if ( ! $given ) {
 			return true;
+		}
+		$list = array_values( array_filter( $given, array( __CLASS__, 'is_valid_entry' ) ) );
+		if ( ! $list ) {
+			// A list was written but nothing in it is an address (a typo): a restriction that cannot be read must not become "allow everyone".
+			return false;
 		}
 		$packed = @inet_pton( (string) $ip ); // phpcs:ignore WordPress.PHP.NoSilencedErrors
 		if ( false === $packed ) {

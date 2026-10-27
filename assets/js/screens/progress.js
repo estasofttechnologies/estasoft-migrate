@@ -186,7 +186,7 @@
 
 	function mount( root, first, settings ) {
 		var jobId = first.id;
-		var runner = settings && settings.environment ? String( settings.environment.runner || '' ) : '';
+		var leaveOk = ESTM.canLeave( settings && settings.environment ? settings.environment : null );
 		var last = null;
 		var watcher = null;
 		var wantStatus = '';
@@ -359,10 +359,10 @@
 					return sprintf( __( '%1$s · Cancelled %2$s.', 'estasoft-migrate' ), kind, fmt.date( v.finished || v.updated ) );
 			}
 			var tail;
-			if ( 'ajax' === runner ) {
-				tail = __( 'Keep this page open: the job moves forward while it is open. If you leave, it stays where it is and carries on when you come back.', 'estasoft-migrate' );
-			} else {
+			if ( leaveOk ) {
 				tail = __( 'You can leave this page. The job keeps running and resumes from the last saved position if the server restarts.', 'estasoft-migrate' );
+			} else {
+				tail = __( 'Keep this page open and visible: on this server the job only moves forward while it is open. If you leave, it stays where it is and carries on when you come back.', 'estasoft-migrate' );
 			}
 			if ( ! v.started ) {
 				/* translators: 1: kind of job, 2: date and time, 3: what to expect when leaving the page */
@@ -443,8 +443,7 @@
 				stat.rows.dd,
 				'completed' === v.status ?
 					fmt.number( s.rows_done ) :
-					/* translators: 1: rows done, 2: rows in total */
-					sprintf( __( '%1$s of %2$s', 'estasoft-migrate' ), fmt.number( s.rows_done ), fmt.number( Math.max( s.rows_total, s.rows_done ) ) )
+					sprintf( /* translators: 1: how many so far or chosen, 2: how many there are in total */ __( '%1$s of %2$s', 'estasoft-migrate' ), fmt.number( s.rows_done ), fmt.number( Math.max( s.rows_total, s.rows_done ) ) )
 			);
 			setText( stat.elapsed.dd, s.elapsed > 0 || 'completed' === v.status ? fmt.duration( s.elapsed ) : '–' );
 			setText(
@@ -548,8 +547,7 @@
 					setText( rowsTd, done ?
 						fmt.number( t.done ) :
 						( ! ( t.done > 0 ) ? fmt.number( t.total ) :
-						/* translators: 1: rows done, 2: rows in total */
-						sprintf( __( '%1$s of %2$s', 'estasoft-migrate' ), fmt.number( t.done ), fmt.number( t.total ) ) )
+						sprintf( /* translators: 1: how many so far or chosen, 2: how many there are in total */ __( '%1$s of %2$s', 'estasoft-migrate' ), fmt.number( t.done ), fmt.number( t.total ) ) )
 					);
 					ui.setBar( barEl, p, { live: 'running' === t.status && ( 'running' === v.status || 'queued' === v.status ) } );
 					setText( pctEl, pctText( p, done ) );

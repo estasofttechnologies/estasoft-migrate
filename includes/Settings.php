@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Reads, validates and stores the plugin settings in a single option.

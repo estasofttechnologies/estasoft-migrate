@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate\Package;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Authenticated encryption with libsodium (XChaCha20-Poly1305), one box per package frame.

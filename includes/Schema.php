@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Creates and names the plugin tables: jobs, logs and delta-sync baselines.
@@ -121,7 +121,7 @@ class Schema {
 	public static function uninstall() {
 		global $wpdb;
 		foreach ( self::all_tables() as $table ) {
-			$wpdb->query( "DROP TABLE IF EXISTS `{$table}`" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery
+			$wpdb->query( "DROP TABLE IF EXISTS `{$table}`" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared,WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter -- $table is one of this plugin's own table names, fixed in all_tables().
 		}
 	}
 }

@@ -21,6 +21,7 @@ Free, GPL v2 or later, by ESTASOFT TECHNOLOGIES. Works on WordPress 5.8+, PHP 7.
 | `.wordpress-org/` | The official icon for the plugin directory (`icon.svg`, 128 and 256 px PNG). Not part of the zip. The same "E" is drawn in `views/app.php` (header) and `Admin::icon()` (menu). |
 | `tests/` | `Unit` (no WordPress, SQLite in memory) and `Integration` (real WordPress and MySQL/MariaDB). |
 | `docs/REST.md`, `docs/UI.md` | The REST contract and how to write a screen. |
+| `docs/REVIEW.md` | What the pre-release reviews found, what was fixed and what is known. |
 
 ## Principles
 

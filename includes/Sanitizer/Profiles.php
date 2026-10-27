@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate\Sanitizer;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * The three ready-made profiles from the Sanitizer screen, and the rule and safety ids they switch on.
@@ -20,30 +20,35 @@ final class Profiles {
 	/**
 	 * All profiles.
 	 *
-	 * @return array<string,array{name:string,text:string,rules:array<string,bool>,safety:array<string,bool>}>
+	 * @return array<string,array{name:string,text:string,rules:array<string,bool>,safety:array<string,bool>,keep_admins:bool}>
 	 */
 	public static function all() {
 		return array(
 			'staging' => array(
-				'name'   => __( 'Staging', 'estasoft-migrate' ),
-				'text'   => __( 'A safe copy for testing. Fake personal data, passwords reset, outgoing email blocked.', 'estasoft-migrate' ),
-				'rules'  => self::flags(
+				'name'        => __( 'Staging', 'estasoft-migrate' ),
+				'text'        => __( 'A safe copy for testing. Fake personal data, passwords reset, outgoing email blocked.', 'estasoft-migrate' ),
+				'rules'       => self::flags(
 					self::RULES,
 					array( 'names', 'emails', 'phones', 'addr', 'ips', 'pw', 'secrets' )
 				),
-				'safety' => self::flags( self::SAFETY, array( 'mail', 'seo', 'pay', 'smtp' ) ),
+				'safety'      => self::flags( self::SAFETY, array( 'mail', 'seo', 'pay', 'smtp' ) ),
+				// You usually sign in to a staging copy with your own account, so administrators are kept as they are.
+				'keep_admins' => true,
 			),
 			'dev'     => array(
-				'name'   => __( 'Developer handoff', 'estasoft-migrate' ),
-				'text'   => __( 'Keeps content and structure. Removes customer data, free text and secrets.', 'estasoft-migrate' ),
-				'rules'  => self::flags( self::RULES, self::RULES ),
-				'safety' => self::flags( self::SAFETY, array( 'mail', 'pay' ) ),
+				'name'        => __( 'Developer handoff', 'estasoft-migrate' ),
+				'text'        => __( 'Keeps content and structure. Removes customer data, free text and secrets.', 'estasoft-migrate' ),
+				'rules'       => self::flags( self::RULES, self::RULES ),
+				'safety'      => self::flags( self::SAFETY, array( 'mail', 'pay' ) ),
+				// The copy leaves your hands, so administrator names, emails and password hashes are masked too.
+				'keep_admins' => false,
 			),
 			'gdpr'    => array(
-				'name'   => __( 'GDPR-safe copy', 'estasoft-migrate' ),
-				'text'   => __( 'Anonymizes everything that could identify a person, including free text.', 'estasoft-migrate' ),
-				'rules'  => self::flags( self::RULES, self::RULES ),
-				'safety' => self::flags( self::SAFETY, array() ),
+				'name'        => __( 'GDPR-safe copy', 'estasoft-migrate' ),
+				'text'        => __( 'Anonymizes everything that could identify a person, including free text.', 'estasoft-migrate' ),
+				'rules'       => self::flags( self::RULES, self::RULES ),
+				'safety'      => self::flags( self::SAFETY, array() ),
+				'keep_admins' => false,
 			),
 		);
 	}
@@ -85,7 +90,7 @@ final class Profiles {
 			'rules'        => $rules,
 			'safety'       => $safety,
 			'keep_users'   => \Estasoft\Migrate\Util::to_list( $overrides['keep_users'] ?? array() ),
-			'keep_admins'  => ! isset( $overrides['keep_admins'] ) || (bool) $overrides['keep_admins'],
+			'keep_admins'  => isset( $overrides['keep_admins'] ) ? (bool) $overrides['keep_admins'] : (bool) $base['keep_admins'],
 			'skip_tables'  => \Estasoft\Migrate\Util::to_list( $overrides['skip_tables'] ?? array() ),
 			'skip_columns' => \Estasoft\Migrate\Util::to_list( $overrides['skip_columns'] ?? array() ),
 			'columns'      => (array) ( $overrides['columns'] ?? array() ),
@@ -113,7 +118,7 @@ final class Profiles {
 				'what'    => __( 'Email addresses', 'estasoft-migrate' ),
 				'where'   => __( 'Users, comments, WooCommerce billing', 'estasoft-migrate' ),
 				'how'     => __( 'Replaced with an address on a reserved test domain', 'estasoft-migrate' ),
-				'example' => __( 'sara.w@mail.test → user4821@example.invalid', 'estasoft-migrate' ),
+				'example' => __( 'sara.w@mail.test → user0000004821@example.invalid', 'estasoft-migrate' ),
 			),
 			array(
 				'id'      => 'phones',

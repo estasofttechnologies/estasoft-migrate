@@ -11,7 +11,7 @@ use Estasoft\Migrate\Db\Database;
 use Estasoft\Migrate\Logger;
 use Estasoft\Migrate\Storage;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Passed to every task call. Holds the database, logger, storage and the job being run.

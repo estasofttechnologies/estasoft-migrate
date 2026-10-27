@@ -31,7 +31,9 @@ use Estasoft\Migrate\Settings;
 use Estasoft\Migrate\Storage;
 use Estasoft\Migrate\Util;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
+
+// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Exception messages are plain text for JSON and textContent; PHP escapes them with esc_html() where it prints them.
 
 /**
  * The REST routes, the command line and the tests all call this class. It returns arrays and
@@ -187,7 +189,7 @@ final class Api {
 				'https'     => (bool) $this->settings->get( 'require_https', true ),
 				'key_id'    => Settings::key_id( $this->settings->connection_key() ),
 			),
-			'health'     => $this->environment(),
+			'health'     => $this->environment( false ),
 		);
 	}
 
@@ -382,7 +384,9 @@ final class Api {
 				if ( $job->is_finished() ) {
 					throw new ApiException( 'estm_state', __( 'This job has already finished.', 'estasoft-migrate' ), 409 );
 				}
-				$this->runner->cancel( $job->id );
+				if ( ! $this->runner->cancel( $job->id ) ) {
+					throw new ApiException( 'estm_state', __( 'This job can no longer be cancelled: its new data is already in place and it is finishing.', 'estasoft-migrate' ), 409 );
+				}
 				break;
 			case 'retry':
 				if ( ! $this->runner->retry( $job->id ) ) {
@@ -407,9 +411,24 @@ final class Api {
 		if ( ! $job->is_finished() ) {
 			throw new ApiException( 'estm_state', __( 'Cancel the job before removing it.', 'estasoft-migrate' ), 409 );
 		}
-		$this->ctx->store->delete( $job->id );
+		$this->runner->discard( $job->id );
 		$this->ctx->logger->purge( $job->id );
 		return array( 'deleted' => true );
+	}
+
+	/**
+	 * Can this job still be cancelled?
+	 *
+	 * @param Job $job Job.
+	 * @return bool
+	 */
+	private function can_cancel( Job $job ) {
+		try {
+			return $this->tasks->make( $job->type )->can_cancel( $job->params, $job->state );
+		} catch ( \Throwable $e ) {
+			unset( $e );
+			return true;
+		}
 	}
 
 	/**
@@ -478,7 +497,7 @@ final class Api {
 		$out['can']          = array(
 			'pause'  => $job->is_runnable(),
 			'resume' => Job::PAUSED === $job->status,
-			'cancel' => ! $job->is_finished(),
+			'cancel' => ! $job->is_finished() && $this->can_cancel( $job ),
 			'retry'  => Job::FAILED === $job->status,
 			'delete' => $job->is_finished(),
 		);
@@ -930,6 +949,9 @@ final class Api {
 		if ( $size < 1 ) {
 			throw new ApiException( 'estm_invalid', __( 'The file is empty.', 'estasoft-migrate' ), 400 );
 		}
+		if ( $size > Storage::max_package_bytes() ) {
+			throw new ApiException( 'estm_invalid', __( 'The file is larger than this site accepts as a package.', 'estasoft-migrate' ), 413 );
+		}
 		if ( ! $this->ctx->storage->is_writable() ) {
 			throw new ApiException( 'estm_no_space', __( 'The package folder is not writable.', 'estasoft-migrate' ), 507 );
 		}
@@ -984,6 +1006,10 @@ final class Api {
 		$bytes  = (string) $bytes;
 		if ( '' === $bytes || $offset < 0 ) {
 			throw new ApiException( 'estm_invalid', __( 'The piece could not be read.', 'estasoft-migrate' ), 400 );
+		}
+		$expected = (int) ( ( (array) $this->ctx->storage->read_meta( (string) $id ) )['expected'] ?? 0 );
+		if ( $expected > 0 && $offset + strlen( $bytes ) > $expected ) {
+			throw new ApiException( 'estm_invalid', __( 'The piece is larger than the file announced.', 'estasoft-migrate' ), 413 );
 		}
 		clearstatcache( true, $path );
 		$have = (int) filesize( $path );
@@ -1167,6 +1193,23 @@ final class Api {
 	 * @return array
 	 */
 	public function save_settings( array $in ) {
+		if ( array_key_exists( 'ip_allowlist', $in ) ) {
+			// Entries that are not addresses are dropped when saving. If that leaves nothing, the list would be empty and every
+			// address would be let in, which is the opposite of what a person who typed a list meant.
+			$given = (array) preg_split( '/[\s,]+/', trim( (string) $in['ip_allowlist'] ), -1, PREG_SPLIT_NO_EMPTY );
+			$valid = array_filter( $given, array( \Estasoft\Migrate\Remote\IpMatcher::class, 'is_valid_entry' ) );
+			if ( $given && ! $valid ) {
+				throw new ApiException(
+					'estm_invalid',
+					sprintf(
+						/* translators: %s: the entries that are not IP addresses */
+						__( 'None of these is a valid IP address or range: %s. Use an address like 203.0.113.7 or a range like 203.0.113.0/24, one per line, or leave the list empty to accept any address.', 'estasoft-migrate' ),
+						implode( ', ', array_slice( $given, 0, 5 ) )
+					),
+					400
+				);
+			}
+		}
 		$this->settings->update( $in );
 		return $this->settings();
 	}
@@ -1228,12 +1271,12 @@ final class Api {
 	/**
 	 * Facts about this server, for the Settings and Overview screens.
 	 *
+	 * @param bool $probe Test whether the package folder can be downloaded from directly when that was not tested lately. The Overview, which polls, only reads the last answer.
 	 * @return array
 	 */
-	private function environment() {
+	private function environment( $probe = true ) {
 		$site = $this->ctx->site_info();
 		$mode = is_callable( $this->opts['runner_mode'] ) ? (string) call_user_func( $this->opts['runner_mode'] ) : (string) $this->settings->get( 'runner', 'auto' );
-		$dir  = $this->ctx->storage->dir();
 		$env  = array(
 			'php'              => PHP_VERSION,
 			'wp'               => (string) ( $site['wp_version'] ?? '' ),
@@ -1248,7 +1291,8 @@ final class Api {
 			'multisite'        => ! empty( $site['multisite'] ),
 			'storage'          => array(
 				'writable'  => $this->ctx->storage->is_writable(),
-				'protected' => is_file( $dir . '/index.php' ) && ( is_file( $dir . '/.htaccess' ) || is_file( $dir . '/web.config' ) ),
+				// True: a test file could not be fetched. False: it could. Null: this server could not try.
+				'protected' => $this->ctx->storage->direct_access_blocked( false, $probe ),
 				'free'      => $this->free_space(),
 				'used'      => $this->ctx->storage->total_size(),
 			),

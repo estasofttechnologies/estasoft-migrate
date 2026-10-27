@@ -2,7 +2,7 @@
 Contributors: estasofttechnologies
 Tags: migration, database, search replace, staging, gdpr
 Requires at least: 5.8
-Tested up to: 7.2
+Tested up to: 7.1
 Requires PHP: 7.4
 Stable tag: 1.0.0
 License: GPLv2 or later
@@ -36,7 +36,9 @@ Everything is free. There is no license key, no locked tab, no upgrade banner an
 
 = Privacy =
 
-The plugin does not collect or send any data to Estasoft or anyone else. It makes web requests only to a WordPress site that you connect yourself (for push and pull), signed with a key that only the two sites know. Packages and snapshots are stored in a protected folder inside your uploads directory and are never publicly downloadable.
+The plugin does not collect or send any data to Estasoft or anyone else, and it uses no third-party service. It makes web requests only to a WordPress site that you connect yourself (for push and pull), signed with a key that only the two sites know. Packages and snapshots are stored in a protected folder inside your uploads directory and are never publicly downloadable.
+
+A package is a full copy of your database, so treat it like your database. The plugin also adds suggested wording about what it stores to **Settings > Privacy**, for your privacy policy.
 
 = Planned =
 
@@ -80,6 +82,14 @@ A single file with your database, split into checked blocks, optionally compress
 
 On the destination site, turn on **Accept incoming migrations** in Settings and copy the connection key. On the source site, choose **Push** or **Pull** under New migration and paste the address and key.
 
+= Are my packages safe from being downloaded by other people? =
+
+They are kept in a folder with a random name inside your uploads directory, with rules that deny web access and an empty index file. Downloads go through your admin session and a permission check. The plugin tests this by requesting a throw-away file from that folder and shows the result on the Packages and Settings screens. If your web server ignores `.htaccess` files (nginx does), add a rule that denies access to `wp-content/uploads/estasoft-migrate-*`, or protect the package with a password.
+
+= Does it move media files, themes and plugins? =
+
+No. This version moves the database only. Use it together with your host's file copy, rsync or your usual deployment for `wp-content`.
+
 = Does it work with Multisite? =
 
 Not yet. This version migrates single sites only, and the pre-flight check says so on a network.
@@ -90,7 +100,7 @@ Not yet. This version migrates single sites only, and the pre-flight check says 
 2. New migration: export, push and pull.
 3. Pre-flight check before anything changes.
 4. Live progress with pause, resume and cancel.
-5. Database sanitizer with profiles and a preview.
+5. Database sanitizer: profiles, a switch for every rule and an example of each change.
 6. Serialization-safe search and replace with a dry run.
 7. Packages and rollback snapshots.
 

@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate\Engine;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Plain data object. The state array holds everything needed to continue after a restart.

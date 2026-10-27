@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate\Remote;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 interface Transport {
 

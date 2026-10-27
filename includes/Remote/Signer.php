@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate\Remote;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * HMAC-SHA256 over the action, the time, a one-time value and the SHA-256 of the body.

@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate\Sanitizer;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Cleans and completes what the screen sends, so stored values are always safe to use.
@@ -27,7 +27,7 @@ final class SavedConfig {
 			'rules'        => $base['rules'],
 			'safety'       => $base['safety'],
 			'keep_users'   => array(),
-			'keep_admins'  => true,
+			'keep_admins'  => (bool) $base['keep_admins'],
 			'skip_tables'  => array(),
 			'skip_columns' => array(),
 			'on_export'    => false,

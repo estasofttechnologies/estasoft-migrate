@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate\Sanitizer;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Uses WordPress's own hashing when it is loaded, so reset accounts accept the password on any WordPress version.

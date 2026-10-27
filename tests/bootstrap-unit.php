@@ -5,7 +5,10 @@
  * @package Estasoft\Migrate
  */
 
-define( 'ESTASOFT_MIGRATE_TESTING', true );
+// The plugin files stop when ABSPATH is missing, so the unit tests, which run without WordPress, define it.
+if ( ! defined( 'ABSPATH' ) ) {
+	define( 'ABSPATH', sys_get_temp_dir() . '/estm-abspath/' );
+}
 
 if ( ! defined( 'DAY_IN_SECONDS' ) ) {
 	define( 'DAY_IN_SECONDS', 86400 );

@@ -7,14 +7,14 @@
 
 namespace Estasoft\Migrate\Sanitizer;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Finds secret-looking keys (API keys, tokens, passwords) in serialized or JSON option values and empties them.
  */
 final class SecretScrubber {
 
-	const KEY_PATTERN = '/(api[_\-]?key|secret|token|passw(or)?d|passwd|license|licence|client[_\-]?id|access[_\-]?key|private[_\-]?key|webhook|auth[_\-]?key|signing|credentials?|bearer|smtp[_\-]?pass)/i';
+	const KEY_PATTERN = '/(api[_\-]?key|secret|token|passw(or)?d|passwd|license|licence|client[_\-]?id|access[_\-]?key|private[_\-]?key|webhook|auth[_\-]?key|signing|credentials?|bearer|smtp[_\-]?pass|salt|logged[_\-]?in[_\-]?key|nonce[_\-]?key)/i';
 
 	/**
 	 * Option names that hold payment, SMTP or analytics settings. The whole value is emptied.
@@ -46,14 +46,22 @@ final class SecretScrubber {
 			// Objects are not created: classes are not allowed, so no code can run.
 			$data = @unserialize( $value, array( 'allowed_classes' => false ) ); // phpcs:ignore WordPress.PHP.NoSilencedErrors,WordPress.PHP.DiscouragedPHPFunctions
 			if ( is_array( $data ) ) {
-				return serialize( self::walk( $data ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
+				$changed = false;
+				$data    = self::walk( $data, $changed );
+				return $changed ? serialize( $data ) : $value; // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
 			}
 			return $value;
 		}
 		if ( \Estasoft\Migrate\Replace\JsonText::looks_json( $value ) ) {
-			$data = json_decode( $value, true );
-			if ( is_array( $data ) ) {
-				$out = json_encode( self::walk( $data ), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ); // phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode
+			// Objects stay objects ({} must not become []), and a value with no secret is returned exactly as it was.
+			$data = json_decode( $value );
+			if ( is_array( $data ) || is_object( $data ) ) {
+				$changed = false;
+				$data    = self::walk( $data, $changed );
+				if ( ! $changed ) {
+					return $value;
+				}
+				$out = json_encode( $data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRESERVE_ZERO_FRACTION ); // phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode
 				return false === $out ? $value : $out;
 			}
 		}
@@ -61,17 +69,26 @@ final class SecretScrubber {
 	}
 
 	/**
-	 * Walk an array.
+	 * Walk an array or object and empty the secrets in it.
 	 *
-	 * @param array $data Data.
-	 * @return array
+	 * @param array|object $data    Data.
+	 * @param bool         $changed Set to true when something was emptied.
+	 * @return array|object
 	 */
-	private static function walk( array $data ) {
+	private static function walk( $data, &$changed ) {
 		foreach ( $data as $key => $item ) {
-			if ( is_array( $item ) ) {
-				$data[ $key ] = self::walk( $item );
-			} elseif ( is_string( $key ) && 1 === preg_match( self::KEY_PATTERN, $key ) && is_string( $item ) ) {
-				$data[ $key ] = '';
+			if ( is_array( $item ) || is_object( $item ) ) {
+				$item = self::walk( $item, $changed );
+			} elseif ( is_string( $key ) && 1 === preg_match( self::KEY_PATTERN, $key ) && is_string( $item ) && '' !== $item ) {
+				$item    = '';
+				$changed = true;
+			} else {
+				continue;
+			}
+			if ( is_object( $data ) ) {
+				$data->$key = $item;
+			} else {
+				$data[ $key ] = $item;
 			}
 		}
 		return $data;

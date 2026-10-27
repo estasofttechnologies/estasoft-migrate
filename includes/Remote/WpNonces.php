@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate\Remote;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Transients live in the options table (or the object cache), so they work on any host.

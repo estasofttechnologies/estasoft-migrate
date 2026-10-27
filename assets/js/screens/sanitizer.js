@@ -12,7 +12,6 @@
 	var __ = ESTM.i18n.__;
 	var _n = ESTM.i18n._n;
 	var sprintf = ESTM.i18n.sprintf;
-	var TD = 'estasoft-migrate';
 
 	var MAX_KEPT = 50;
 
@@ -95,8 +94,8 @@
 	/* ---------------------------------------------------------------- Screen */
 
 	ESTM.screen( 'sanitizer', function ( root ) {
-		var lede = __( 'Make a copy of this database that is safe to share, test on or hand over. The live database is never changed.', TD );
-		var title = __( 'Database sanitizer', TD );
+		var lede = __( 'Make a copy of this database that is safe to share, test on or hand over. The live database is never changed.', 'estasoft-migrate' );
+		var title = __( 'Database sanitizer', 'estasoft-migrate' );
 
 		function load() {
 			ESTM.replace( root, ui.pageHead( title, lede ), h( 'div.stack', ui.skeleton( 3 ), ui.skeleton( 6 ) ) );
@@ -139,7 +138,7 @@
 				rules: {},
 				safety: {},
 				keep_users: ESTM.toList( saved.keep_users || [] ),
-				keep_admins: false !== saved.keep_admins,
+				keep_admins: undefined === saved.keep_admins ? !! profiles[ id ].keep_admins : false !== saved.keep_admins,
 				skip_tables: ESTM.toList( saved.skip_tables || [] ),
 				skip_columns: ESTM.toList( saved.skip_columns || [] ),
 				on_export: !! saved.on_export,
@@ -263,13 +262,13 @@
 
 		/* ---------------- Page head and notices */
 
-		var previewBtn = ui.btn( __( 'Preview sample rows', TD ), { onClick: runPreview } );
-		var copyBtn = ui.btn( __( 'Create sanitized copy', TD ), { kind: 'primary', onClick: startCopy } );
+		var previewBtn = ui.btn( __( 'Preview sample rows', 'estasoft-migrate' ), { onClick: runPreview } );
+		var copyBtn = ui.btn( __( 'Create sanitized copy', 'estasoft-migrate' ), { kind: 'primary', onClick: startCopy } );
 
 		var safeNote = ui.note(
 			'tint',
-			__( 'The sanitizer never changes this site. It masks values while it writes the copy, so the live database keeps its real data.', TD ),
-			{ title: __( 'Your live site stays as it is.', TD ) }
+			__( 'The sanitizer never changes this site. It masks values while it writes the copy, so the live database keeps its real data.', 'estasoft-migrate' ),
+			{ title: __( 'Your live site stays as it is.', 'estasoft-migrate' ) }
 		);
 
 		/* ---------------- Profile cards */
@@ -287,7 +286,7 @@
 		var profileSection = h(
 			'section',
 			{ 'aria-labelledby': 'san-profile-h' },
-			h( 'h2', { id: 'san-profile-h', style: 'font-size:16px;margin-bottom:10px' }, __( 'Profile', TD ) ),
+			h( 'h2', { id: 'san-profile-h', style: 'font-size:16px;margin-bottom:10px' }, __( 'Profile', 'estasoft-migrate' ) ),
 			h( 'div.g-auto', { style: 'grid-template-columns:repeat(auto-fit,minmax(260px,1fr))' }, profileEls.map( function ( p ) { return p.el; } ) )
 		);
 
@@ -296,8 +295,13 @@
 				return;
 			}
 			function apply() {
+				// The administrator switch follows the profile unless it was changed by hand.
+				var followed = !! st.keep_admins === !! profiles[ st.profile ].keep_admins;
 				st.profile = id;
 				resetToProfile();
+				if ( followed ) {
+					st.keep_admins = !! profiles[ id ].keep_admins;
+				}
 				refresh();
 			}
 			if ( ! isCustomised() ) {
@@ -307,11 +311,11 @@
 			ui.confirm( {
 				title: sprintf(
 					/* translators: %s: name of a sanitizer profile */
-					__( 'Switch to “%s”?', TD ),
+					__( 'Switch to “%s”?', 'estasoft-migrate' ),
 					profiles[ id ].name
 				),
-				message: __( 'You changed some rules or staging safety switches. Switching replaces them with the defaults of the new profile. The accounts you keep and the skipped tables stay as they are.', TD ),
-				confirm: __( 'Switch profile', TD ),
+				message: __( 'You changed some rules or staging safety switches. Switching replaces them with the defaults of the new profile. The accounts you keep and the skipped tables stay as they are.', 'estasoft-migrate' ),
+				confirm: __( 'Switch profile', 'estasoft-migrate' ),
 			} ).then( function ( ok ) {
 				if ( ok ) {
 					apply();
@@ -323,10 +327,10 @@
 		/* ---------------- Rules table */
 
 		var rulesSummary = h( 'span.sub' );
-		var resetBtn = ui.btn( __( 'Reset to profile defaults', TD ), { kind: 'quiet', size: 'sm', onClick: function () {
+		var resetBtn = ui.btn( __( 'Reset to profile defaults', 'estasoft-migrate' ), { kind: 'quiet', size: 'sm', onClick: function () {
 			resetToProfile();
 			refresh();
-			ui.toast( __( 'Rules and safety switches are back to the profile defaults.', TD ) );
+			ui.toast( __( 'Rules and safety switches are back to the profile defaults.', 'estasoft-migrate' ) );
 		} } );
 		resetBtn.hidden = true;
 
@@ -349,21 +353,21 @@
 
 		var rulesCard = h(
 			'section.card.flush',
-			h( 'div.card-h', h( 'h2', __( 'What gets changed', TD ) ), h( 'div.row', rulesSummary, resetBtn ) ),
+			h( 'div.card-h', h( 'h2', __( 'What gets changed', 'estasoft-migrate' ) ), h( 'div.row', rulesSummary, resetBtn ) ),
 			h(
 				'div',
-				{ role: 'table', 'aria-label': __( 'Masking rules', TD ) },
+				{ role: 'table', 'aria-label': __( 'Masking rules', 'estasoft-migrate' ) },
 				h(
 					'div.rrow.head',
 					{ role: 'row' },
-					h( 'span', { role: 'columnheader' }, __( 'On', TD ) ),
-					h( 'span', { role: 'columnheader' }, __( 'Data', TD ) ),
-					h( 'span', { role: 'columnheader' }, __( 'What happens', TD ) ),
-					h( 'span', { role: 'columnheader' }, __( 'Example', TD ) )
+					h( 'span', { role: 'columnheader' }, __( 'On', 'estasoft-migrate' ) ),
+					h( 'span', { role: 'columnheader' }, __( 'Data', 'estasoft-migrate' ) ),
+					h( 'span', { role: 'columnheader' }, __( 'What happens', 'estasoft-migrate' ) ),
+					h( 'span', { role: 'columnheader' }, __( 'Example', 'estasoft-migrate' ) )
 				),
 				ruleEls.map( function ( r ) { return r.row; } )
 			),
-			h( 'div.card-f', h( 'span.sub', __( 'Inside one copy the same real value always becomes the same fake one, so counts and relationships stay intact.', TD ) ) )
+			h( 'div.card-f', h( 'span.sub', __( 'Inside one copy the same real value always becomes the same fake one, so counts and relationships stay intact.', 'estasoft-migrate' ) ) )
 		);
 
 		/* ---------------- Sanitize on export */
@@ -375,9 +379,9 @@
 		} } );
 		var exportCard = h(
 			'section.card.hi',
-			h( 'div.card-h', { style: 'margin-bottom:6px' }, h( 'h2', { id: exportId }, __( 'Sanitize on export', TD ) ), exportSw ),
-			h( 'p.sub', __( 'Sensitive values are masked while the package is written. The unmasked data never reaches the package file or the other site.', TD ) ),
-			h( 'p.sub', { style: 'margin-top:8px' }, __( 'When this is on, New migration starts with sanitizing already selected.', TD ) )
+			h( 'div.card-h', { style: 'margin-bottom:6px' }, h( 'h2', { id: exportId }, __( 'Sanitize on export', 'estasoft-migrate' ) ), exportSw ),
+			h( 'p.sub', __( 'Sensitive values are masked while the package is written. The unmasked data never reaches the package file or the other site.', 'estasoft-migrate' ) ),
+			h( 'p.sub', { style: 'margin-top:8px' }, __( 'When this is on, New migration starts with sanitizing already selected.', 'estasoft-migrate' ) )
 		);
 
 		/* ---------------- Staging safety */
@@ -394,7 +398,7 @@
 		} );
 		var safetyCard = h(
 			'section.card',
-			h( 'div.card-h', h( 'h2', __( 'Staging safety', TD ) ), safetySummary ),
+			h( 'div.card-h', h( 'h2', __( 'Staging safety', 'estasoft-migrate' ) ), safetySummary ),
 			safetyEls.map( function ( s ) { return s.row; } )
 		);
 
@@ -411,15 +415,15 @@
 			{ style: 'padding-top:0;border-top:0' },
 			h(
 				'div.tx',
-				h( 'b', { id: keepAdminsId }, __( 'Keep all administrator accounts', TD ) ),
-				h( 'span', { id: keepAdminsId + '-d' }, __( 'Administrators keep their real names, emails and passwords, so you can still sign in to the copy.', TD ) )
+				h( 'b', { id: keepAdminsId }, __( 'Keep all administrator accounts', 'estasoft-migrate' ) ),
+				h( 'span', { id: keepAdminsId + '-d' }, __( 'Administrators keep their real names, emails and password hashes, so you can still sign in to the copy. Switch this off when the copy leaves your hands.', 'estasoft-migrate' ) )
 			),
 			h( 'div.ctl', keepAdminsSw )
 		);
 		var keepAdminsList = h( 'p.sub', { style: 'margin-top:-4px' } );
 
 		var chipsBox = h( 'div.chips', { 'aria-live': 'off' } );
-		var addToggle = ui.btn( __( 'Add account', TD ), { kind: 'quiet', size: 'sm', onClick: function () {
+		var addToggle = ui.btn( __( 'Add account', 'estasoft-migrate' ), { kind: 'quiet', size: 'sm', onClick: function () {
 			var open = addPanel.hidden;
 			addPanel.hidden = ! open;
 			addToggle.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
@@ -430,21 +434,21 @@
 		addToggle.setAttribute( 'aria-expanded', 'false' );
 		addToggle.setAttribute( 'aria-controls', 'san-add-panel' );
 
-		var addInput = ui.input( { placeholder: __( 'admin or name@example.com', TD ), onKeydown: function ( ev ) {
+		var addInput = ui.input( { placeholder: __( 'admin or name@example.com', 'estasoft-migrate' ), onKeydown: function ( ev ) {
 			if ( 'Enter' === ev.key ) {
 				ev.preventDefault();
 				addTyped();
 			}
 		} } );
 		var addField = inputField(
-			__( 'Login, email or user ID', TD ),
+			__( 'Login, email or user ID', 'estasoft-migrate' ),
 			addInput,
-			h( 'div.input-group', addInput, ui.btn( __( 'Add', TD ), { onClick: addTyped } ) ),
-			__( 'Accounts that do not exist are ignored.', TD )
+			h( 'div.input-group', addInput, ui.btn( __( 'Add', 'estasoft-migrate' ), { onClick: addTyped } ) ),
+			__( 'Accounts that do not exist are ignored.', 'estasoft-migrate' )
 		);
 		var adminRows = data.admins.map( function ( a ) {
 			var nameId = ESTM.uid( 'san-adm' );
-			var btn = ui.btn( __( 'Add', TD ), { size: 'sm', kind: 'quiet', onClick: function () { toggleKept( a.login ); } } );
+			var btn = ui.btn( __( 'Add', 'estasoft-migrate' ), { size: 'sm', kind: 'quiet', onClick: function () { toggleKept( a.login ); } } );
 			btn.id = ESTM.uid( 'san-admbtn' );
 			btn.setAttribute( 'aria-labelledby', btn.id + ' ' + nameId );
 			var row = h(
@@ -458,7 +462,7 @@
 		var adminList = adminRows.length
 			? h(
 				'div.stack.tight',
-				h( 'span.lbl', __( 'Administrators of this site', TD ) ),
+				h( 'span.lbl', __( 'Administrators of this site', 'estasoft-migrate' ) ),
 				h( 'ul.stack.tight', adminRows.map( function ( a ) { return a.row; } ) )
 			)
 			: null;
@@ -467,15 +471,15 @@
 		function addTyped() {
 			var value = addInput.value.trim();
 			if ( ! value ) {
-				addField.setError( __( 'Type a login, an email address or a user ID.', TD ) );
+				addField.setError( __( 'Type a login, an email address or a user ID.', 'estasoft-migrate' ) );
 				return;
 			}
 			if ( st.keep_users.indexOf( value ) >= 0 ) {
-				addField.setError( __( 'That account is already in the list.', TD ) );
+				addField.setError( __( 'That account is already in the list.', 'estasoft-migrate' ) );
 				return;
 			}
 			if ( st.keep_users.length >= MAX_KEPT ) {
-				addField.setError( sprintf( /* translators: %d: most accounts that can be kept */ __( 'You can keep up to %d accounts.', TD ), MAX_KEPT ) );
+				addField.setError( sprintf( /* translators: %d: most accounts that can be kept */ __( 'You can keep up to %d accounts.', 'estasoft-migrate' ), MAX_KEPT ) );
 				return;
 			}
 			addField.setError( '' );
@@ -502,7 +506,7 @@
 					user,
 					h( 'button', {
 						type: 'button',
-						'aria-label': sprintf( /* translators: %s: login or email of an account */ __( 'Stop keeping %s unchanged', TD ), user ),
+						'aria-label': sprintf( /* translators: %s: login or email of an account */ __( 'Stop keeping %s unchanged', 'estasoft-migrate' ), user ),
 						onclick: function () {
 							st.keep_users.splice( i, 1 );
 							refresh();
@@ -523,10 +527,10 @@
 		skipTablesArea.addEventListener( 'change', function () { skipTablesArea.value = st.skip_tables.join( '\n' ); } );
 		var skipTablesHint = h( 'span.hint', { 'aria-live': 'off' } );
 		var skipTablesField = inputField(
-			__( 'Tables to leave unmasked', TD ),
+			__( 'Tables to leave unmasked', 'estasoft-migrate' ),
 			skipTablesArea,
 			h( 'div.stack.tight', skipTablesArea, skipTablesHint ),
-			__( 'One per line or separated by commas. Write the name without the prefix, for example usermeta.', TD )
+			__( 'One per line or separated by commas. Write the name without the prefix, for example usermeta.', 'estasoft-migrate' )
 		);
 
 		var skipColsArea = ui.textarea( { rows: 3, mono: true, placeholder: 'users.user_email\ncomments.comment_author', onInput: function () {
@@ -537,10 +541,10 @@
 		skipColsArea.addEventListener( 'change', function () { skipColsArea.value = st.skip_columns.join( '\n' ); } );
 		var skipColsHint = h( 'span.hint', { 'aria-live': 'off' } );
 		var skipColsField = inputField(
-			__( 'Columns to leave unmasked', TD ),
+			__( 'Columns to leave unmasked', 'estasoft-migrate' ),
 			skipColsArea,
 			h( 'div.stack.tight', skipColsArea, skipColsHint ),
-			__( 'One per line or separated by commas, written as table.column, for example users.user_email.', TD )
+			__( 'One per line or separated by commas, written as table.column, for example users.user_email.', 'estasoft-migrate' )
 		);
 
 		var skipSummary = ui.btn( '', { kind: 'link', onClick: function () {
@@ -554,14 +558,14 @@
 
 		var keepCard = h(
 			'section.card',
-			h( 'h2', { style: 'margin-bottom:6px' }, __( 'Keep unchanged', TD ) ),
-			h( 'p.sub', { style: 'margin-bottom:12px' }, __( 'These accounts keep their real details and passwords in the copy.', TD ) ),
+			h( 'h2', { style: 'margin-bottom:6px' }, __( 'Keep unchanged', 'estasoft-migrate' ) ),
+			h( 'p.sub', { style: 'margin-bottom:12px' }, __( 'These accounts keep their real details and passwords in the copy.', 'estasoft-migrate' ) ),
 			keepAdminsRow,
 			keepAdminsList,
 			h( 'div.row', { style: 'margin-top:8px' }, chipsBox, addToggle ),
 			addPanel,
 			h( 'hr.hr', { style: 'margin:16px 0' } ),
-			h( 'p.sub', __( 'Skip tables or columns:', TD ), ' ', skipSummary ),
+			h( 'p.sub', __( 'Skip tables or columns:', 'estasoft-migrate' ), ' ', skipSummary ),
 			skipPanel
 		);
 
@@ -575,13 +579,12 @@
 				var heading = previewBox.querySelector( 'h2' );
 				if ( heading ) {
 					heading.setAttribute( 'tabindex', '-1' );
-					heading.focus();
-					previewBox.scrollIntoView( { block: 'nearest', behavior: 'smooth' } );
+					ui.reveal( heading, previewBox );
 				}
 			}, function ( err ) {
-				ESTM.replace( previewBox, ui.card( { title: __( 'Preview of sample rows', TD ) }, ui.note( 'err', ESTM.errorMessage( err ), { title: __( 'The preview could not be made.', TD ) } ) ) );
+				ESTM.replace( previewBox, ui.card( { title: __( 'Preview of sample rows', 'estasoft-migrate' ) }, ui.note( 'err', ESTM.errorMessage( err ), { title: __( 'The preview could not be made.', 'estasoft-migrate' ) } ) ) );
 			} );
-			ESTM.replace( previewBox, ui.card( { title: __( 'Preview of sample rows', TD ) }, h( 'p.sub', ui.spinner( __( 'Reading sample rows', TD ) ), ' ', __( 'Reading a few rows from each table…', TD ) ) ) );
+			ESTM.replace( previewBox, ui.card( { title: __( 'Preview of sample rows', 'estasoft-migrate' ) }, h( 'p.sub', ui.spinner( __( 'Reading sample rows', 'estasoft-migrate' ) ), ' ', __( 'Reading a few rows from each table…', 'estasoft-migrate' ) ) ) );
 			ui.busy( previewBtn, started );
 		}
 
@@ -591,29 +594,29 @@
 				ui.note(
 					'tint',
 					[
-						__( 'This is only a preview. Fake values are different on every run, so the copy will not match this exactly.', TD ),
+						__( 'This is only a preview. Fake values are different on every run, so the copy will not match this exactly.', 'estasoft-migrate' ),
 						' ',
-						__( '“Before” shows real values from this site. They are shown to you only and are not saved anywhere.', TD ),
+						__( '“Before” shows real values from this site. They are shown to you only and are not saved anywhere.', 'estasoft-migrate' ),
 					],
-					{ title: __( 'Nothing was changed.', TD ) }
+					{ title: __( 'Nothing was changed.', 'estasoft-migrate' ) }
 				),
 			];
 			if ( res.kept > 0 ) {
 				body.push( h( 'p.sub', sprintf(
 					/* translators: %s: number of accounts */
-					_n( '%s account is kept unchanged and is left out of this preview.', '%s accounts are kept unchanged and are left out of this preview.', res.kept, TD ),
+					_n( '%s account is kept unchanged and is left out of this preview.', '%s accounts are kept unchanged and are left out of this preview.', res.kept, 'estasoft-migrate' ),
 					ESTM.fmt.number( res.kept )
 				) ) );
 			}
 			if ( ! tables.length ) {
 				body.push( ui.empty(
-					__( 'No sample row would change', TD ),
-					__( 'With these settings no row that was looked at is masked. Turn on at least one rule, or check which accounts and tables you keep unchanged.', TD )
+					__( 'No sample row would change', 'estasoft-migrate' ),
+					__( 'With these settings no row that was looked at is masked. Turn on at least one rule, or check which accounts and tables you keep unchanged.', 'estasoft-migrate' )
 				) );
 			}
 			return h(
 				'section.card',
-				h( 'div.card-h', h( 'h2', __( 'Preview of sample rows', TD ) ), ui.btn( __( 'Close preview', TD ), { kind: 'quiet', size: 'sm', onClick: function () {
+				h( 'div.card-h', h( 'h2', __( 'Preview of sample rows', 'estasoft-migrate' ) ), ui.btn( __( 'Close preview', 'estasoft-migrate' ), { kind: 'quiet', size: 'sm', onClick: function () {
 					ESTM.replace( previewBox );
 					previewBtn.focus();
 				} } ) ),
@@ -627,7 +630,7 @@
 				h( 'div.row', h( 'h3.mono', t.table ), t.dropped
 					? ui.badge( sprintf(
 						/* translators: %s: number of rows */
-						_n( '%s row is left out of the copy', '%s rows are left out of the copy', t.dropped, TD ),
+						_n( '%s row is left out of the copy', '%s rows are left out of the copy', t.dropped, 'estasoft-migrate' ),
 						ESTM.fmt.number( t.dropped )
 					), 'warn' )
 					: null ),
@@ -636,7 +639,7 @@
 						'div.san-ex',
 						h( 'span.cell-sub', sprintf(
 							/* translators: %d: example number */
-							__( 'Example %d', TD ),
+							__( 'Example %d', 'estasoft-migrate' ),
 							i + 1
 						) ),
 						ex.changed.map( function ( col ) {
@@ -645,7 +648,7 @@
 							return h(
 								'div.stack.tight',
 								h( 'span.san-col', col ),
-								h( 'div.diff', h( 'del', before ? clip( before, 240 ) : __( '(empty)', TD ) ), h( 'ins', after ? clip( after, 240 ) : __( '(empty)', TD ) ) )
+								h( 'div.diff', h( 'del', before ? clip( before, 240 ) : __( '(empty)', 'estasoft-migrate' ) ), h( 'ins', after ? clip( after, 240 ) : __( '(empty)', 'estasoft-migrate' ) ) )
 							);
 						} )
 					);
@@ -656,8 +659,9 @@
 		/* ---------------- Save */
 
 		var savebarText = h( 'span', { role: 'status' } );
-		var savebarSave = ui.btn( __( 'Save settings', TD ), { onClick: save } );
-		var savebarUndo = ui.btn( __( 'Discard changes', TD ), { kind: 'quiet', onClick: function () {
+		var savebarDirty = null;
+		var savebarSave = ui.btn( __( 'Save settings', 'estasoft-migrate' ), { onClick: save } );
+		var savebarUndo = ui.btn( __( 'Discard changes', 'estasoft-migrate' ), { kind: 'quiet', onClick: function () {
 			st = fromSaved( clone( lastSaved ) );
 			syncAreas();
 			refresh();
@@ -671,7 +675,7 @@
 				savedSig = signature( st );
 				syncAreas();
 				refresh();
-				ui.toast( __( 'Sanitizer settings saved.', TD ) );
+				ui.toast( __( 'Sanitizer settings saved.', 'estasoft-migrate' ) );
 			}, function ( err ) {
 				ui.toast( ESTM.errorMessage( err ), 'err' );
 			} );
@@ -707,12 +711,12 @@
 			var lines = [
 				sprintf(
 					/* translators: %s: name of a sanitizer profile */
-					__( 'Sanitized copy with the “%s” profile', TD ),
+					__( 'Sanitized copy with the “%s” profile', 'estasoft-migrate' ),
 					profiles[ st.profile ].name
 				),
 				sprintf(
 					/* translators: 1: number of masking rules that are on, 2: number of rules */
-					__( '%1$d of %2$d masking rules on', TD ),
+					__( '%1$d of %2$d masking rules on', 'estasoft-migrate' ),
 					count( st.rules, ruleIds ),
 					ruleIds.length
 				),
@@ -721,38 +725,38 @@
 			lines.push( safe.length
 				? sprintf(
 					/* translators: %s: list of staging safety switches */
-					__( 'Staging safety: %s', TD ),
+					__( 'Staging safety: %s', 'estasoft-migrate' ),
 					listText( safe )
 				)
-				: __( 'No staging safety switches', TD ) );
+				: __( 'No staging safety switches', 'estasoft-migrate' ) );
 			var kept = [];
 			if ( st.keep_admins ) {
-				kept.push( __( 'all administrators', TD ) );
+				kept.push( __( 'all administrators', 'estasoft-migrate' ) );
 			}
 			kept = kept.concat( st.keep_users );
 			if ( kept.length ) {
 				lines.push( sprintf(
 					/* translators: %s: list of accounts that stay unchanged */
-					__( 'Kept unchanged: %s', TD ),
+					__( 'Kept unchanged: %s', 'estasoft-migrate' ),
 					listText( kept )
 				) );
 			}
 			if ( st.skip_tables.length ) {
 				lines.push( sprintf(
 					/* translators: %s: list of tables */
-					__( 'Tables not masked: %s', TD ),
+					__( 'Tables not masked: %s', 'estasoft-migrate' ),
 					listText( st.skip_tables )
 				) );
 			}
 			if ( st.skip_columns.length ) {
 				lines.push( sprintf(
 					/* translators: %s: list of columns */
-					__( 'Columns not masked: %s', TD ),
+					__( 'Columns not masked: %s', 'estasoft-migrate' ),
 					listText( st.skip_columns )
 				) );
 			}
 			lines.push( protection );
-			lines.push( __( 'This site is not changed. Values are masked while the copy is written.', TD ) );
+			lines.push( __( 'This site is not changed. Values are masked while the copy is written.', 'estasoft-migrate' ) );
 			return lines;
 		}
 
@@ -761,28 +765,28 @@
 			var dlg;
 			var pw1 = ui.password( {} );
 			var pw2 = ui.password( {} );
-			var pw1Field = inputField( __( 'Password', TD ), pw1.input, pw1, __( 'Anyone who opens the copy needs it. A lost password cannot be recovered.', TD ) );
-			var pw2Field = inputField( __( 'Repeat the password', TD ), pw2.input, pw2 );
+			var pw1Field = inputField( __( 'Password', 'estasoft-migrate' ), pw1.input, pw1, __( 'Anyone who opens the copy needs it. A lost password cannot be recovered.', 'estasoft-migrate' ) );
+			var pw2Field = inputField( __( 'Repeat the password', 'estasoft-migrate' ), pw2.input, pw2 );
 			var pwBox = h( 'div.stack.tight', pw1Field, pw2Field );
-			var nameInput = ui.input( { placeholder: __( 'For example: staging copy for the agency', TD ), onKeydown: function ( ev ) {
+			var nameInput = ui.input( { placeholder: __( 'For example: staging copy for the agency', 'estasoft-migrate' ), onKeydown: function ( ev ) {
 				if ( 'Enter' === ev.key ) {
 					ev.preventDefault();
 					submit();
 				}
 			} } );
 			var nameField = inputField(
-				[ __( 'Name', TD ), h( 'span.muted', ' ' + __( '(optional)', TD ) ) ],
+				[ __( 'Name', 'estasoft-migrate' ), h( 'span.muted', ' ' + __( '(optional)', 'estasoft-migrate' ) ) ],
 				nameInput,
 				null,
-				__( 'Helps you find this copy in Packages.', TD )
+				__( 'Helps you find this copy in Packages.', 'estasoft-migrate' )
 			);
 
 			var choices = [
-				{ id: 'password', title: __( 'Protect with a password', TD ), text: __( 'The copy is encrypted. You need the password to open it, wherever you take it.', TD ) },
-				{ id: 'sitekey', title: __( 'Protect with this site’s key only', TD ), text: __( 'The copy is encrypted without a password. Only this site can open it again, so it is not for handing to someone else.', TD ) },
+				{ id: 'password', title: __( 'Protect with a password', 'estasoft-migrate' ), text: __( 'The copy is encrypted. You need the password to open it, wherever you take it.', 'estasoft-migrate' ) },
+				{ id: 'sitekey', title: __( 'Protect with this site’s key only', 'estasoft-migrate' ), text: __( 'The copy is encrypted without a password. Only this site can open it again, so it is not for handing to someone else.', 'estasoft-migrate' ) },
 			];
 			if ( ! encryptRequired ) {
-				choices.push( { id: 'none', title: __( 'No protection', TD ), text: __( 'The file is not encrypted. Anyone who gets the file can read it.', TD ) } );
+				choices.push( { id: 'none', title: __( 'No protection', 'estasoft-migrate' ), text: __( 'The file is not encrypted. Anyone who gets the file can read it.', 'estasoft-migrate' ) } );
 			}
 			var optEls = choices.map( function ( c ) {
 				var el = h( 'button', { type: 'button', class: 'opt', 'aria-pressed': 'false', onclick: function () { choose( c.id ); } }, h( 'span.t', c.title ), h( 'span.d', c.text ) );
@@ -813,12 +817,12 @@
 					pw1Field.setError( '' );
 					pw2Field.setError( '' );
 					if ( ! pw1.input.value ) {
-						pw1Field.setError( __( 'Enter a password, or choose another way to protect the copy.', TD ) );
+						pw1Field.setError( __( 'Enter a password, or choose another way to protect the copy.', 'estasoft-migrate' ) );
 						pw1.input.focus();
 						return;
 					}
 					if ( pw1.input.value !== pw2.input.value ) {
-						pw2Field.setError( __( 'The two passwords are not the same.', TD ) );
+						pw2Field.setError( __( 'The two passwords are not the same.', 'estasoft-migrate' ) );
 						pw2.input.focus();
 						return;
 					}
@@ -830,18 +834,18 @@
 					input.label = label;
 				}
 				var protectionLine = 'password' === mode
-					? __( 'Encrypted with a password', TD )
-					: ( 'sitekey' === mode ? __( 'Encrypted with this site’s key (only this site can open it)', TD ) : __( 'Not encrypted', TD ) );
+					? __( 'Encrypted with a password', 'estasoft-migrate' )
+					: ( 'sitekey' === mode ? __( 'Encrypted with this site’s key (only this site can open it)', 'estasoft-migrate' ) : __( 'Not encrypted', 'estasoft-migrate' ) );
 				var plan = {
 					mode: 'sanitize',
 					type: 'export',
 					input: input,
-					title: __( 'Create sanitized copy', TD ),
+					title: __( 'Create sanitized copy', 'estasoft-migrate' ),
 					lines: planLines( protectionLine ),
 					back: 'sanitizer',
 				};
 				if ( ! ESTM.draft.set( 'plan', plan ) ) {
-					ui.toast( __( 'Your browser would not keep the plan for the next step. Allow site data for this page and try again.', TD ), 'err' );
+					ui.toast( __( 'Your browser would not keep the plan for the next step. Allow site data for this page and try again.', 'estasoft-migrate' ), 'err' );
 					return;
 				}
 				ESTM.draft.set( 'sanitizer-form', payload() );
@@ -852,17 +856,17 @@
 
 			var noRules = 0 === count( st.rules, ruleIds );
 			dlg = ui.dialog( {
-				title: __( 'Create a sanitized copy', TD ),
+				title: __( 'Create a sanitized copy', 'estasoft-migrate' ),
 				body: [
-					h( 'p', __( 'The copy is written as a package. This site is not changed: values are masked while the package is written.', TD ) ),
-					noRules ? ui.note( 'warn', __( 'Every masking rule is off, so this copy would contain real personal data.', TD ) ) : null,
-					h( 'div.stack.tight', { role: 'group', 'aria-label': __( 'How to protect the copy', TD ) }, optEls.map( function ( o ) { return o.el; } ) ),
+					h( 'p', __( 'The copy is written as a package. This site is not changed: values are masked while the package is written.', 'estasoft-migrate' ) ),
+					noRules ? ui.note( 'warn', __( 'Every masking rule is off, so this copy would contain real personal data.', 'estasoft-migrate' ) ) : null,
+					h( 'div.stack.tight', { role: 'group', 'aria-label': __( 'How to protect the copy', 'estasoft-migrate' ) }, optEls.map( function ( o ) { return o.el; } ) ),
 					pwBox,
 					nameField,
 				],
 				actions: [
-					ui.btn( __( 'Cancel', TD ), { kind: 'quiet', onClick: function () { dlg.close( false ); copyBtn.focus(); } } ),
-					ui.btn( __( 'Continue to checks', TD ), { kind: 'primary', onClick: submit } ),
+					ui.btn( __( 'Cancel', 'estasoft-migrate' ), { kind: 'quiet', onClick: function () { dlg.close( false ); copyBtn.focus(); } } ),
+					ui.btn( __( 'Continue to checks', 'estasoft-migrate' ), { kind: 'primary', onClick: submit } ),
 				],
 			} );
 			pw1.input.addEventListener( 'keydown', function ( ev ) {
@@ -894,13 +898,13 @@
 
 			ESTM.replace( rulesSummary, sprintf(
 				/* translators: 1: number of rules that are on, 2: number of rules */
-				__( '%1$d of %2$d rules on', TD ),
+				__( '%1$d of %2$d rules on', 'estasoft-migrate' ),
 				count( st.rules, ruleIds ),
 				ruleIds.length
 			) );
 			ESTM.replace( safetySummary, sprintf(
 				/* translators: 1: number of switches that are on, 2: number of switches */
-				__( '%1$d of %2$d on', TD ),
+				__( '%1$d of %2$d on', 'estasoft-migrate' ),
 				count( st.safety, safeIds ),
 				safeIds.length
 			) );
@@ -909,13 +913,13 @@
 			keepAdminsList.hidden = ! ( st.keep_admins && adminLogins.length );
 			ESTM.replace( keepAdminsList, sprintf(
 				/* translators: %s: logins of administrator accounts */
-				__( 'Kept because they are administrators: %s', TD ),
+				__( 'Kept because they are administrators: %s', 'estasoft-migrate' ),
 				listText( adminLogins )
 			) );
 			drawChips();
 			adminRows.forEach( function ( a ) {
 				var kept = st.keep_users.indexOf( a.login ) >= 0;
-				a.btn.textContent = st.keep_admins ? __( 'Kept', TD ) : ( kept ? __( 'Remove', TD ) : __( 'Add', TD ) );
+				a.btn.textContent = st.keep_admins ? __( 'Kept', 'estasoft-migrate' ) : ( kept ? __( 'Remove', 'estasoft-migrate' ) : __( 'Add', 'estasoft-migrate' ) );
 				a.btn.disabled = st.keep_admins;
 			} );
 
@@ -924,14 +928,14 @@
 			ESTM.replace( skipTablesHint, tProblems.length
 				? sprintf(
 					/* translators: %s: names that were typed */
-					__( 'Not a table on this site: %s. It is still saved.', TD ),
+					__( 'Not a table on this site: %s. It is still saved.', 'estasoft-migrate' ),
 					listText( tProblems )
 				)
 				: null );
 			ESTM.replace( skipColsHint, cProblems.length
 				? sprintf(
 					/* translators: %s: names that were typed */
-					__( 'Not a column of this site, written as table.column: %s. It is still saved.', TD ),
+					__( 'Not a column of this site, written as table.column: %s. It is still saved.', 'estasoft-migrate' ),
 					listText( cProblems )
 				)
 				: null );
@@ -939,19 +943,23 @@
 			skipSummary.textContent = skipTotal
 				? sprintf(
 					/* translators: 1: number of tables, 2: number of columns */
-					__( '%1$d tables, %2$d columns', TD ),
+					__( '%1$d tables, %2$d columns', 'estasoft-migrate' ),
 					st.skip_tables.length,
 					st.skip_columns.length
 				)
-				: __( 'none selected', TD );
+				: __( 'none selected', 'estasoft-migrate' );
 
 			var dirty = isDirty();
 			savebar.classList.toggle( 'dirty', dirty );
 			savebarUndo.hidden = ! dirty;
 			savebarSave.classList.toggle( 'btn-primary', dirty );
-			ESTM.replace( savebarText, dirty
-				? h( 'b', __( 'You have unsaved changes.', TD ) )
-				: h( 'span.sub', __( 'All changes are saved.', TD ) ) );
+			// Rewritten only when the state flips, so a screen reader does not repeat it at every keystroke.
+			if ( savebarDirty !== dirty ) {
+				savebarDirty = dirty;
+				ESTM.replace( savebarText, dirty
+					? h( 'b', __( 'You have unsaved changes.', 'estasoft-migrate' ) )
+					: h( 'span.sub', __( 'All changes are saved.', 'estasoft-migrate' ) ) );
+			}
 		}
 
 		/* ---------------- Draw */

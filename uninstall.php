@@ -10,33 +10,48 @@
 
 defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
-wp_clear_scheduled_hook( 'estasoft_migrate_daily' );
-wp_unschedule_hook( 'estasoft_migrate_run_job' );
+/**
+ * Stop what is scheduled and, if the person asked for it, remove the plugin's data.
+ *
+ * @return void
+ */
+function estasoft_migrate_uninstall() {
+	global $wpdb;
 
-$estm_settings = get_option( 'estasoft_migrate_settings', array() );
-if ( ! is_array( $estm_settings ) || empty( $estm_settings['delete_on_uninstall'] ) ) {
-	return;
-}
+	wp_clear_scheduled_hook( 'estasoft_migrate_daily' );
+	wp_unschedule_hook( 'estasoft_migrate_run_job' );
 
-global $wpdb;
-
-// Packages and snapshots.
-if ( ! empty( $estm_settings['storage_token'] ) ) {
-	$estm_uploads = wp_upload_dir( null, false );
-	$estm_dir     = rtrim( $estm_uploads['basedir'], '/\\' ) . '/estasoft-migrate-' . $estm_settings['storage_token'];
-	if ( is_dir( $estm_dir ) ) {
-		$estm_items = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $estm_dir, FilesystemIterator::SKIP_DOTS ), RecursiveIteratorIterator::CHILD_FIRST );
-		foreach ( $estm_items as $estm_item ) {
-			$estm_item->isDir() ? rmdir( $estm_item->getPathname() ) : wp_delete_file( $estm_item->getPathname() ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_rmdir
-		}
-		rmdir( $estm_dir ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_rmdir
+	$settings = get_option( 'estasoft_migrate_settings', array() );
+	if ( ! is_array( $settings ) || empty( $settings['delete_on_uninstall'] ) ) {
+		return;
 	}
+
+	// Packages and snapshots.
+	if ( ! empty( $settings['storage_token'] ) ) {
+		$uploads = wp_upload_dir( null, false );
+		$dir     = rtrim( $uploads['basedir'], '/\\' ) . '/estasoft-migrate-' . $settings['storage_token'];
+		if ( is_dir( $dir ) ) {
+			$items = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $dir, FilesystemIterator::SKIP_DOTS ), RecursiveIteratorIterator::CHILD_FIRST );
+			foreach ( $items as $item ) {
+				$item->isDir() ? rmdir( $item->getPathname() ) : wp_delete_file( $item->getPathname() ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_rmdir
+			}
+			rmdir( $dir ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_rmdir
+		}
+	}
+
+	// Tables and options.
+	foreach ( array( 'jobs', 'logs', 'baselines' ) as $short ) {
+		$wpdb->query( 'DROP TABLE IF EXISTS `' . $wpdb->prefix . 'estasoft_' . $short . '`' ); // phpcs:ignore WordPress.DB, PluginCheck.Security.DirectDB.UnescapedDBParameter -- A table of this plugin; $short comes from the fixed list above.
+	}
+	delete_option( 'estasoft_migrate_settings' );
+	delete_option( 'estasoft_migrate_block_mail' );
+	$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$wpdb->prepare(
+			"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s",
+			$wpdb->esc_like( '_transient_estm_' ) . '%',
+			$wpdb->esc_like( '_transient_timeout_estm_' ) . '%'
+		)
+	);
 }
 
-// Tables and options.
-foreach ( array( 'jobs', 'logs', 'baselines' ) as $estm_short ) {
-	$wpdb->query( 'DROP TABLE IF EXISTS `' . $wpdb->prefix . 'estasoft_' . $estm_short . '`' ); // phpcs:ignore WordPress.DB
-}
-delete_option( 'estasoft_migrate_settings' );
-delete_option( 'estasoft_migrate_block_mail' );
-$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '\_transient\_estm\_%' OR option_name LIKE '\_transient\_timeout\_estm\_%'" ); // phpcs:ignore WordPress.DB
+estasoft_migrate_uninstall();

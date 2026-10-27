@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate\Engine;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * An import, a pull or a real search and replace changes this site's tables. Anything that reads the

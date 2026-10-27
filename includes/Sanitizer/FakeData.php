@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate\Sanitizer;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Same real value in, same fake value out (within one salt), so joins between tables keep working:
@@ -205,7 +205,7 @@ final class FakeData {
 	 * @return string
 	 */
 	public function username( $real ) {
-		return 'user' . substr( $this->digest( 'login', $real ), 0, 6 );
+		return 'user' . substr( $this->digest( 'login', $real ), 0, 10 );
 	}
 
 	/**
@@ -219,9 +219,10 @@ final class FakeData {
 		if ( 1 === preg_match( '/@example\.invalid$/i', $real ) ) {
 			return $real;
 		}
-		// Digits only, so the result looks like user4821@example.invalid.
-		$n = hexdec( substr( $this->digest( 'email', $real ), 0, 8 ) ) % 100000;
-		return 'user' . str_pad( (string) $n, 5, '0', STR_PAD_LEFT ) . '@example.invalid';
+		// Digits only, so the result looks like user0000004821@example.invalid. Ten digits keep two people from
+		// getting the same address (five digits gave about one clash in a hundred customers).
+		$n = hexdec( substr( $this->digest( 'email', $real ), 0, 12 ) ) % 10000000000;
+		return 'user' . str_pad( (string) $n, 10, '0', STR_PAD_LEFT ) . '@example.invalid';
 	}
 
 	/**

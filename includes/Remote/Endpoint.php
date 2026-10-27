@@ -58,12 +58,14 @@ class Endpoint {
 	 */
 	public function serve() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput
-		$action = preg_replace( '/[^a-z_]/', '', strtolower( (string) wp_unslash( $_GET['estm_remote'] ) ) );
+		$given  = wp_unslash( $_GET['estm_remote'] );
+		$action = is_scalar( $given ) ? preg_replace( '/[^a-z_]/', '', strtolower( (string) $given ) ) : '';
 
 		// Other plugins sometimes print notices; they must not end up inside the signed answer.
 		ob_start();
 
-		if ( 'POST' !== ( $_SERVER['REQUEST_METHOD'] ?? '' ) ) {
+		$method = isset( $_SERVER['REQUEST_METHOD'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) : '';
+		if ( 'POST' !== $method ) {
 			$this->send(
 				405,
 				array( 'Content-Type' => 'application/json' ),

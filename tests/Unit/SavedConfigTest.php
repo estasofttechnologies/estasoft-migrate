@@ -56,4 +56,14 @@ class SavedConfigTest extends TestCase {
 		$this->assertSame( array( 'a@x.test' ), $config['keep_users'] );
 		$this->assertFalse( $config['keep_admins'] );
 	}
+
+	public function test_administrators_are_only_kept_by_default_in_a_staging_copy() {
+		$this->assertTrue( \Estasoft\Migrate\Sanitizer\Profiles::build_config( 'staging' )['keep_admins'] );
+		$this->assertFalse( \Estasoft\Migrate\Sanitizer\Profiles::build_config( 'dev' )['keep_admins'], 'A developer handoff leaves your hands.' );
+		$this->assertFalse( \Estasoft\Migrate\Sanitizer\Profiles::build_config( 'gdpr' )['keep_admins'] );
+		$this->assertTrue( \Estasoft\Migrate\Sanitizer\Profiles::build_config( 'gdpr', array( 'keep_admins' => true ) )['keep_admins'], 'A choice made on purpose wins.' );
+		$this->assertFalse( SavedConfig::defaults( 'gdpr' )['keep_admins'] );
+		$this->assertFalse( SavedConfig::clean( array( 'profile' => 'dev' ) )['keep_admins'] );
+		$this->assertTrue( SavedConfig::clean( array( 'profile' => 'staging' ) )['keep_admins'] );
+	}
 }

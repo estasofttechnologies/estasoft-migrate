@@ -50,14 +50,18 @@ jobs:
       - run: composer test
 
   integration:
-    name: Integration tests (${{ matrix.db }})
+    name: Integration tests (WordPress ${{ matrix.wp }}, PHP ${{ matrix.php }}, ${{ matrix.db }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
-          - db: mysql:8.0
-          - db: mariadb:10.11
+          # The oldest combination the plugin header promises.
+          - { wp: '5.8', php: '7.4', db: 'mysql:5.7' }
+          - { wp: '6.4', php: '8.1', db: 'mariadb:10.6' }
+          # The newest.
+          - { wp: 'latest', php: '8.3', db: 'mysql:8.0' }
+          - { wp: 'latest', php: '8.3', db: 'mariadb:10.11' }
     services:
       database:
         image: ${{ matrix.db }}
@@ -75,7 +79,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: ${{ matrix.php }}
           extensions: mbstring, sodium, mysqli, zlib
           tools: composer, wp-cli
           coverage: none
@@ -85,13 +89,18 @@ jobs:
           mysql -h 127.0.0.1 -uroot -proot -e "CREATE DATABASE wp_test; CREATE DATABASE wp_dest;"
           mkdir -p "$RUNNER_TEMP/wp"
           cd "$RUNNER_TEMP/wp"
-          wp core download --quiet
+          if [ "${{ matrix.wp }}" = "latest" ]; then
+            wp core download --quiet
+          else
+            wp core download --quiet --version="${{ matrix.wp }}"
+          fi
           wp config create --dbname=wp_test --dbuser=root --dbpass=root --dbhost=127.0.0.1 --skip-check
           wp core install --url=http://localhost --title=Test --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email
+          wp core version
           echo "ESTM_WP_ROOT=$RUNNER_TEMP/wp" >> "$GITHUB_ENV"
           echo "ESTM_DEST_DB=wp_dest" >> "$GITHUB_ENV"
       - name: Integration tests
-        run: bin/ci-run.sh "Integration tests (${{ matrix.db }})" vendor/bin/phpunit -c phpunit-integration.xml.dist
+        run: bin/ci-run.sh "Integration tests (WordPress ${{ matrix.wp }}, ${{ matrix.db }})" vendor/bin/phpunit -c phpunit-integration.xml.dist
 
   scripts:
     name: JavaScript syntax

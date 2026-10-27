@@ -7,7 +7,7 @@
 
 namespace Estasoft\Migrate\Rest;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Plain-language message, a stable code and an HTTP status.

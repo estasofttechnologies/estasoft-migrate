@@ -7,7 +7,7 @@
  * @package Estasoft\Migrate
  */
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 spl_autoload_register(
 	static function ( $class ) {

@@ -10,7 +10,6 @@
 defined( 'ABSPATH' ) || exit;
 ?>
 <div class="wrap estm-wrap">
-	<h1 class="screen-reader-text"><?php echo esc_html( $screen['title'] ); ?></h1>
 	<hr class="wp-header-end">
 
 	<div class="estm" data-screen="<?php echo esc_attr( '' === $id ? 'overview' : $id ); ?>">

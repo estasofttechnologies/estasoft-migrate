@@ -34,11 +34,16 @@ class JobParamsTest extends TestCase {
 	}
 
 	public function test_export_keeps_the_password_sealed_not_in_clear_text() {
-		list( , $params ) = JobParams::build( 'export', array( 'password' => 'hunter2', 'label' => 'Before the redesign' ), $this->rig->ctx );
+		list( , $params ) = JobParams::build( 'export', array( 'password' => 'hunter2-long', 'label' => 'Before the redesign' ), $this->rig->ctx );
 		$this->assertArrayNotHasKey( 'password', $params );
 		$this->assertArrayNotHasKey( 'passphrase', $params );
-		$this->assertStringNotContainsString( 'hunter2', json_encode( $params ) );
-		$this->assertSame( 'hunter2', Secrets::open( $params['passphrase_enc'], $this->rig->ctx->secret ) );
+		$this->assertStringNotContainsString( 'hunter2-long', json_encode( $params ) );
+		$this->assertSame( 'hunter2-long', Secrets::open( $params['passphrase_enc'], $this->rig->ctx->secret ) );
+	}
+
+	public function test_a_package_password_must_have_at_least_eight_characters() {
+		$this->expectException( \InvalidArgumentException::class );
+		JobParams::build( 'export', array( 'password' => 'short' ), $this->rig->ctx );
 	}
 
 	public function test_sanitize_makes_a_sanitized_export() {

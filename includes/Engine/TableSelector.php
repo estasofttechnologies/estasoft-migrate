@@ -10,7 +10,7 @@ namespace Estasoft\Migrate\Engine;
 use Estasoft\Migrate\Db\Database;
 use Estasoft\Migrate\Db\Identifier;
 
-defined( 'ABSPATH' ) || defined( 'ESTASOFT_MIGRATE_TESTING' ) || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Site tables only: names that start with the table prefix, minus the plugin's own tables.

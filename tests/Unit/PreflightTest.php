@@ -99,6 +99,35 @@ class PreflightTest extends TestCase {
 		$this->assertSame( 'pass', $this->find( $result, 'storage' )['status'] );
 	}
 
+	public function test_the_package_folder_check_says_what_a_stranger_could_do() {
+		$rig                      = $this->site();
+		$rig->storage->public_url = 'https://example.test/uploads/estasoft-migrate-abc';
+		$checker                  = new Checker( $rig->ctx, $this->healthy() );
+
+		// The web server ignores the guard files and hands the file out: a warning that says what to do.
+		$rig->storage->http = function ( $url ) use ( $rig ) {
+			return array( 'code' => 200, 'body' => file_get_contents( $rig->storage->dir() . '/' . basename( $url ) ) );
+		};
+		$found = $this->find( $checker->run( array( 'mode' => 'export' ) ), 'storage' );
+		$this->assertSame( 'warn', $found['status'] );
+		$this->assertStringContainsString( 'can be downloaded', $found['title'] );
+
+		// The host has since denied the folder: the next check shows it as protected.
+		$rig->storage->http = static function () {
+			return array( 'code' => 403, 'body' => 'Forbidden' );
+		};
+		$found = $this->find( $checker->run( array( 'mode' => 'export' ) ), 'storage' );
+		$this->assertSame( 'pass', $found['status'] );
+		$this->assertStringContainsString( 'protected', $found['title'] );
+
+		// The test could not be made: the check says so instead of claiming protection.
+		$rig->storage->http = static function () {
+			return null;
+		};
+		$found = $this->find( $checker->run( array( 'mode' => 'export' ) ), 'storage' );
+		$this->assertStringNotContainsString( 'protected', $found['title'] );
+	}
+
 	public function test_old_php_and_tiny_memory_block_the_run() {
 		$rig    = $this->site();
 		$result = ( new Checker( $rig->ctx, $this->healthy( array( 'php' => '7.2.5', 'memory' => 32 * 1048576 ) ) ) )->run( array( 'mode' => 'export' ) );
