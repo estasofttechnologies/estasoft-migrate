@@ -220,13 +220,17 @@ class MysqlRoundtripTest extends TestCase {
 		$this->dest->set_url( $this->url_a );
 		$this->dest->run( 'import', array( 'package_id' => $this->export() ) );
 		$p = $wpdb->prefix;
+		// MySQL 8 prints "CHARACTER SET x" for a column whose collation was written out in the CREATE
+		// statement and leaves it out for a column that inherited the table's default. A table restored
+		// from a mysqldump file behaves the same way. The character set and the collation are the same
+		// either way, so that wording is not compared.
+		$plain = static function ( $definition ) {
+			return preg_replace( '/ CHARACTER SET [a-z0-9_]+ (COLLATE [a-z0-9_]+)/i', ' $1', $definition );
+		};
 		foreach ( array( 'estm_blob', 'estm_multi', 'estm_nopk', 'posts', 'postmeta' ) as $t ) {
-			$before = $wpdb->get_row( "SHOW CREATE TABLE `{$p}{$t}`", ARRAY_N )[1];
-			$after  = $this->dest_wpdb->get_row( "SHOW CREATE TABLE `{$p}{$t}`", ARRAY_N )[1];
-			$last = static function ( $definition ) {
-				return substr( $definition, (int) strrpos( $definition, "\n" ) + 1 );
-			};
-			$this->assertSame( $before, $after, "Table definition of {$t} changed.\nSource options: " . $last( $before ) . "\nDestination options: " . $last( $after ) . "\n" );
+			$before = $plain( $wpdb->get_row( "SHOW CREATE TABLE `{$p}{$t}`", ARRAY_N )[1] );
+			$after  = $plain( $this->dest_wpdb->get_row( "SHOW CREATE TABLE `{$p}{$t}`", ARRAY_N )[1] );
+			$this->assertSame( $before, $after, "Table definition of {$t} changed." );
 		}
 	}
 
