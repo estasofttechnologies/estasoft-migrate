@@ -328,9 +328,10 @@ class JobRunner {
 		if ( ! $job || Job::FAILED !== $job->status ) {
 			return false;
 		}
+		$retried = (int) ( $job->state['_retried'] ?? 0 ) + 1;
 		unset( $job->state['_error'] );
 		$job->state['_failures'] = 0;
-		$job->state['_retried']  = (int) ( $job->state['_retried'] ?? 0 ) + 1;
+		$job->state['_retried']  = $retried;
 		$job->status             = $job->started_gmt ? Job::RUNNING : Job::QUEUED;
 		$job->finished_gmt       = null;
 		$job->message            = __( 'Retrying from the last saved position.', 'estasoft-migrate' );
