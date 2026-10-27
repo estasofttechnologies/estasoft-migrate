@@ -27,7 +27,7 @@ jobs:
       - name: PHP syntax
         run: composer lint
       - name: WordPress coding standards
-        run: composer cs
+        run: bin/ci-run.sh "Coding standards" vendor/bin/phpcs -q --report=emacs
       - name: PHPStan
         run: bin/ci-run.sh "PHPStan" composer stan
 
