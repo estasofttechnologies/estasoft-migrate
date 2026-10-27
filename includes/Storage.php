@@ -202,7 +202,7 @@ class Storage {
 		if ( '' !== $this->public_url ) {
 			return rtrim( $this->public_url, '/' );
 		}
-		if ( ! function_exists( 'wp_upload_dir' ) || null !== $this->dir && null === $this->settings ) {
+		if ( ! function_exists( 'wp_upload_dir' ) || ( null !== $this->dir && null === $this->settings ) ) {
 			return '';
 		}
 		$uploads = wp_upload_dir( null, false );
