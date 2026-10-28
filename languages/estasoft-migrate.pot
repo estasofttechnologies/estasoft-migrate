@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-28T11:31:52+00:00\n"
+"POT-Creation-Date: 2026-10-28T11:39:00+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: estasoft-migrate\n"
@@ -1424,7 +1424,7 @@ msgid "The answer was not signed with your connection key. It may not come from 
 msgstr ""
 
 #: includes/Remote/Client.php:181
-msgid "The other site is not accepting migrations yet. On that site open Estasoft Migration → Settings and turn on “Accept incoming migrations”."
+msgid "The other site is not accepting migrations. It may never have been switched on, or it switched itself off after a while without a migration. On that site open Estasoft Migration → Settings and turn on “Accept incoming migrations”."
 msgstr ""
 
 #: includes/Remote/Client.php:183
