@@ -178,7 +178,7 @@ class Client {
 	private function message_for( $code, array $data ) {
 		switch ( $code ) {
 			case 'estm_off':
-				return __( 'The other site is not accepting migrations yet. On that site open Estasoft Migration → Settings and turn on “Accept incoming migrations”.', 'estasoft-migrate' );
+				return __( 'The other site is not accepting migrations. It may never have been switched on, or it switched itself off after a while without a migration. On that site open Estasoft Migration → Settings and turn on “Accept incoming migrations”.', 'estasoft-migrate' );
 			case 'estm_bad_key':
 				return __( 'The other site did not accept the connection key. Copy the key again from its Settings screen.', 'estasoft-migrate' );
 			case 'estm_bad_sig':
