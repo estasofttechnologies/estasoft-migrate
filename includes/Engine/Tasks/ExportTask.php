@@ -308,6 +308,7 @@ class ExportTask extends Task {
 				$name  = $entry['name'];
 				$pk    = $db->primary_key( $name );
 				$cols  = $db->columns( $name );
+				$names = $db->writable_columns( $name );
 				$pipe->begin_table( $entry['logical'], $cols, $pk );
 
 				if ( ! $entry['started'] ) {
@@ -318,13 +319,13 @@ class ExportTask extends Task {
 							'name'     => $name,
 							'logical'  => $entry['logical'],
 							'ddl'      => $ddl,
-							'columns'  => array_keys( $cols ),
+							'columns'  => $names,
 							'pk'       => $pk,
 							'rows_est' => $entry['rows_est'],
 						)
 					);
 					if ( ! $pk && $entry['rows_est'] > 0 ) {
-						$ctx->log( 'warning', sprintf( 'Table %s has no primary key, so it is read with a slower method and rows changed during the export may be missed.', $name ) );
+						$ctx->log( 'warning', sprintf( 'Table %s has no primary key and no unique key of columns that are never NULL, so it is read with a slower method and rows changed during the export may be missed.', $name ) );
 					}
 					$entry['started']  = true;
 					$state['baseline'] = Baseline::start( $pk );
@@ -372,7 +373,7 @@ class ExportTask extends Task {
 					}
 				}
 
-				$json = RowCodec::encode( $name, array_keys( $cols ), $out );
+				$json = RowCodec::encode( $name, $names, $out );
 				$writer->raw_frame( 'R', $json );
 
 				// Move the cursor only after the block is safely written.

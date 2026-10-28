@@ -124,12 +124,15 @@ class JobRunner {
 			}
 		);
 
+		// Dates are read and written in UTC while a job works, so a row means the same moment on every server.
+		$this->ctx->db->utc_session( true );
 		try {
 			$job = $this->store->find( $job_id );
 			if ( $job && $job->is_runnable() ) {
 				$this->work( $job, $budget, $runner );
 			}
 		} finally {
+			$this->ctx->db->utc_session( false );
 			$this->store->unlock( $job_id );
 			$released = true;
 		}

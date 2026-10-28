@@ -13,8 +13,8 @@ use Estasoft\Migrate\Engine\Task;
 use Estasoft\Migrate\Engine\TaskException;
 use Estasoft\Migrate\Package\Secrets;
 use Estasoft\Migrate\Remote\Client;
+use Estasoft\Migrate\Remote\ClientFactory;
 use Estasoft\Migrate\Remote\RemoteException;
-use Estasoft\Migrate\Remote\WpTransport;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -71,11 +71,7 @@ abstract class RemoteTask extends Task {
 				)
 			);
 		}
-		$factory = $ctx->service( 'remote_client' );
-		if ( is_callable( $factory ) ) {
-			return call_user_func( $factory, $url, $key );
-		}
-		return new Client( new WpTransport(), $url, $key );
+		return ClientFactory::make( $ctx, $url, $key );
 	}
 
 	/**

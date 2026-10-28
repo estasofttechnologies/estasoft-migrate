@@ -29,6 +29,6 @@ final class ClientFactory {
 		if ( is_callable( $factory ) ) {
 			return call_user_func( $factory, $url, $key );
 		}
-		return new Client( new WpTransport(), $url, $key );
+		return new Client( new WpTransport( (bool) $ctx->service( 'allow_private_hosts' ) ), $url, $key );
 	}
 }

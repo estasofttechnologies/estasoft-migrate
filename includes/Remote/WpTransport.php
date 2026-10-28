@@ -18,6 +18,22 @@ defined( 'ABSPATH' ) || exit;
 class WpTransport implements Transport {
 
 	/**
+	 * Allow this site to connect to local and private network addresses.
+	 *
+	 * @var bool
+	 */
+	private $allow_private;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param bool $allow_private Connect to localhost and private network addresses too (a development site on the same machine or network).
+	 */
+	public function __construct( $allow_private = false ) {
+		$this->allow_private = (bool) $allow_private;
+	}
+
+	/**
 	 * POST a body.
 	 *
 	 * @param string $url     Address.
@@ -37,7 +53,22 @@ class WpTransport implements Transport {
 			'user-agent'  => 'EstasoftMigrate/' . ( defined( 'ESTASOFT_MIGRATE_VERSION' ) ? ESTASOFT_MIGRATE_VERSION : '0' ) . '; ' . home_url( '/' ),
 		);
 
-		$response = wp_remote_post( $url, $args );
+		// WordPress's "safe" request refuses localhost, private network addresses and unusual ports, so a connection key typed
+		// with a mistaken address cannot be used to make this server call something inside its own network.
+		$allow = (bool) apply_filters( 'estasoft_migrate_allow_private_hosts', $this->allow_private, $url );
+		if ( ! $allow && false === wp_http_validate_url( $url ) ) {
+			throw new RemoteException(
+				'estm_private_host',
+				sprintf(
+					/* translators: %s: address of the other site */
+					__( 'WordPress does not connect to %s because it is a local or private network address, or uses an unusual port. If this is a site of your own on this machine or network, turn on "Allow local and private addresses" in Settings and try again.', 'estasoft-migrate' ),
+					$url
+				),
+				0
+			);
+		}
+
+		$response = $allow ? wp_remote_post( $url, $args ) : wp_safe_remote_post( $url, $args );
 		if ( is_wp_error( $response ) ) {
 			$message = $response->get_error_message();
 			$code    = 'estm_unreachable';

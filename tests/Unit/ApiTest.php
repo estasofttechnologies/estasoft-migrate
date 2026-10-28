@@ -677,6 +677,43 @@ class ApiTest extends TestCase {
 		$this->assertGreaterThan( time(), $new['connection']['previous_key_until'], 'The old key works for a short while.' );
 	}
 
+	public function test_incoming_timer_private_addresses_and_stopping_the_old_key_through_the_api() {
+		list( $rig )    = $this->rig();
+		$rig->settings = new ArraySettings();
+		$api           = $this->api( $rig );
+		$s             = $api->settings();
+		$this->assertSame( 24, $s['values']['accept_hours'] );
+		$this->assertFalse( $s['values']['allow_private_hosts'], 'Local and private addresses are refused until someone allows them.' );
+		$this->assertSame( 0, $s['connection']['accept_until'] );
+
+		$on = $api->save_settings( array( 'accept_incoming' => true, 'accept_hours' => '1', 'allow_private_hosts' => true ) );
+		$this->assertSame( 1, $on['values']['accept_hours'] );
+		$this->assertTrue( $on['values']['allow_private_hosts'] );
+		$this->assertEqualsWithDelta( time() + 3600, $on['connection']['accept_until'], 5 );
+
+		$api->save_settings( array( 'accept_incoming' => false ) );
+		$off = $api->settings();
+		$this->assertSame( 0, $off['connection']['accept_until'] );
+
+		// The screen shows a switch that ran out of time as off, and says when it happened.
+		$api->save_settings( array( 'accept_incoming' => true ) );
+		$rig->settings->update_raw( array( 'accept_until' => time() - 10 ) );
+		$late = $api->settings();
+		$this->assertFalse( $late['values']['accept_incoming'] );
+		$this->assertGreaterThan( 0, $late['connection']['accept_ended'] );
+
+		$first = $api->settings()['connection']['key'];
+		$grace = $api->regenerate_key();
+		$this->assertGreaterThan( time(), $grace['connection']['previous_key_until'] );
+		$stopped = $api->revoke_previous_key();
+		$this->assertSame( 0, $stopped['connection']['previous_key_until'] );
+		$this->assertNotSame( $first, $stopped['connection']['key'] );
+		$this->assertSame( 0, $api->revoke_previous_key()['connection']['previous_key_until'], 'Stopping it twice is harmless.' );
+
+		$none = $api->regenerate_key( false );
+		$this->assertSame( 0, $none['connection']['previous_key_until'], 'Replaced without a grace period.' );
+	}
+
 	public function test_a_connection_can_be_tested() {
 		list( $local, $api ) = $this->rig( 'https://local.example.com', 3 );
 		$remote              = new EngineHarness( 'wp_', 'https://live.example.com' );

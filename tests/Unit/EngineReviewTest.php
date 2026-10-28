@@ -203,6 +203,8 @@ class EngineReviewTest extends TestCase {
 
 		$target = $this->hooked_rig( 'https://new.example.com', 3 );
 		$target->db->query( "UPDATE wp_options SET option_value = 'LOCAL-SETTINGS' WHERE option_name = 'estasoft_migrate_settings'" );
+		// A request number remembered by the replay guard, which an import must not make forgettable.
+		$target->db->query( "INSERT INTO wp_options (option_name, option_value, autoload) VALUES ('estasoft_migrate_n_0123456789abcdef0123456789abcdef', '" . ( time() + 600 ) . "', 'no')" );
 		$this->transfer( $source, $target, $id );
 
 		$imp       = $target->runner->create( 'import', 'import', array( 'package_id' => $id, 'snapshot' => false ) );
@@ -222,6 +224,7 @@ class EngineReviewTest extends TestCase {
 		$this->assertSame( Job::COMPLETED, $done->status, $done->message );
 		$this->assertSame( '10', $target->db->get_var( 'SELECT COUNT(*) FROM wp_posts' ) );
 		$this->assertNotNull( $this->option( $target, 'estasoft_migrate_settings' ), 'The plugin settings survive.' );
+		$this->assertNotNull( $this->option( $target, 'estasoft_migrate_n_0123456789abcdef0123456789abcdef' ), 'So does the memory of used request numbers.' );
 		$this->assertSame( '0', $this->option( $target, 'blog_public' ), 'The staging safety switches were applied.' );
 		$this->assertSame( array(), $this->staging_tables( $target ), 'No copy of the old site is left behind.' );
 	}

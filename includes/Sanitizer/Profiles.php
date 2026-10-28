@@ -116,7 +116,7 @@ final class Profiles {
 			array(
 				'id'      => 'emails',
 				'what'    => __( 'Email addresses', 'estasoft-migrate' ),
-				'where'   => __( 'Users, comments, WooCommerce billing', 'estasoft-migrate' ),
+				'where'   => __( 'Users, comments, WooCommerce billing, scheduled tasks, user meta', 'estasoft-migrate' ),
 				'how'     => __( 'Replaced with an address on a reserved test domain', 'estasoft-migrate' ),
 				'example' => __( 'sara.w@mail.test → user0000004821@example.invalid', 'estasoft-migrate' ),
 			),
@@ -137,7 +137,7 @@ final class Profiles {
 			array(
 				'id'      => 'ips',
 				'what'    => __( 'IP addresses', 'estasoft-migrate' ),
-				'where'   => __( 'Comments and orders', 'estasoft-migrate' ),
+				'where'   => __( 'Comments, orders, scheduled tasks, user meta', 'estasoft-migrate' ),
 				'how'     => __( 'Last part set to zero', 'estasoft-migrate' ),
 				'example' => __( '203.0.113.57 → 203.0.113.0', 'estasoft-migrate' ),
 			),

@@ -193,8 +193,8 @@ class Server {
 	 * @throws RemoteException When any check fails.
 	 */
 	private function authenticate( $action, $body, array $headers, $ip, $https ) {
-		if ( ! $this->settings->get( 'accept_incoming', false ) ) {
-			throw new RemoteException( 'estm_off', __( 'This site is not accepting migrations.', 'estasoft-migrate' ), 403 );
+		if ( ! $this->settings->incoming_open() ) {
+			throw new RemoteException( 'estm_off', __( 'This site is not accepting migrations. Switch on "Accept incoming migrations" in its Settings.', 'estasoft-migrate' ), 403 );
 		}
 		if ( $this->nonces->blocked( $ip ) ) {
 			throw new RemoteException( 'estm_rate', __( 'Too many failed attempts. Try again in a few minutes.', 'estasoft-migrate' ), 429 );
@@ -243,6 +243,7 @@ class Server {
 		if ( ! $this->nonces->use_once( $nonce, Signer::MAX_SKEW * 2 ) ) {
 			throw new RemoteException( 'estm_replay', __( 'This request was already received.', 'estasoft-migrate' ), 401 );
 		}
+		$this->settings->keep_incoming_open();
 		return $found;
 	}
 

@@ -22,6 +22,16 @@ class Settings {
 	const RUNNERS = array( 'auto', 'ajax', 'cron', 'action_scheduler', 'cli' );
 
 	/**
+	 * How long "Accept incoming migrations" stays on without a migration, in hours. 0 means it stays on until it is switched off.
+	 */
+	const INCOMING_HOURS = array( 1, 24, 168, 0 );
+
+	/**
+	 * How long a replaced connection key keeps working, in seconds.
+	 */
+	const KEY_GRACE = 600;
+
+	/**
 	 * Cached values.
 	 *
 	 * @var array|null
@@ -36,6 +46,10 @@ class Settings {
 	public static function defaults() {
 		return array(
 			'accept_incoming'       => false,
+			'accept_hours'          => 24,
+			'accept_until'          => 0,
+			'accept_ended'          => 0,
+			'allow_private_hosts'   => false,
 			'connection_key'        => '',
 			'previous_key'          => '',
 			'previous_key_until'    => 0,
@@ -117,9 +131,25 @@ class Settings {
 	public static function sanitize( array $input, array $current ) {
 		$out = array();
 
-		foreach ( array( 'accept_incoming', 'require_https', 'encrypt_packages', 'delete_on_uninstall' ) as $flag ) {
+		foreach ( array( 'accept_incoming', 'require_https', 'allow_private_hosts', 'encrypt_packages', 'delete_on_uninstall' ) as $flag ) {
 			if ( array_key_exists( $flag, $input ) ) {
 				$out[ $flag ] = filter_var( $input[ $flag ], FILTER_VALIDATE_BOOLEAN );
+			}
+		}
+
+		if ( array_key_exists( 'accept_hours', $input ) ) {
+			// Anything that is not a number counts as no answer (24 hours), never as 0, which would mean "stay on".
+			$hours               = is_numeric( $input['accept_hours'] ) ? (int) $input['accept_hours'] : 24;
+			$out['accept_hours'] = in_array( $hours, self::INCOMING_HOURS, true ) ? $hours : 24;
+		}
+		// Switching incoming migrations on (or changing how long they stay on) starts the clock again; switching them off stops it.
+		if ( array_key_exists( 'accept_incoming', $input ) || array_key_exists( 'accept_hours', $input ) ) {
+			$on    = array_key_exists( 'accept_incoming', $out ) ? $out['accept_incoming'] : ! empty( $current['accept_incoming'] );
+			$hours = array_key_exists( 'accept_hours', $out ) ? $out['accept_hours'] : (int) ( $current['accept_hours'] ?? 24 );
+
+			$out['accept_until'] = $on && $hours > 0 ? time() + $hours * 3600 : 0;
+			if ( $on ) {
+				$out['accept_ended'] = 0;
 			}
 		}
 
@@ -205,21 +235,77 @@ class Settings {
 	}
 
 	/**
-	 * Create a new connection key. The old key keeps working for a short grace period.
+	 * Create a new connection key.
 	 *
+	 * @param bool $grace Keep the old key working for a short while (so the new key can be pasted into the other sites), or stop it at once.
 	 * @return string The new key.
 	 */
-	public function regenerate_key() {
+	public function regenerate_key( $grace = true ) {
 		$old = (string) $this->get( 'connection_key', '' );
 		$new = self::generate_key();
 		$this->update_raw(
 			array(
 				'connection_key'     => $new,
-				'previous_key'       => $old,
-				'previous_key_until' => '' === $old ? 0 : time() + 600,
+				'previous_key'       => $grace ? $old : '',
+				'previous_key_until' => $grace && '' !== $old ? time() + self::KEY_GRACE : 0,
 			)
 		);
 		return $new;
+	}
+
+	/**
+	 * Stop the previous key now, without waiting for its grace period to end.
+	 *
+	 * @return void
+	 */
+	public function revoke_previous_key() {
+		$this->update_raw(
+			array(
+				'previous_key'       => '',
+				'previous_key_until' => 0,
+			)
+		);
+	}
+
+	/**
+	 * Is this site accepting migrations right now? Incoming migrations that were switched on for a limited time
+	 * switch themselves off here, once that time has passed without a migration.
+	 *
+	 * @return bool
+	 */
+	public function incoming_open() {
+		if ( ! $this->get( 'accept_incoming', false ) ) {
+			return false;
+		}
+		$until = (int) $this->get( 'accept_until', 0 );
+		if ( $until > 0 && $until <= time() ) {
+			$this->update_raw(
+				array(
+					'accept_incoming' => false,
+					'accept_until'    => 0,
+					'accept_ended'    => $until,
+				)
+			);
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * A request from another site was accepted: push the switch-off time forward, so a migration that is running is never cut off,
+	 * and the switch-off only follows a period without any. Written at most once in half a period.
+	 *
+	 * @return void
+	 */
+	public function keep_incoming_open() {
+		$hours = (int) $this->get( 'accept_hours', 24 );
+		if ( $hours <= 0 || ! $this->get( 'accept_incoming', false ) ) {
+			return;
+		}
+		$window = $hours * 3600;
+		if ( (int) $this->get( 'accept_until', 0 ) - time() < $window / 2 ) {
+			$this->update_raw( array( 'accept_until' => time() + $window ) );
+		}
 	}
 
 	/**

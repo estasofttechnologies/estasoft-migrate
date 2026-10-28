@@ -185,7 +185,8 @@ final class Api {
 				'free'      => $this->free_space(),
 			),
 			'connection' => array(
-				'accepting' => (bool) $this->settings->get( 'accept_incoming', false ),
+				'accepting' => $this->settings->incoming_open(),
+				'until'     => (int) $this->settings->get( 'accept_until', 0 ),
 				'https'     => (bool) $this->settings->get( 'require_https', true ),
 				'key_id'    => Settings::key_id( $this->settings->connection_key() ),
 			),
@@ -1162,8 +1163,9 @@ final class Api {
 	 * @return array
 	 */
 	public function settings() {
+		$this->settings->incoming_open(); // Notices an expired switch-off time, so the screen shows the switch as it really is.
 		$all  = $this->settings->all();
-		$keep = array( 'accept_incoming', 'require_https', 'ip_allowlist', 'runner', 'max_batch', 'slice_seconds', 'encrypt_packages', 'delete_packages_days', 'keep_snapshots', 'delete_snapshots_days', 'delete_on_uninstall' );
+		$keep = array( 'accept_incoming', 'accept_hours', 'require_https', 'allow_private_hosts', 'ip_allowlist', 'runner', 'max_batch', 'slice_seconds', 'encrypt_packages', 'delete_packages_days', 'keep_snapshots', 'delete_snapshots_days', 'delete_on_uninstall' );
 		$vals = array();
 		$defs = array();
 		$base = Settings::defaults();
@@ -1180,6 +1182,8 @@ final class Api {
 				'key_id'             => Settings::key_id( $key ),
 				'endpoint'           => (string) $this->opts['endpoint'],
 				'previous_key_until' => (int) $all['previous_key_until'],
+				'accept_until'       => (int) $all['accept_until'],
+				'accept_ended'       => (int) $all['accept_ended'],
 			),
 			'environment' => $this->environment(),
 			'runners'     => Settings::RUNNERS,
@@ -1217,10 +1221,21 @@ final class Api {
 	/**
 	 * Create a new connection key.
 	 *
+	 * @param bool $grace Let the old key keep working for a few minutes. False stops it at once.
 	 * @return array
 	 */
-	public function regenerate_key() {
-		$this->settings->regenerate_key();
+	public function regenerate_key( $grace = true ) {
+		$this->settings->regenerate_key( $grace );
+		return $this->settings();
+	}
+
+	/**
+	 * Stop the previous connection key now.
+	 *
+	 * @return array
+	 */
+	public function revoke_previous_key() {
+		$this->settings->revoke_previous_key();
 		return $this->settings();
 	}
 

@@ -231,6 +231,37 @@ class RemoteFlowTest extends TestCase {
 		$this->assertStringContainsString( 'Accept incoming migrations', $job->message );
 	}
 
+	public function test_incoming_migrations_that_ran_out_of_time_are_refused() {
+		list( $local, $remote ) = $this->pair();
+		$remote->settings->update_raw( array( 'accept_hours' => 1, 'accept_until' => time() - 5 ) );
+		$job = $local->run( 'push', $local->remote_params() );
+		$this->assertSame( Job::FAILED, $job->status );
+		$this->assertStringContainsString( 'Accept incoming migrations', $job->message );
+		$this->assertFalse( $remote->settings->get( 'accept_incoming' ), 'It also switched itself off.' );
+	}
+
+	public function test_a_running_migration_keeps_incoming_open() {
+		list( $local, $remote ) = $this->pair();
+		$remote->settings->update_raw( array( 'accept_hours' => 1, 'accept_until' => time() + 120 ) );
+		$job = $local->run( 'push', $local->remote_params() );
+		$this->assertSame( Job::COMPLETED, $job->status, (string) $job->message );
+		$this->assertGreaterThan( time() + 1800, (int) $remote->settings->get( 'accept_until' ), 'Every request moved the switch-off time forward.' );
+	}
+
+	public function test_a_key_that_was_stopped_is_refused_at_once() {
+		list( $local, $remote ) = $this->pair();
+		$old = (string) $remote->settings->get( 'connection_key' );
+		$local->connect_to( $remote, $old );
+		$remote->settings->regenerate_key();
+		$this->assertSame( Job::COMPLETED, $local->run( 'push', $local->remote_params() )->status, 'The old key still works during its grace period.' );
+
+		$remote->settings->revoke_previous_key();
+		$local->connect_to( $remote, $old );
+		$job = $local->run( 'push', $local->remote_params() );
+		$this->assertSame( Job::FAILED, $job->status );
+		$this->assertStringContainsString( 'did not accept the connection key', $job->message );
+	}
+
 	public function test_https_can_be_required() {
 		list( $local, $remote ) = $this->pair();
 		$t        = $local->connect_to( $remote );

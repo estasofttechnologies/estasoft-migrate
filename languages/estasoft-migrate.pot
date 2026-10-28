@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-27T22:23:05+00:00\n"
+"POT-Creation-Date: 2026-10-28T11:31:52+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: estasoft-migrate\n"
@@ -18,7 +18,7 @@ msgstr ""
 #: estasoft-migrate.php
 #: includes/Privacy.php:36
 #: views/app.php:19
-#: assets/js/screens/settings.js:766
+#: assets/js/screens/settings.js:861
 msgid "Estasoft Migration & Database Sanitizer"
 msgstr ""
 
@@ -117,7 +117,7 @@ msgstr ""
 #: includes/Admin/Admin.php:103
 #: includes/Admin/Admin.php:104
 #: includes/Admin/Admin.php:316
-#: assets/js/screens/settings.js:101
+#: assets/js/screens/settings.js:117
 msgid "Settings"
 msgstr ""
 
@@ -214,77 +214,83 @@ msgid "Deleted."
 msgstr ""
 
 #. translators: %s: address
-#: includes/Cli/Command.php:737
+#: includes/Cli/Command.php:762
 #, php-format
 msgid "Address: %s"
 msgstr ""
 
-#: includes/Cli/Command.php:739
+#: includes/Cli/Command.php:764
 msgid "This site does not accept incoming migrations yet. Turn it on in Settings, or run: wp estasoft-migrate key --accept-incoming=on"
 msgstr ""
 
+#. translators: %s: date and time
+#: includes/Cli/Command.php:769
+#, php-format
+msgid "Incoming migrations switch themselves off on %s unless a migration arrives before then."
+msgstr ""
+
 #. translators: %d: job id
-#: includes/Cli/Command.php:828
+#: includes/Cli/Command.php:861
 #, php-format
 msgid "The job is paused. Continue with: wp estasoft-migrate resume %d"
 msgstr ""
 
 #. translators: 1: job id, 2: reason
-#: includes/Cli/Command.php:831
+#: includes/Cli/Command.php:864
 #, php-format
 msgid "The job did not finish (#%1$d). %2$s Fix the cause, then run: wp estasoft-migrate resume %1$d"
 msgstr ""
 
 #. translators: 1: tables, 2: rows, 3: size
-#: includes/Cli/Command.php:850
+#: includes/Cli/Command.php:883
 #, php-format
 msgid "Package created: %1$d tables, %2$s rows, %3$s."
 msgstr ""
 
-#: includes/Cli/Command.php:853
+#: includes/Cli/Command.php:886
 msgid "Protected with the password you gave."
 msgstr ""
 
-#: includes/Cli/Command.php:853
+#: includes/Cli/Command.php:886
 msgid "Protected with this site's key."
 msgstr ""
 
 #. translators: 1: tables, 2: rows
-#: includes/Cli/Command.php:860
+#: includes/Cli/Command.php:893
 #, php-format
 msgid "Restored %1$d tables, %2$s rows."
 msgstr ""
 
 #. translators: 1: tables, 2: rows
-#: includes/Cli/Command.php:862
+#: includes/Cli/Command.php:895
 #, php-format
 msgid "Imported %1$d tables, %2$s rows."
 msgstr ""
 
 #. translators: %s: snapshot id
-#: includes/Cli/Command.php:865
+#: includes/Cli/Command.php:898
 #, php-format
 msgid "Rollback snapshot: %s (restore with: wp estasoft-migrate restore <id>)"
 msgstr ""
 
 #. translators: 1: address, 2: tables, 3: rows
-#: includes/Cli/Command.php:869
+#: includes/Cli/Command.php:902
 #, php-format
 msgid "Pushed to %1$s: %2$d tables, %3$s rows."
 msgstr ""
 
 #. translators: 1: matches, 2: rows, 3: rows scanned
-#: includes/Cli/Command.php:873
+#: includes/Cli/Command.php:906
 #, php-format
 msgid "%1$s matches in %2$s rows (of %3$s scanned)."
 msgstr ""
 
-#: includes/Cli/Command.php:907
+#: includes/Cli/Command.php:940
 msgid "The file cannot be read."
 msgstr ""
 
 #. translators: %s: path
-#: includes/Cli/Command.php:1009
+#: includes/Cli/Command.php:1042
 #, php-format
 msgid "Cannot read %s"
 msgstr ""
@@ -295,7 +301,7 @@ msgid "Check package"
 msgstr ""
 
 #: includes/Engine/JobParams.php:52
-#: includes/Rest/Api.php:275
+#: includes/Rest/Api.php:276
 msgid "Unknown job type."
 msgstr ""
 
@@ -346,8 +352,8 @@ msgstr ""
 
 #: includes/Engine/JobParams.php:203
 #: includes/Engine/JobParams.php:346
-#: includes/Rest/Api.php:1390
-#: includes/Rest/Api.php:1404
+#: includes/Rest/Api.php:1405
+#: includes/Rest/Api.php:1419
 msgid "Choose one of the sanitizer profiles."
 msgstr ""
 
@@ -357,7 +363,7 @@ msgid "Pull from another site"
 msgstr ""
 
 #: includes/Engine/JobParams.php:228
-#: includes/Rest/Api.php:1238
+#: includes/Rest/Api.php:1253
 msgid "Enter the full address of the other site, for example https://example.com"
 msgstr ""
 
@@ -366,7 +372,7 @@ msgid "Enter the connection key from the other site’s Settings screen."
 msgstr ""
 
 #: includes/Engine/JobParams.php:234
-#: includes/Rest/Api.php:1241
+#: includes/Rest/Api.php:1256
 #: assets/js/screens/new.js:838
 msgid "That does not look like a connection key. Keys start with esm_."
 msgstr ""
@@ -388,17 +394,17 @@ msgstr ""
 msgid "Use at least 8 characters for the package password."
 msgstr ""
 
-#: includes/Engine/JobRunner.php:161
+#: includes/Engine/JobRunner.php:166
 msgid "Started."
 msgstr ""
 
 #. translators: %d: attempt number
-#: includes/Engine/JobRunner.php:234
+#: includes/Engine/JobRunner.php:239
 #, php-format
 msgid "A temporary problem interrupted the job. Trying again (attempt %d)."
 msgstr ""
 
-#: includes/Engine/JobRunner.php:249
+#: includes/Engine/JobRunner.php:254
 #: includes/Engine/Tasks/ExportTask.php:75
 #: includes/Engine/Tasks/ExportTask.php:227
 #: includes/Engine/Tasks/ImportTask.php:66
@@ -414,38 +420,38 @@ msgstr ""
 msgid "Your site was not changed."
 msgstr ""
 
-#: includes/Engine/JobRunner.php:250
+#: includes/Engine/JobRunner.php:255
 msgid "Check the package, then retry."
 msgstr ""
 
-#: includes/Engine/JobRunner.php:254
-#: includes/Engine/JobRunner.php:504
+#: includes/Engine/JobRunner.php:259
+#: includes/Engine/JobRunner.php:509
 msgid "Rows already handled are safe. The job stopped at the last saved position."
 msgstr ""
 
-#: includes/Engine/JobRunner.php:255
+#: includes/Engine/JobRunner.php:260
 msgid "Retry the job. If it fails again, check the database error in the log."
 msgstr ""
 
 #. translators: %s: error message
-#: includes/Engine/JobRunner.php:260
+#: includes/Engine/JobRunner.php:265
 #, php-format
 msgid "Unexpected error: %s"
 msgstr ""
 
-#: includes/Engine/JobRunner.php:356
+#: includes/Engine/JobRunner.php:361
 msgid "Retrying from the last saved position."
 msgstr ""
 
-#: includes/Engine/JobRunner.php:380
+#: includes/Engine/JobRunner.php:385
 msgid "Cancelled."
 msgstr ""
 
-#: includes/Engine/JobRunner.php:502
+#: includes/Engine/JobRunner.php:507
 msgid "The server stopped this job several times in a row, most likely because it ran out of memory or time."
 msgstr ""
 
-#: includes/Engine/JobRunner.php:505
+#: includes/Engine/JobRunner.php:510
 msgid "Raise the PHP memory limit or lower the largest batch in Settings, then retry."
 msgstr ""
 
@@ -483,30 +489,30 @@ msgid "This happens when the security keys in wp-config.php change while a job i
 msgstr ""
 
 #. translators: 1: row count, 2: size
-#: includes/Engine/Tasks/ExportTask.php:507
+#: includes/Engine/Tasks/ExportTask.php:508
 #, php-format
 msgid "Package ready: %1$s rows, %2$s."
 msgstr ""
 
-#: includes/Engine/Tasks/ExportTask.php:562
+#: includes/Engine/Tasks/ExportTask.php:563
 msgid "Package ready."
 msgstr ""
 
 #. translators: 1: table name, 2: number of tables done, 3: number of tables
-#: includes/Engine/Tasks/ExportTask.php:568
+#: includes/Engine/Tasks/ExportTask.php:569
 #, php-format
 msgid "Exporting %1$s (table %2$d of %3$d)."
 msgstr ""
 
-#: includes/Engine/Tasks/ExportTask.php:574
+#: includes/Engine/Tasks/ExportTask.php:575
 msgid "Finishing the package."
 msgstr ""
 
-#: includes/Engine/Tasks/ExportTask.php:609
+#: includes/Engine/Tasks/ExportTask.php:610
 msgid "Copying tables"
 msgstr ""
 
-#: includes/Engine/Tasks/ExportTask.php:614
+#: includes/Engine/Tasks/ExportTask.php:615
 msgid "Sealing the package"
 msgstr ""
 
@@ -699,7 +705,7 @@ msgid "The other site finished but did not report a package."
 msgstr ""
 
 #: includes/Engine/Tasks/PullTask.php:235
-#: includes/Rest/Api.php:975
+#: includes/Rest/Api.php:976
 msgid "The package file could not be created."
 msgstr ""
 
@@ -818,7 +824,7 @@ msgid "The address or the connection key of the other site is missing."
 msgstr ""
 
 #: includes/Engine/Tasks/RemoteTask.php:69
-#: includes/Engine/Tasks/RemoteTask.php:144
+#: includes/Engine/Tasks/RemoteTask.php:140
 msgid "Nothing was changed on either site."
 msgstr ""
 
@@ -826,58 +832,58 @@ msgstr ""
 msgid "Start the migration again and enter both."
 msgstr ""
 
-#: includes/Engine/Tasks/RemoteTask.php:115
+#: includes/Engine/Tasks/RemoteTask.php:111
 msgid "Check the connection details, then start again."
 msgstr ""
 
-#: includes/Engine/Tasks/RemoteTask.php:118
+#: includes/Engine/Tasks/RemoteTask.php:114
 msgid "Free some disk space on that site, then retry."
 msgstr ""
 
-#: includes/Engine/Tasks/RemoteTask.php:121
+#: includes/Engine/Tasks/RemoteTask.php:117
 msgid "Retry in a few minutes."
 msgstr ""
 
-#: includes/Engine/Tasks/RemoteTask.php:121
+#: includes/Engine/Tasks/RemoteTask.php:117
 msgid "Check the Logs screen on both sites for details."
 msgstr ""
 
-#: includes/Engine/Tasks/RemoteTask.php:150
+#: includes/Engine/Tasks/RemoteTask.php:146
 msgid "The other site is a WordPress multisite network, which this version cannot migrate."
 msgstr ""
 
-#: includes/Engine/Tasks/RemoteTask.php:156
-#: includes/Remote/Server.php:358
+#: includes/Engine/Tasks/RemoteTask.php:152
+#: includes/Remote/Server.php:359
 msgid "The other site cannot write to its storage folder."
 msgstr ""
 
-#: includes/Engine/Tasks/RemoteTask.php:159
+#: includes/Engine/Tasks/RemoteTask.php:155
 msgid "Make wp-content/uploads writable on that site."
 msgstr ""
 
 #. translators: 1: local version, 2: other version
-#: includes/Engine/Tasks/RemoteTask.php:170
+#: includes/Engine/Tasks/RemoteTask.php:166
 #, php-format
 msgid "The two sites run different major versions of Estasoft Migration (%1$s and %2$s). Update the plugin on both."
 msgstr ""
 
 #. translators: %s: address
-#: includes/Engine/Tasks/RemoteTask.php:181
+#: includes/Engine/Tasks/RemoteTask.php:177
 #, php-format
 msgid "Connected to %s."
 msgstr ""
 
 #. translators: %s: message from the other site
-#: includes/Engine/Tasks/RemoteTask.php:229
+#: includes/Engine/Tasks/RemoteTask.php:225
 #, php-format
 msgid "The other site stopped the job: %s"
 msgstr ""
 
-#: includes/Engine/Tasks/RemoteTask.php:230
+#: includes/Engine/Tasks/RemoteTask.php:226
 msgid "no reason was given."
 msgstr ""
 
-#: includes/Engine/Tasks/RemoteTask.php:234
+#: includes/Engine/Tasks/RemoteTask.php:230
 msgid "Open the Logs screen on the other site for details, fix the cause and start again."
 msgstr ""
 
@@ -966,7 +972,7 @@ msgstr ""
 #: includes/Preflight/Checker.php:263
 #: includes/Preflight/Checker.php:265
 #: includes/Preflight/Checker.php:267
-#: assets/js/screens/settings.js:786
+#: assets/js/screens/settings.js:881
 msgid "Memory limit"
 msgstr ""
 
@@ -1018,7 +1024,7 @@ msgid "Estasoft Migrate will use small batches that finish inside the limit and 
 msgstr ""
 
 #: includes/Preflight/Checker.php:301
-#: assets/js/screens/settings.js:793
+#: assets/js/screens/settings.js:888
 msgid "Package folder"
 msgstr ""
 
@@ -1057,7 +1063,7 @@ msgstr ""
 #: includes/Preflight/Checker.php:342
 #: includes/Preflight/Checker.php:346
 #: assets/js/screens/packages.js:596
-#: assets/js/screens/settings.js:796
+#: assets/js/screens/settings.js:891
 msgid "Free disk space"
 msgstr ""
 
@@ -1134,8 +1140,8 @@ msgstr ""
 #. translators: %d: number of tables
 #: includes/Preflight/Checker.php:455
 #, php-format
-msgid "%d table has no primary key"
-msgid_plural "%d tables have no primary key"
+msgid "%d table has no primary or unique key"
+msgid_plural "%d tables have no primary or unique key"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -1472,7 +1478,7 @@ msgid "The other site could not complete the request."
 msgstr ""
 
 #: includes/Remote/Server.php:197
-msgid "This site is not accepting migrations."
+msgid "This site is not accepting migrations. Switch on \"Accept incoming migrations\" in its Settings."
 msgstr ""
 
 #: includes/Remote/Server.php:200
@@ -1509,227 +1515,233 @@ msgstr ""
 msgid "This request was already received."
 msgstr ""
 
-#: includes/Remote/Server.php:281
+#: includes/Remote/Server.php:282
 msgid "Unknown request."
 msgstr ""
 
-#: includes/Remote/Server.php:352
+#: includes/Remote/Server.php:353
 msgid "The package is empty."
 msgstr ""
 
-#: includes/Remote/Server.php:355
+#: includes/Remote/Server.php:356
 msgid "The package is larger than the other site accepts."
 msgstr ""
 
 #. translators: 1: needed space, 2: free space
-#: includes/Remote/Server.php:366
+#: includes/Remote/Server.php:367
 #, php-format
 msgid "The other site does not have enough disk space: %1$s needed, %2$s free."
 msgstr ""
 
-#: includes/Remote/Server.php:378
+#: includes/Remote/Server.php:379
 msgid "The other site could not create the package file."
 msgstr ""
 
-#: includes/Remote/Server.php:414
+#: includes/Remote/Server.php:415
 msgid "The package was not found on the other site."
 msgstr ""
 
-#: includes/Remote/Server.php:419
+#: includes/Remote/Server.php:420
 msgid "The package is not ready for this step."
 msgstr ""
 
-#: includes/Remote/Server.php:437
+#: includes/Remote/Server.php:438
 msgid "The part could not be read."
 msgstr ""
 
-#: includes/Remote/Server.php:440
+#: includes/Remote/Server.php:441
 msgid "The part is too large for the other site."
 msgstr ""
 
-#: includes/Remote/Server.php:443
+#: includes/Remote/Server.php:444
 msgid "A part was damaged on the way."
 msgstr ""
 
-#: includes/Remote/Server.php:449
+#: includes/Remote/Server.php:450
 msgid "The part is larger than the package announced."
 msgstr ""
 
-#: includes/Remote/Server.php:456
+#: includes/Remote/Server.php:457
 msgid "A part is missing."
 msgstr ""
 
-#: includes/Remote/Server.php:465
+#: includes/Remote/Server.php:466
 msgid "A part does not match what was already received."
 msgstr ""
 
-#: includes/Remote/Server.php:472
+#: includes/Remote/Server.php:473
 msgid "The other site could not write the package."
 msgstr ""
 
-#: includes/Remote/Server.php:478
+#: includes/Remote/Server.php:479
 msgid "The other site ran out of disk space while receiving the package."
 msgstr ""
 
-#: includes/Remote/Server.php:497
+#: includes/Remote/Server.php:498
 msgid "The package arrived incomplete."
 msgstr ""
 
 #. translators: %s: title of the job that is running
-#: includes/Remote/Server.php:528
+#: includes/Remote/Server.php:529
 #, php-format
 msgid "Another job is still in progress on this site: %s."
 msgstr ""
 
-#: includes/Remote/Server.php:556
+#: includes/Remote/Server.php:557
 msgid "The package password could not be read."
 msgstr ""
 
-#: includes/Remote/Server.php:567
+#: includes/Remote/Server.php:568
 msgid "Import received package"
 msgstr ""
 
-#: includes/Remote/Server.php:607
+#: includes/Remote/Server.php:608
 msgid "Export for another site"
 msgstr ""
 
-#: includes/Remote/Server.php:640
+#: includes/Remote/Server.php:641
 msgid "The job was not found on the other site."
 msgstr ""
 
-#: includes/Remote/Server.php:728
+#: includes/Remote/Server.php:729
 msgid "This package is not available for download."
 msgstr ""
 
+#. translators: %s: address of the other site
+#: includes/Remote/WpTransport.php:64
+#, php-format
+msgid "WordPress does not connect to %s because it is a local or private network address, or uses an unusual port. If this is a site of your own on this machine or network, turn on \"Allow local and private addresses\" in Settings and try again."
+msgstr ""
+
 #. translators: %s: technical error message
-#: includes/Remote/WpTransport.php:46
+#: includes/Remote/WpTransport.php:77
 #, php-format
 msgid "The other site could not be reached: %s"
 msgstr ""
 
 #. translators: %s: technical error message
-#: includes/Remote/WpTransport.php:53
+#: includes/Remote/WpTransport.php:84
 #, php-format
 msgid "A secure connection to the other site could not be made (%s). Check that its SSL certificate is valid."
 msgstr ""
 
-#: includes/Remote/WpTransport.php:58
+#: includes/Remote/WpTransport.php:89
 msgid "The other site did not answer in time."
 msgstr ""
 
-#: includes/Rest/Api.php:237
+#: includes/Rest/Api.php:238
 msgid "Choose what to do first."
 msgstr ""
 
-#: includes/Rest/Api.php:280
+#: includes/Rest/Api.php:281
 msgid "Packages are set to be encrypted. Enter a password for this package, or turn off encryption in Settings."
 msgstr ""
 
 #. translators: %s: title of the job that is running
-#: includes/Rest/Api.php:296
+#: includes/Rest/Api.php:297
 #, php-format
 msgid "Another job is still in progress: %s. Wait for it to finish, or cancel it first."
 msgstr ""
 
-#: includes/Rest/Api.php:372
+#: includes/Rest/Api.php:373
 msgid "This job is not running."
 msgstr ""
 
-#: includes/Rest/Api.php:378
+#: includes/Rest/Api.php:379
 msgid "This job is not paused."
 msgstr ""
 
-#: includes/Rest/Api.php:385
+#: includes/Rest/Api.php:386
 msgid "This job has already finished."
 msgstr ""
 
-#: includes/Rest/Api.php:388
+#: includes/Rest/Api.php:389
 msgid "This job can no longer be cancelled: its new data is already in place and it is finishing."
 msgstr ""
 
-#: includes/Rest/Api.php:393
+#: includes/Rest/Api.php:394
 msgid "Only a failed job can be retried."
 msgstr ""
 
-#: includes/Rest/Api.php:398
+#: includes/Rest/Api.php:399
 msgid "Unknown action."
 msgstr ""
 
-#: includes/Rest/Api.php:412
+#: includes/Rest/Api.php:413
 msgid "Cancel the job before removing it."
 msgstr ""
 
-#: includes/Rest/Api.php:443
+#: includes/Rest/Api.php:444
 msgid "That job no longer exists."
 msgstr ""
 
-#: includes/Rest/Api.php:922
-#: includes/Rest/Api.php:1144
+#: includes/Rest/Api.php:923
+#: includes/Rest/Api.php:1145
 msgid "That package no longer exists."
 msgstr ""
 
 #. translators: %s: job title
-#: includes/Rest/Api.php:930
+#: includes/Rest/Api.php:931
 #, php-format
 msgid "This package is being used by a job that is still in progress: %s."
 msgstr ""
 
-#: includes/Rest/Api.php:950
+#: includes/Rest/Api.php:951
 msgid "The file is empty."
 msgstr ""
 
-#: includes/Rest/Api.php:953
+#: includes/Rest/Api.php:954
 msgid "The file is larger than this site accepts as a package."
 msgstr ""
 
-#: includes/Rest/Api.php:956
+#: includes/Rest/Api.php:957
 msgid "The package folder is not writable."
 msgstr ""
 
 #. translators: 1: needed, 2: free
-#: includes/Rest/Api.php:964
+#: includes/Rest/Api.php:965
 #, php-format
 msgid "Not enough disk space: %1$s needed, %2$s free."
 msgstr ""
 
-#: includes/Rest/Api.php:1008
+#: includes/Rest/Api.php:1009
 msgid "The piece could not be read."
 msgstr ""
 
-#: includes/Rest/Api.php:1012
+#: includes/Rest/Api.php:1013
 msgid "The piece is larger than the file announced."
 msgstr ""
 
-#: includes/Rest/Api.php:1017
+#: includes/Rest/Api.php:1018
 msgid "A piece is missing."
 msgstr ""
 
-#: includes/Rest/Api.php:1024
+#: includes/Rest/Api.php:1025
 msgid "The package could not be written."
 msgstr ""
 
-#: includes/Rest/Api.php:1030
+#: includes/Rest/Api.php:1031
 msgid "The server ran out of disk space while receiving the package."
 msgstr ""
 
-#: includes/Rest/Api.php:1048
+#: includes/Rest/Api.php:1049
 msgid "The file arrived incomplete. Try the upload again."
 msgstr ""
 
-#: includes/Rest/Api.php:1126
+#: includes/Rest/Api.php:1127
 msgid "That upload no longer exists. Start it again."
 msgstr ""
 
-#: includes/Rest/Api.php:1130
+#: includes/Rest/Api.php:1131
 msgid "That package is not being uploaded."
 msgstr ""
 
-#: includes/Rest/Api.php:1148
+#: includes/Rest/Api.php:1149
 msgid "That package is not finished yet."
 msgstr ""
 
 #. translators: %s: the entries that are not IP addresses
-#: includes/Rest/Api.php:1206
+#: includes/Rest/Api.php:1210
 #, php-format
 msgid "None of these is a valid IP address or range: %s. Use an address like 203.0.113.7 or a range like 203.0.113.0/24, one per line, or leave the list empty to accept any address."
 msgstr ""
@@ -1790,7 +1802,7 @@ msgid "Email addresses"
 msgstr ""
 
 #: includes/Sanitizer/Profiles.php:119
-msgid "Users, comments, WooCommerce billing"
+msgid "Users, comments, WooCommerce billing, scheduled tasks, user meta"
 msgstr ""
 
 #: includes/Sanitizer/Profiles.php:120
@@ -1838,7 +1850,7 @@ msgid "IP addresses"
 msgstr ""
 
 #: includes/Sanitizer/Profiles.php:140
-msgid "Comments and orders"
+msgid "Comments, orders, scheduled tasks, user meta"
 msgstr ""
 
 #: includes/Sanitizer/Profiles.php:141
@@ -1966,7 +1978,7 @@ msgstr ""
 
 #: views/app.php:33
 #: assets/js/screens/overview.js:247
-#: assets/js/screens/settings.js:752
+#: assets/js/screens/settings.js:847
 msgid "Documentation"
 msgstr ""
 
@@ -1998,7 +2010,7 @@ msgstr ""
 
 #. translators: %d: seconds
 #: assets/js/core.js:148
-#: assets/js/screens/settings.js:787
+#: assets/js/screens/settings.js:882
 #, js-format
 msgid "%d s"
 msgstr ""
@@ -2100,7 +2112,7 @@ msgstr ""
 
 #: assets/js/core.js:490
 #: assets/js/screens/progress.js:516
-#: assets/js/screens/settings.js:788
+#: assets/js/screens/settings.js:883
 msgid "Running"
 msgstr ""
 
@@ -2126,20 +2138,20 @@ msgstr ""
 #: assets/js/core.js:683
 #: assets/js/screens/new.js:448
 #: assets/js/screens/sanitizer.js:778
-#: assets/js/screens/settings.js:428
+#: assets/js/screens/settings.js:521
 msgid "(optional)"
 msgstr ""
 
 #: assets/js/core.js:729
 #: assets/js/core.js:732
 #: assets/js/screens/logs.js:155
-#: assets/js/screens/settings.js:338
-#: assets/js/screens/settings.js:341
+#: assets/js/screens/settings.js:373
+#: assets/js/screens/settings.js:376
 msgid "Show"
 msgstr ""
 
 #: assets/js/core.js:732
-#: assets/js/screens/settings.js:341
+#: assets/js/screens/settings.js:376
 msgid "Hide"
 msgstr ""
 
@@ -2581,8 +2593,8 @@ msgid "The other site needs Estasoft Migration & Database Sanitizer installed an
 msgstr ""
 
 #: assets/js/screens/new.js:297
-#: assets/js/screens/settings.js:333
-#: assets/js/screens/settings.js:352
+#: assets/js/screens/settings.js:368
+#: assets/js/screens/settings.js:388
 msgid "Connection key"
 msgstr ""
 
@@ -2925,7 +2937,7 @@ msgid "Kept as they are"
 msgstr ""
 
 #: assets/js/screens/new.js:750
-#: assets/js/screens/settings.js:797
+#: assets/js/screens/settings.js:892
 msgid "Yes"
 msgstr ""
 
@@ -3355,13 +3367,13 @@ msgid "Every feature is free under the GPL v2 or later. No license key, no locke
 msgstr ""
 
 #: assets/js/screens/overview.js:248
-#: assets/js/screens/settings.js:752
-#: assets/js/screens/settings.js:807
+#: assets/js/screens/settings.js:847
+#: assets/js/screens/settings.js:902
 msgid "Support forum"
 msgstr ""
 
 #: assets/js/screens/overview.js:249
-#: assets/js/screens/settings.js:752
+#: assets/js/screens/settings.js:847
 msgid "Source code"
 msgstr ""
 
@@ -3390,7 +3402,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: assets/js/screens/overview.js:270
-#: assets/js/screens/settings.js:777
+#: assets/js/screens/settings.js:872
 msgid "All good"
 msgstr ""
 
@@ -3700,7 +3712,7 @@ msgid "Snapshots"
 msgstr ""
 
 #: assets/js/screens/packages.js:597
-#: assets/js/screens/settings.js:796
+#: assets/js/screens/settings.js:891
 msgid "Not known"
 msgstr ""
 
@@ -3709,23 +3721,23 @@ msgid "Low"
 msgstr ""
 
 #: assets/js/screens/packages.js:601
-#: assets/js/screens/settings.js:794
+#: assets/js/screens/settings.js:889
 msgid "Direct downloads"
 msgstr ""
 
 #: assets/js/screens/packages.js:604
 #: assets/js/screens/preflight.js:335
-#: assets/js/screens/settings.js:794
+#: assets/js/screens/settings.js:889
 msgid "Blocked"
 msgstr ""
 
 #: assets/js/screens/packages.js:605
-#: assets/js/screens/settings.js:794
+#: assets/js/screens/settings.js:889
 msgid "Not blocked"
 msgstr ""
 
 #: assets/js/screens/packages.js:605
-#: assets/js/screens/settings.js:794
+#: assets/js/screens/settings.js:889
 msgid "Could not be checked"
 msgstr ""
 
@@ -4418,7 +4430,7 @@ msgstr ""
 
 #: assets/js/screens/preflight.js:389
 #: assets/js/screens/preflight.js:391
-#: assets/js/screens/settings.js:70
+#: assets/js/screens/settings.js:73
 msgid "Unknown"
 msgstr ""
 
@@ -5700,8 +5712,8 @@ msgstr ""
 #. translators: 1: number of tables, 2: list of table names
 #: assets/js/screens/replace.js:780
 #, js-format
-msgid "%1$s table was skipped because it has no primary key, so its rows cannot be updated safely: %2$s."
-msgid_plural "%1$s tables were skipped because they have no primary key, so their rows cannot be updated safely: %2$s."
+msgid "%1$s table was skipped because it has no primary or unique key, so its rows cannot be updated safely: %2$s."
+msgid_plural "%1$s tables were skipped because they have no primary or unique key, so their rows cannot be updated safely: %2$s."
 msgstr[0] ""
 msgstr[1] ""
 
@@ -6405,540 +6417,614 @@ msgstr ""
 msgid "All changes are saved."
 msgstr ""
 
-#: assets/js/screens/settings.js:59
+#: assets/js/screens/settings.js:62
 msgid "Automatic (recommended)"
 msgstr ""
 
-#: assets/js/screens/settings.js:60
+#: assets/js/screens/settings.js:63
 msgid "Browser requests (AJAX)"
 msgstr ""
 
-#: assets/js/screens/settings.js:61
-#: assets/js/screens/settings.js:788
+#: assets/js/screens/settings.js:64
+#: assets/js/screens/settings.js:883
 msgid "WP-Cron"
 msgstr ""
 
-#: assets/js/screens/settings.js:62
-#: assets/js/screens/settings.js:789
+#: assets/js/screens/settings.js:65
+#: assets/js/screens/settings.js:884
 msgid "Action Scheduler"
 msgstr ""
 
-#: assets/js/screens/settings.js:63
+#: assets/js/screens/settings.js:66
 msgid "WP-CLI only"
 msgstr ""
 
-#: assets/js/screens/settings.js:102
+#. translators: %d: number of days
+#: assets/js/screens/settings.js:86
+#, js-format
+msgid "%d day"
+msgid_plural "%d days"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: number of hours
+#: assets/js/screens/settings.js:90
+#, js-format
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] ""
+msgstr[1] ""
+
+#: assets/js/screens/settings.js:92
+msgid "Never (stay on until I switch it off)"
+msgstr ""
+
+#: assets/js/screens/settings.js:118
 msgid "The defaults work for most sites. Change them only if your host has strict limits or you connect sites to each other."
 msgstr ""
 
 #. translators: 1: smallest allowed number, 2: largest allowed number
-#: assets/js/screens/settings.js:246
+#: assets/js/screens/settings.js:263
 #, js-format
 msgid "Enter a whole number from %1$s to %2$s."
 msgstr ""
 
-#: assets/js/screens/settings.js:263
+#: assets/js/screens/settings.js:280
 msgid "Unsaved changes"
 msgstr ""
 
-#: assets/js/screens/settings.js:264
+#: assets/js/screens/settings.js:281
 msgid "No unsaved changes"
 msgstr ""
 
-#: assets/js/screens/settings.js:267
+#: assets/js/screens/settings.js:284
 msgid "Save changes"
 msgstr ""
 
-#: assets/js/screens/settings.js:270
+#: assets/js/screens/settings.js:287
 msgid "Reset to defaults"
 msgstr ""
 
 #. translators: %s: short identifier of the connection key
-#: assets/js/screens/settings.js:315
+#: assets/js/screens/settings.js:333
 #, js-format
 msgid "Key ID: %s. Other sites show the same ID when they use this key."
 msgstr ""
 
 #. translators: %s: time of day, for example 14:32
-#: assets/js/screens/settings.js:327
+#: assets/js/screens/settings.js:346
 #, js-format
 msgid "The previous key still works until %s. Paste the new key into the other sites before then."
 msgstr ""
 
-#: assets/js/screens/settings.js:328
+#: assets/js/screens/settings.js:348
+msgid "Stop the old key now"
+msgstr ""
+
+#: assets/js/screens/settings.js:350
 msgid "A new key was created."
 msgstr ""
 
-#: assets/js/screens/settings.js:347
-#: assets/js/screens/settings.js:366
+#: assets/js/screens/settings.js:361
+msgid "The old key no longer works."
+msgstr ""
+
+#: assets/js/screens/settings.js:382
+#: assets/js/screens/settings.js:407
 msgid "Replace key"
 msgstr ""
 
-#: assets/js/screens/settings.js:354
+#: assets/js/screens/settings.js:390
 msgid "Every request between sites is signed with this key and expires within minutes, so the key itself is never sent. Treat it like a password."
 msgstr ""
 
-#: assets/js/screens/settings.js:356
+#: assets/js/screens/settings.js:392
 msgid "The old key keeps working for a short while, then sites that still use it are disconnected."
 msgstr ""
 
-#: assets/js/screens/settings.js:364
+#: assets/js/screens/settings.js:401
 msgid "Replace the connection key?"
 msgstr ""
 
-#: assets/js/screens/settings.js:365
+#: assets/js/screens/settings.js:404
 msgid "A new key is created. The current key keeps working for a few minutes so you can paste the new key into the other sites. After that, any site that still uses the old key is disconnected."
 msgstr ""
 
-#: assets/js/screens/settings.js:378
+#: assets/js/screens/settings.js:405
+msgid "Stop the old key at once. Choose this if the key may have been seen by someone else."
+msgstr ""
+
+#: assets/js/screens/settings.js:419
 msgid "A new connection key was created."
 msgstr ""
 
-#: assets/js/screens/settings.js:385
+#: assets/js/screens/settings.js:426
 msgid "Without HTTPS, the connection key stays hidden, but the data that is sent can be read on its way. Turn this off only on a private network."
 msgstr ""
 
-#: assets/js/screens/settings.js:386
+#: assets/js/screens/settings.js:427
 msgid "This site is not served over HTTPS, so other sites cannot connect while this is on."
 msgstr ""
 
-#: assets/js/screens/settings.js:387
+#: assets/js/screens/settings.js:428
 msgid "Incoming migrations are off. Other sites cannot connect, send packages or pull from this site."
 msgstr ""
 
-#: assets/js/screens/settings.js:407
+#: assets/js/screens/settings.js:431
+msgid "While this is on, this site can send its signed migration requests to addresses inside its own network, not only to the internet. Turn it off when you no longer connect to a site that way."
+msgstr ""
+
+#. translators: %s: date and time
+#: assets/js/screens/settings.js:452
+#, js-format
+msgid "Incoming migrations switched themselves off on %s because no migration arrived. Switch them on again when you need them."
+msgstr ""
+
+#: assets/js/screens/settings.js:460
+msgid "Incoming migrations stay on until you switch them off. Switch them off when you are not migrating."
+msgstr ""
+
+#. translators: %s: date and time
+#: assets/js/screens/settings.js:463
+#, js-format
+msgid "They switch themselves off on %s unless a migration arrives before then. Each migration moves that time forward."
+msgstr ""
+
+#. translators: %s: how long, for example 24 hours
+#: assets/js/screens/settings.js:466
+#, js-format
+msgid "After you save, they switch themselves off after %s without a migration."
+msgstr ""
+
+#: assets/js/screens/settings.js:481
 msgid "Accept incoming migrations"
 msgstr ""
 
-#: assets/js/screens/settings.js:408
+#: assets/js/screens/settings.js:482
 msgid "Lets another site that has the connection key send packages to this site or pull this site’s database. Switch it off when you are not migrating."
 msgstr ""
 
-#: assets/js/screens/settings.js:413
+#: assets/js/screens/settings.js:491
+msgid "Switch off automatically after"
+msgstr ""
+
+#: assets/js/screens/settings.js:492
+msgid "Without a migration for this long, incoming migrations switch themselves off, so the connection key does not stay usable by accident. A migration that is running keeps them on."
+msgstr ""
+
+#: assets/js/screens/settings.js:499
 msgid "With the key, a site can send a package and start an import here, which replaces this site’s data, or ask for a copy of the database. It cannot reach anything else."
 msgstr ""
 
-#: assets/js/screens/settings.js:417
-#: assets/js/screens/settings.js:445
+#: assets/js/screens/settings.js:503
+#: assets/js/screens/settings.js:539
 msgid "Connection address"
 msgstr ""
 
-#: assets/js/screens/settings.js:422
+#: assets/js/screens/settings.js:508
 msgid "Require HTTPS"
 msgstr ""
 
-#: assets/js/screens/settings.js:422
+#: assets/js/screens/settings.js:508
 msgid "Refuse connections that are not encrypted."
 msgstr ""
 
-#: assets/js/screens/settings.js:428
+#: assets/js/screens/settings.js:512
+msgid "Allow local and private addresses"
+msgstr ""
+
+#: assets/js/screens/settings.js:513
+msgid "For connecting this site to a site of your own on this computer or network, such as localhost or 192.168.x.x, for example while you build a site locally. WordPress refuses these addresses unless you allow them, so a mistyped address cannot make this server call something inside its own network. This applies to the sites this one connects to (push, pull and the connection test)."
+msgstr ""
+
+#: assets/js/screens/settings.js:521
 msgid "Allowed IP addresses"
 msgstr ""
 
-#: assets/js/screens/settings.js:430
+#: assets/js/screens/settings.js:523
 msgid "One address or range (like 198.51.100.0/24) per line. Leave empty to accept any address that has the key. Lines that are not valid addresses are dropped when you save; if none is valid, nothing is saved."
 msgstr ""
 
-#: assets/js/screens/settings.js:438
+#: assets/js/screens/settings.js:531
 msgid "Connection and security"
 msgstr ""
 
-#: assets/js/screens/settings.js:447
+#: assets/js/screens/settings.js:541
 msgid "Other sites reach this site at this address. In most cases you only need the site address and the key."
 msgstr ""
 
-#: assets/js/screens/settings.js:458
+#: assets/js/screens/settings.js:553
 msgid "WP-Cron is switched off in wp-config.php. Jobs only continue in the background if a real cron job calls wp-cron.php. Until then, keep the Progress page open."
 msgstr ""
 
-#: assets/js/screens/settings.js:459
+#: assets/js/screens/settings.js:554
 msgid "Action Scheduler is not installed on this site, so WP-Cron is used instead."
 msgstr ""
 
 #. translators: %s: name of the runner that is used, for example WP-Cron
-#: assets/js/screens/settings.js:475
+#: assets/js/screens/settings.js:570
 #, js-format
 msgid "Picks the best background option this server allows and falls back if one fails. On this server that is %s."
 msgstr ""
 
-#: assets/js/screens/settings.js:477
+#: assets/js/screens/settings.js:572
 msgid "Only this browser tab moves a job along. If you close the Progress page, the job waits until you open it again."
 msgstr ""
 
-#: assets/js/screens/settings.js:479
+#: assets/js/screens/settings.js:574
 msgid "WordPress continues the job in the background through WP-Cron, so you can close the page. It needs visits to your site or a real cron job."
 msgstr ""
 
-#: assets/js/screens/settings.js:481
+#: assets/js/screens/settings.js:576
 msgid "Continues jobs in the background with the Action Scheduler library that WooCommerce and some other plugins include."
 msgstr ""
 
-#: assets/js/screens/settings.js:483
+#: assets/js/screens/settings.js:578
 msgid "Nothing runs in the background. Start and resume jobs from the command line with wp estasoft-migrate resume."
 msgstr ""
 
 #. translators: %s: runner name
-#: assets/js/screens/settings.js:504
+#: assets/js/screens/settings.js:599
 #, js-format
 msgid "%s (not installed)"
 msgstr ""
 
-#: assets/js/screens/settings.js:511
+#: assets/js/screens/settings.js:606
 msgid "Runner"
 msgstr ""
 
 #. translators: %d: seconds
-#: assets/js/screens/settings.js:523
+#: assets/js/screens/settings.js:618
 #, js-format
 msgid "%d s limit detected"
 msgstr ""
 
-#: assets/js/screens/settings.js:523
+#: assets/js/screens/settings.js:618
 msgid "No time limit"
 msgstr ""
 
 #. translators: %s: memory size
-#: assets/js/screens/settings.js:524
+#: assets/js/screens/settings.js:619
 #, js-format
 msgid "%s memory"
 msgstr ""
 
-#: assets/js/screens/settings.js:524
+#: assets/js/screens/settings.js:619
 msgid "No memory limit"
 msgstr ""
 
 #. translators: %d: seconds
-#: assets/js/screens/settings.js:527
+#: assets/js/screens/settings.js:622
 #, js-format
 msgid "Each request works for at most this long, and never more than 80%% of the server’s %d-second limit."
 msgstr ""
 
-#: assets/js/screens/settings.js:528
+#: assets/js/screens/settings.js:623
 msgid "Each request works for at most this long. Shorter is gentler on slow hosts."
 msgstr ""
 
-#: assets/js/screens/settings.js:532
+#: assets/js/screens/settings.js:627
 msgid "Performance"
 msgstr ""
 
-#: assets/js/screens/settings.js:536
+#: assets/js/screens/settings.js:631
 msgid "Largest batch"
 msgstr ""
 
-#: assets/js/screens/settings.js:537
+#: assets/js/screens/settings.js:632
 msgid "Rows per batch. Batches shrink on their own when the server is slow and grow again when it is fast."
 msgstr ""
 
-#: assets/js/screens/settings.js:538
+#: assets/js/screens/settings.js:633
 msgid "rows"
 msgstr ""
 
-#: assets/js/screens/settings.js:540
+#: assets/js/screens/settings.js:635
 msgid "Time per request"
 msgstr ""
 
-#: assets/js/screens/settings.js:540
+#: assets/js/screens/settings.js:635
 msgid "seconds"
 msgstr ""
 
-#: assets/js/screens/settings.js:543
+#: assets/js/screens/settings.js:638
 msgid "Server limits"
 msgstr ""
 
-#: assets/js/screens/settings.js:543
+#: assets/js/screens/settings.js:638
 msgid "What this server allows one request to use. Requests stop at 75% of the memory limit."
 msgstr ""
 
-#: assets/js/screens/settings.js:551
+#: assets/js/screens/settings.js:646
 msgid "This server has no PHP sodium extension, so packages cannot be encrypted. Exports will be refused while this is on."
 msgstr ""
 
-#: assets/js/screens/settings.js:560
+#: assets/js/screens/settings.js:655
 msgid "Packages and clean-up"
 msgstr ""
 
-#: assets/js/screens/settings.js:563
+#: assets/js/screens/settings.js:658
 msgid "Encrypt new packages"
 msgstr ""
 
-#: assets/js/screens/settings.js:564
+#: assets/js/screens/settings.js:659
 msgid "Every new package must be protected with a password or with this site’s key. A password is not stored anywhere, so keep it safe."
 msgstr ""
 
-#: assets/js/screens/settings.js:569
+#: assets/js/screens/settings.js:664
 msgid "Delete old packages after"
 msgstr ""
 
-#: assets/js/screens/settings.js:570
+#: assets/js/screens/settings.js:665
 msgid "Exports and received packages older than this are removed by themselves. 0 keeps them until you delete them."
 msgstr ""
 
-#: assets/js/screens/settings.js:571
-#: assets/js/screens/settings.js:583
+#: assets/js/screens/settings.js:666
+#: assets/js/screens/settings.js:678
 msgid "days"
 msgstr ""
 
-#: assets/js/screens/settings.js:575
+#: assets/js/screens/settings.js:670
 msgid "Snapshots to keep"
 msgstr ""
 
-#: assets/js/screens/settings.js:576
+#: assets/js/screens/settings.js:671
 msgid "Rollback snapshots are large. Only this many of the newest ones are kept; older ones are removed."
 msgstr ""
 
-#: assets/js/screens/settings.js:577
+#: assets/js/screens/settings.js:672
 msgid "snapshots"
 msgstr ""
 
-#: assets/js/screens/settings.js:581
+#: assets/js/screens/settings.js:676
 msgid "Delete old snapshots after"
 msgstr ""
 
-#: assets/js/screens/settings.js:582
+#: assets/js/screens/settings.js:677
 msgid "Snapshots older than this are removed, except the newest one. 0 keeps them until you delete them."
 msgstr ""
 
-#: assets/js/screens/settings.js:593
+#: assets/js/screens/settings.js:688
 msgid "Privacy and removal"
 msgstr ""
 
-#: assets/js/screens/settings.js:596
+#: assets/js/screens/settings.js:691
 msgid "Usage tracking"
 msgstr ""
 
-#: assets/js/screens/settings.js:596
+#: assets/js/screens/settings.js:691
 msgid "None. Estasoft Migrate collects no statistics and sends nothing to ESTASOFT TECHNOLOGIES or anyone else. It only contacts a site when you connect it yourself."
 msgstr ""
 
-#: assets/js/screens/settings.js:597
+#: assets/js/screens/settings.js:692
 msgid "Off, always"
 msgstr ""
 
-#: assets/js/screens/settings.js:601
+#: assets/js/screens/settings.js:696
 msgid "Delete all data when the plugin is deleted"
 msgstr ""
 
-#: assets/js/screens/settings.js:602
+#: assets/js/screens/settings.js:697
 msgid "Removes jobs, logs, packages, snapshots and settings. Off by default, so reinstalling keeps your history."
 msgstr ""
 
-#: assets/js/screens/settings.js:621
+#: assets/js/screens/settings.js:716
 msgid "Some values are not valid. Fix the fields marked in red and save again."
 msgstr ""
 
-#: assets/js/screens/settings.js:626
+#: assets/js/screens/settings.js:721
 msgid "There is nothing to save."
 msgstr ""
 
 #. translators: 1: setting name, 2: the number that was stored
-#: assets/js/screens/settings.js:652
+#: assets/js/screens/settings.js:747
 #, js-format
 msgid "%1$s is now %2$s"
 msgstr ""
 
-#: assets/js/screens/settings.js:658
+#: assets/js/screens/settings.js:753
 msgid "These lines are not valid addresses and were not saved: "
 msgstr ""
 
 #. translators: %s: list of settings with their stored values
-#: assets/js/screens/settings.js:671
+#: assets/js/screens/settings.js:766
 #, js-format
 msgid "Saved. Some numbers had to stay within the allowed range: %s."
 msgstr ""
 
-#: assets/js/screens/settings.js:673
+#: assets/js/screens/settings.js:768
 msgid "Saved. Some addresses were dropped, see the list under Allowed IP addresses."
 msgstr ""
 
-#: assets/js/screens/settings.js:675
+#: assets/js/screens/settings.js:770
 msgid "Settings saved."
 msgstr ""
 
-#: assets/js/screens/settings.js:681
+#: assets/js/screens/settings.js:776
 msgid "Reset to defaults?"
 msgstr ""
 
-#: assets/js/screens/settings.js:682
-msgid "The form is filled with the factory values: incoming migrations off, HTTPS required, automatic runner, and the standard limits and clean-up times. Nothing is saved until you press Save changes. Your connection key does not change."
+#: assets/js/screens/settings.js:777
+msgid "The form is filled with the factory values: incoming migrations off (and, once on, switching themselves off after 24 hours), HTTPS required, local and private addresses refused, automatic runner, and the standard limits and clean-up times. Nothing is saved until you press Save changes. Your connection key does not change."
 msgstr ""
 
-#: assets/js/screens/settings.js:683
+#: assets/js/screens/settings.js:778
 msgid "Fill in the defaults"
 msgstr ""
 
-#: assets/js/screens/settings.js:697
+#: assets/js/screens/settings.js:792
 msgid "The defaults are filled in. Press Save changes to keep them."
 msgstr ""
 
 #. translators: %d: seconds
-#: assets/js/screens/settings.js:720
+#: assets/js/screens/settings.js:815
 #, js-format
 msgid "The server stops a request after %d seconds. Jobs are cut into short slices to fit, so large databases take longer but still finish."
 msgstr ""
 
 #. translators: %s: memory size
-#: assets/js/screens/settings.js:723
+#: assets/js/screens/settings.js:818
 #, js-format
 msgid "The memory limit is low (%s). Lower the largest batch if jobs run out of memory."
 msgstr ""
 
-#: assets/js/screens/settings.js:726
+#: assets/js/screens/settings.js:821
 msgid "WP-Cron is switched off, so jobs only continue in the background if a real cron job calls wp-cron.php."
 msgstr ""
 
-#: assets/js/screens/settings.js:729
+#: assets/js/screens/settings.js:824
 msgid "The PHP sodium extension is missing, so packages cannot be encrypted or opened if they are."
 msgstr ""
 
-#: assets/js/screens/settings.js:732
+#: assets/js/screens/settings.js:827
 msgid "The PHP zlib extension is missing, so packages cannot be compressed and are larger."
 msgstr ""
 
-#: assets/js/screens/settings.js:735
+#: assets/js/screens/settings.js:830
 msgid "The package folder is not writable. Packages and snapshots cannot be saved."
 msgstr ""
 
-#: assets/js/screens/settings.js:738
+#: assets/js/screens/settings.js:833
 msgid "A test file in the package folder could be downloaded without signing in. Encrypt your packages or ask your host to block access to the folder."
 msgstr ""
 
 #. translators: %s: free disk space
-#: assets/js/screens/settings.js:741
+#: assets/js/screens/settings.js:836
 #, js-format
 msgid "Only %s of disk space is free. Imports need room for a rollback snapshot."
 msgstr ""
 
-#: assets/js/screens/settings.js:763
+#: assets/js/screens/settings.js:858
 msgid "About"
 msgstr ""
 
-#: assets/js/screens/settings.js:766
+#: assets/js/screens/settings.js:861
 msgid "Plugin"
 msgstr ""
 
-#: assets/js/screens/settings.js:767
+#: assets/js/screens/settings.js:862
 msgid "Version"
 msgstr ""
 
-#: assets/js/screens/settings.js:768
+#: assets/js/screens/settings.js:863
 msgid "Developer"
 msgstr ""
 
-#: assets/js/screens/settings.js:769
+#: assets/js/screens/settings.js:864
 msgid "License"
 msgstr ""
 
-#: assets/js/screens/settings.js:769
+#: assets/js/screens/settings.js:864
 msgid "GPL v2 or later"
 msgstr ""
 
-#: assets/js/screens/settings.js:775
+#: assets/js/screens/settings.js:870
 msgid "This server"
 msgstr ""
 
 #. translators: %d: number of things the person should know about their server
-#: assets/js/screens/settings.js:776
+#: assets/js/screens/settings.js:871
 #, js-format
 msgid "%d thing to know"
 msgid_plural "%d things to know"
 msgstr[0] ""
 msgstr[1] ""
 
-#: assets/js/screens/settings.js:780
+#: assets/js/screens/settings.js:875
 msgid "Nothing on this server limits the plugin."
 msgstr ""
 
-#: assets/js/screens/settings.js:783
+#: assets/js/screens/settings.js:878
 msgid "PHP"
 msgstr ""
 
-#: assets/js/screens/settings.js:784
+#: assets/js/screens/settings.js:879
 msgid "WordPress"
 msgstr ""
 
-#: assets/js/screens/settings.js:785
+#: assets/js/screens/settings.js:880
 msgid "Database"
 msgstr ""
 
-#: assets/js/screens/settings.js:786
-#: assets/js/screens/settings.js:787
+#: assets/js/screens/settings.js:881
+#: assets/js/screens/settings.js:882
 msgid "No limit"
 msgstr ""
 
-#: assets/js/screens/settings.js:787
+#: assets/js/screens/settings.js:882
 msgid "Max execution time"
 msgstr ""
 
-#: assets/js/screens/settings.js:788
+#: assets/js/screens/settings.js:883
 msgid "Switched off"
 msgstr ""
 
-#: assets/js/screens/settings.js:789
+#: assets/js/screens/settings.js:884
 msgid "Installed"
 msgstr ""
 
-#: assets/js/screens/settings.js:789
+#: assets/js/screens/settings.js:884
 msgid "Not installed"
 msgstr ""
 
-#: assets/js/screens/settings.js:790
+#: assets/js/screens/settings.js:885
 msgid "Background runner"
 msgstr ""
 
-#: assets/js/screens/settings.js:791
+#: assets/js/screens/settings.js:886
 msgid "Encryption (sodium)"
 msgstr ""
 
-#: assets/js/screens/settings.js:791
-#: assets/js/screens/settings.js:792
+#: assets/js/screens/settings.js:886
+#: assets/js/screens/settings.js:887
 msgid "Available"
 msgstr ""
 
-#: assets/js/screens/settings.js:791
-#: assets/js/screens/settings.js:792
+#: assets/js/screens/settings.js:886
+#: assets/js/screens/settings.js:887
 msgid "Missing"
 msgstr ""
 
-#: assets/js/screens/settings.js:792
+#: assets/js/screens/settings.js:887
 msgid "Compression (zlib)"
 msgstr ""
 
-#: assets/js/screens/settings.js:793
+#: assets/js/screens/settings.js:888
 msgid "Writable"
 msgstr ""
 
-#: assets/js/screens/settings.js:793
+#: assets/js/screens/settings.js:888
 msgid "Not writable"
 msgstr ""
 
-#: assets/js/screens/settings.js:795
+#: assets/js/screens/settings.js:890
 msgid "Used by packages"
 msgstr ""
 
-#: assets/js/screens/settings.js:797
+#: assets/js/screens/settings.js:892
 msgid "Multisite"
 msgstr ""
 
-#: assets/js/screens/settings.js:797
+#: assets/js/screens/settings.js:892
 msgid "No"
 msgstr ""
 
-#: assets/js/screens/settings.js:801
+#: assets/js/screens/settings.js:896
 msgid "Free, for everyone"
 msgstr ""
 
-#: assets/js/screens/settings.js:802
+#: assets/js/screens/settings.js:897
 msgid "No license key, no locked features, no upgrade notices. If it helps you, a review on WordPress.org is the best thanks."
 msgstr ""
 
-#: assets/js/screens/settings.js:806
+#: assets/js/screens/settings.js:901
 msgid "Rate the plugin"
 msgstr ""
 
-#: assets/js/screens/settings.js:811
+#: assets/js/screens/settings.js:906
 msgid "Languages and direction"
 msgstr ""
 
-#: assets/js/screens/settings.js:812
+#: assets/js/screens/settings.js:907
 msgid "The plugin follows your WordPress language. Right-to-left languages such as Arabic and Kurdish (Sorani) mirror the whole interface."
 msgstr ""

@@ -136,7 +136,8 @@ abstract class AbstractDatabase implements Database {
 	 */
 	public function fetch_batch( $table, array $key_columns, $after, $limit, $offset = 0 ) {
 		$limit = max( 1, (int) $limit );
-		$sql   = 'SELECT * FROM ' . Identifier::quote( $table );
+		// The columns are named, not "*": a generated column cannot be written back, and an invisible column is left out of "*".
+		$sql = 'SELECT ' . Identifier::quote_list( $this->writable_columns( $table ) ) . ' FROM ' . Identifier::quote( $table );
 
 		if ( $key_columns ) {
 			$cols = Identifier::quote_list( $key_columns );
@@ -156,6 +157,32 @@ abstract class AbstractDatabase implements Database {
 		}
 
 		return $this->rows( $sql );
+	}
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @param string $table Table name.
+	 * @return string[]
+	 */
+	public function writable_columns( $table ) {
+		$names = array();
+		foreach ( $this->columns( $table ) as $name => $column ) {
+			if ( empty( $column['generated'] ) ) {
+				$names[] = (string) $name;
+			}
+		}
+		return $names;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @param bool $on Start or end.
+	 * @return void
+	 */
+	public function utc_session( $on ) {
+		unset( $on ); // Nothing to do unless the driver has a connection time zone.
 	}
 
 	/**

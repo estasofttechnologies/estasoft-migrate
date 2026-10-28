@@ -131,14 +131,42 @@ class PdoDatabase extends AbstractDatabase {
 	}
 
 	public function primary_key( $table ) {
+		$info = $this->rows( 'PRAGMA table_info(' . Identifier::quote( $table ) . ')' );
 		$cols = array();
-		foreach ( $this->rows( 'PRAGMA table_info(' . Identifier::quote( $table ) . ')' ) as $r ) {
+		foreach ( $info as $r ) {
 			if ( (int) $r['pk'] > 0 ) {
 				$cols[ (int) $r['pk'] ] = $r['name'];
 			}
 		}
 		ksort( $cols );
-		return array_values( $cols );
+		if ( $cols ) {
+			return array_values( $cols );
+		}
+
+		// Like the MySQL driver: the shortest unique key whose columns can never be NULL.
+		$not_null = array();
+		foreach ( $info as $r ) {
+			$not_null[ $r['name'] ] = 1 === (int) $r['notnull'];
+		}
+		$best = null;
+		foreach ( $this->rows( 'PRAGMA index_list(' . Identifier::quote( $table ) . ')' ) as $index ) {
+			if ( 1 !== (int) $index['unique'] || 'pk' === $index['origin'] ) {
+				continue;
+			}
+			$names = array();
+			foreach ( $this->rows( 'PRAGMA index_info(' . Identifier::quote( $index['name'] ) . ')' ) as $part ) {
+				$names[ (int) $part['seqno'] ] = (string) $part['name'];
+			}
+			ksort( $names );
+			$ok = '' !== implode( '', $names );
+			foreach ( $names as $name ) {
+				$ok = $ok && ! empty( $not_null[ $name ] );
+			}
+			if ( $ok && ( null === $best || count( $names ) < count( $best ) ) ) {
+				$best = array_values( $names );
+			}
+		}
+		return null === $best ? array() : $best;
 	}
 
 	public function columns( $table ) {
@@ -146,11 +174,16 @@ class PdoDatabase extends AbstractDatabase {
 			return $this->columns_cache[ $table ];
 		}
 		$out = array();
-		foreach ( $this->rows( 'PRAGMA table_info(' . Identifier::quote( $table ) . ')' ) as $r ) {
+		// table_xinfo also lists generated columns; "hidden" is 2 for a virtual and 3 for a stored generated column.
+		foreach ( $this->rows( 'PRAGMA table_xinfo(' . Identifier::quote( $table ) . ')' ) as $r ) {
+			if ( 1 === (int) $r['hidden'] ) {
+				continue;
+			}
 			$out[ $r['name'] ] = array(
-				'type'    => $r['type'],
-				'binary'  => self::is_binary_type( $r['type'] ),
-				'numeric' => self::is_numeric_type( $r['type'] ),
+				'type'      => $r['type'],
+				'binary'    => self::is_binary_type( $r['type'] ),
+				'numeric'   => self::is_numeric_type( $r['type'] ),
+				'generated' => in_array( (int) $r['hidden'], array( 2, 3 ), true ),
 			);
 		}
 		$this->columns_cache[ $table ] = $out;

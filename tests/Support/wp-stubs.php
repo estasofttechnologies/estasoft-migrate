@@ -62,3 +62,58 @@ if ( ! function_exists( 'esc_html__' ) ) {
 		return esc_html( $text );
 	}
 }
+
+/*
+ * Just enough of the HTTP API to see which request function WpTransport picks. Both stubs record the call and answer with
+ * an error, so no response has to be built.
+ */
+if ( ! class_exists( 'WP_Error' ) ) {
+	class WP_Error { // phpcs:ignore
+		public $code;
+		public $message;
+		public function __construct( $code = '', $message = '' ) {
+			$this->code    = $code;
+			$this->message = $message;
+		}
+		public function get_error_message() {
+			return $this->message;
+		}
+	}
+}
+if ( ! function_exists( 'is_wp_error' ) ) {
+	function is_wp_error( $thing ) { // phpcs:ignore
+		return $thing instanceof WP_Error;
+	}
+}
+if ( ! function_exists( 'apply_filters' ) ) {
+	function apply_filters( $hook, $value ) { // phpcs:ignore
+		return $value;
+	}
+}
+if ( ! function_exists( 'home_url' ) ) {
+	function home_url( $path = '' ) { // phpcs:ignore
+		return 'https://this-site.example.test' . $path;
+	}
+}
+if ( ! function_exists( 'wp_http_validate_url' ) ) {
+	/** Like the real one for the cases the tests need: local and private addresses are refused. */
+	function wp_http_validate_url( $url ) { // phpcs:ignore
+		$host = (string) parse_url( $url, PHP_URL_HOST ); // phpcs:ignore WordPress.WP.AlternativeFunctions.parse_url_parse_url
+		if ( 'localhost' === $host || 1 === preg_match( '/^(10\.|127\.|192\.168\.)/', $host ) ) {
+			return false;
+		}
+		return $url;
+	}
+}
+if ( ! function_exists( 'wp_remote_post' ) ) {
+	function wp_remote_post( $url, $args = array() ) { // phpcs:ignore
+		$GLOBALS['estm_http_calls'][] = 'open ' . $url;
+		return new WP_Error( 'http_request_failed', 'stub-open' );
+	}
+}
+if ( ! function_exists( 'wp_safe_remote_post' ) ) {
+	function wp_safe_remote_post( $url, $args = array() ) { // phpcs:ignore
+		$GLOBALS['estm_http_calls'][] = 'safe ' . $url;
+		return new WP_Error( 'http_request_failed', 'stub-safe' );
+	}
+}

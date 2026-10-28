@@ -452,7 +452,7 @@ class Checker {
 		$this->add(
 			self::WARN,
 			'nokey',
-			sprintf( /* translators: %d: number of tables */ _n( '%d table has no primary key', '%d tables have no primary key', count( $none ), 'estasoft-migrate' ), count( $none ) ),
+			sprintf( /* translators: %d: number of tables */ _n( '%d table has no primary or unique key', '%d tables have no primary or unique key', count( $none ), 'estasoft-migrate' ), count( $none ) ),
 			'search_replace' === $mode
 				? sprintf( /* translators: %s: table names */ __( 'Rows cannot be updated safely without a key, so these tables are skipped: %s', 'estasoft-migrate' ), $list )
 				: sprintf( /* translators: %s: table names */ __( 'They are copied in order with a slower method and are fine to migrate: %s', 'estasoft-migrate' ), $list )

@@ -411,10 +411,101 @@ class RowSanitizer {
 		if ( 'description' === $key ) {
 			$kind = 'note';
 		}
+		if ( null === $kind ) {
+			// Plugins store the last login address or a payment email under keys of their own. Whatever the key, a value that is
+			// exactly an address is personal data.
+			$kind = self::plain_kind( (string) $row['meta_value'] );
+		}
 		if ( null !== $kind ) {
 			$row['meta_value'] = $this->mask_kind( $kind, (string) $row['meta_value'] ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- A value in a row held in memory, not a query.
 		}
 		return $row;
+	}
+
+	/**
+	 * What a value is when it is nothing but an IP address or an email address.
+	 *
+	 * @param string $value Value.
+	 * @return string|null "ip", "email" or null.
+	 */
+	private static function plain_kind( $value ) {
+		$value = trim( $value );
+		if ( false !== filter_var( $value, FILTER_VALIDATE_IP ) ) {
+			return 'ip';
+		}
+		if ( 1 === preg_match( '/^[^@\s]+@[^@\s]+\.[^@\s]+$/', $value ) && strlen( $value ) <= 254 ) {
+			return 'email';
+		}
+		return null;
+	}
+
+	/**
+	 * The "cron" option: the arguments of scheduled events can hold an email address or an IP address.
+	 *
+	 * WordPress finds an event by the md5 of its serialized arguments, so an event whose arguments change gets its new key.
+	 *
+	 * @param string $stored Serialized option value.
+	 * @return string
+	 */
+	private function cron_args( $stored ) {
+		if ( ! $this->on( 'emails' ) && ! $this->on( 'ips' ) ) {
+			return $stored;
+		}
+		$data = @unserialize( $stored, array( 'allowed_classes' => false ) ); // phpcs:ignore WordPress.PHP.NoSilencedErrors,WordPress.PHP.DiscouragedPHPFunctions
+		if ( ! is_array( $data ) ) {
+			return $stored;
+		}
+		$changed = false;
+		foreach ( $data as $time => $hooks ) {
+			if ( ! is_int( $time ) || ! is_array( $hooks ) ) {
+				continue; // The "version" entry.
+			}
+			foreach ( $hooks as $hook => $events ) {
+				if ( ! is_array( $events ) ) {
+					continue;
+				}
+				$rebuilt = array();
+				foreach ( $events as $key => $event ) {
+					if ( is_array( $event ) && ! empty( $event['args'] ) && is_array( $event['args'] ) ) {
+						$touched = false;
+						$args    = $this->mask_args( $event['args'], $touched );
+						if ( $touched ) {
+							$event['args'] = $args;
+							$key           = md5( serialize( $args ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions -- The key WordPress itself builds.
+							$changed       = true;
+						}
+					}
+					$rebuilt[ $key ] = $event;
+				}
+				$data[ $time ][ $hook ] = $rebuilt;
+			}
+		}
+		return $changed ? serialize( $data ) : $stored; // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions
+	}
+
+	/**
+	 * Mask the addresses in a list of arguments, however deeply they are nested.
+	 *
+	 * @param array $args    Arguments.
+	 * @param bool  $touched Set to true when a value was changed.
+	 * @return array
+	 */
+	private function mask_args( array $args, &$touched ) {
+		foreach ( $args as $i => $arg ) {
+			if ( is_array( $arg ) ) {
+				$args[ $i ] = $this->mask_args( $arg, $touched );
+			} elseif ( is_string( $arg ) ) {
+				$kind = self::plain_kind( $arg );
+				if ( null !== $kind ) {
+					$masked = $this->mask_kind( $kind, $arg );
+					if ( $masked !== $arg ) {
+						$args[ $i ] = $masked;
+						$touched    = true;
+					}
+				}
+			}
+		}
+		return $args;
 	}
 
 	/**
@@ -556,6 +647,9 @@ class RowSanitizer {
 		if ( in_array( $name, array( 'admin_email', 'new_admin_email' ), true ) && isset( $row['option_value'] ) ) {
 			$row['option_value'] = $this->mask_kind( 'email', (string) $row['option_value'] );
 			return $row;
+		}
+		if ( 'cron' === $name && isset( $row['option_value'] ) && '' !== $row['option_value'] ) {
+			$row['option_value'] = $this->cron_args( (string) $row['option_value'] );
 		}
 		if ( $this->on( 'secrets' ) && isset( $row['option_value'] ) && '' !== $row['option_value'] ) {
 			if ( SecretScrubber::is_secret_option( $name ) ) {

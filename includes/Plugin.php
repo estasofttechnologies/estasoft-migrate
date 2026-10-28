@@ -192,10 +192,11 @@ final class Plugin {
 			$ctx->secret               = $this->site_secret();
 			$ctx->max_batch            = (int) $this->settings()->get( 'max_batch', 20000 );
 			$ctx->services             = array(
-				'plugin_basename' => plugin_basename( ESTASOFT_MIGRATE_FILE ),
-				'keep_snapshots'  => (int) $this->settings()->get( 'keep_snapshots', 2 ),
-				'after_import'    => array( $this, 'after_import' ),
-				'current_user'    => static function () {
+				'plugin_basename'     => plugin_basename( ESTASOFT_MIGRATE_FILE ),
+				'keep_snapshots'      => (int) $this->settings()->get( 'keep_snapshots', 2 ),
+				'allow_private_hosts' => (bool) $this->settings()->get( 'allow_private_hosts', false ),
+				'after_import'        => array( $this, 'after_import' ),
+				'current_user'        => static function () {
 					$user = wp_get_current_user();
 					return array(
 						'id'    => (int) $user->ID,

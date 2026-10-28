@@ -21,6 +21,14 @@ function estasoft_migrate_uninstall() {
 	wp_clear_scheduled_hook( 'estasoft_migrate_daily' );
 	wp_unschedule_hook( 'estasoft_migrate_run_job' );
 
+	// The memory of used request numbers is of no use to anyone once the plugin is gone, whatever else is kept.
+	$wpdb->query( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$wpdb->prepare(
+			"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+			$wpdb->esc_like( 'estasoft_migrate_n_' ) . '%'
+		)
+	);
+
 	$settings = get_option( 'estasoft_migrate_settings', array() );
 	if ( ! is_array( $settings ) || empty( $settings['delete_on_uninstall'] ) ) {
 		return;
