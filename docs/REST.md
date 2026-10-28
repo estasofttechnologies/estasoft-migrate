@@ -20,7 +20,7 @@ The logic lives in `includes/Rest/Api.php` (unit-tested with arrays in and out).
 
 | Method | Route | Notes |
 | --- | --- | --- |
-| GET | `/overview` | `site{url,name,prefix,wp_version,php,db,multisite}`, `database{tables,rows,bytes,largest{name,rows,bytes}\|null}`, `last` (last completed export/import/push/pull as a job summary, or null), `current` (running job view or null), `recent[]` (job summaries, 8), `packages{exports,snapshots,received}` (each `{count,bytes,newest}`) plus `sanitized` and `free`, `connection{accepting,https,key_id}`, `health` (see Settings → environment) |
+| GET | `/overview` | `site{url,name,prefix,wp_version,php,db,multisite}`, `database{tables,rows,bytes,largest{name,rows,bytes}\|null}`, `last` (last completed export/import/push/pull as a job summary, or null), `current` (running job view or null), `recent[]` (job summaries, 8), `packages{exports,snapshots,received}` (each `{count,bytes,newest}`) plus `sanitized` and `free`, `connection{accepting,until,https,key_id}` (`until` is the time incoming migrations switch themselves off, 0 for never), `health` (see Settings → environment) |
 | GET | `/tables` | `tables[{name,logical,rows,bytes}]`, `totals{tables,rows,bytes}`, `prefix` |
 | POST | `/preflight` | Body: the same fields as the job you plan, plus `mode` = `export\|sanitize\|import\|search_replace\|push\|pull`. Returns `status` (`ready\|warnings\|blocked`), `counts{pass,warn,block}`, `checks[{id,status,title,detail}]` (blocks first), `summary{tables,rows,bytes,package,seconds[lo,hi],remote}`, `safety{snapshot,snapshot_bytes,free,remote_free}` |
 
@@ -97,9 +97,10 @@ Downloads are not REST: see **Downloads**.
 
 | Method | Route | Notes |
 | --- | --- | --- |
-| GET | `/settings` | `values{accept_incoming,require_https,ip_allowlist,runner,max_batch,slice_seconds,encrypt_packages,delete_packages_days,keep_snapshots,delete_snapshots_days,delete_on_uninstall}`, `defaults{…same keys}`, `connection{key,key_id,endpoint,previous_key_until}`, `environment{php,wp,db,memory,max_exec,cron_off,action_scheduler,runner,sodium,zlib,multisite,storage{writable,protected,free,used}}` (`protected` is true when a test file in the package folder could not be fetched from the web, false when it could, null when the server could not try), `runners[]` |
-| POST | `/settings` | Any subset of `values`. Values are validated and clamped; returns the same object as GET. An `ip_allowlist` in which no line is a valid address or range is refused (400 `estm_invalid`) instead of being saved as an empty list |
-| POST | `/settings/key` | Replace the connection key (the old one keeps working for a short while: `previous_key_until`) |
+| GET | `/settings` | `values{accept_incoming,accept_hours,require_https,allow_private_hosts,ip_allowlist,runner,max_batch,slice_seconds,encrypt_packages,delete_packages_days,keep_snapshots,delete_snapshots_days,delete_on_uninstall}`, `defaults{…same keys}`, `connection{key,key_id,endpoint,previous_key_until,accept_until,accept_ended}`, `environment{php,wp,db,memory,max_exec,cron_off,action_scheduler,runner,sodium,zlib,multisite,storage{writable,protected,free,used}}` (`protected` is true when a test file in the package folder could not be fetched from the web, false when it could, null when the server could not try), `runners[]` |
+| POST | `/settings` | Any subset of `values`. Values are validated and clamped; returns the same object as GET. `accept_hours` is how long **Accept incoming migrations** stays on without a migration: 1, 24 (default), 168 or 0 (never switches off); anything else becomes 24. Turning `accept_incoming` on, or changing `accept_hours`, starts that time again; `connection.accept_until` is when it ends, and `connection.accept_ended` when it last ended by itself. `allow_private_hosts` (default false) lets this site connect to localhost and private network addresses An `ip_allowlist` in which no line is a valid address or range is refused (400 `estm_invalid`) instead of being saved as an empty list |
+| POST | `/settings/key` | Replace the connection key. The old one keeps working for 10 minutes (`previous_key_until`) unless the body is `{"grace": false}`, which stops it at once |
+| POST | `/settings/key/revoke-previous` | Stop the previous key now. Harmless when none is active |
 | POST | `/settings/test-connection` | `{remote_url, remote_key}` → `ok, took_ms, https, skew, site{url,name,wp_version,php,prefix,db,multisite}, version, writable, free_bytes, stats` |
 
 ## Sanitizer

@@ -4,6 +4,8 @@ Before the first submission the plugin went through three independent reviews: t
 
 No critical or high security issue was found. One data-integrity problem was critical and four were high; all are fixed.
 
+A second pass went through the limitations that the first pass had written down and fixed every one that could be fixed (the tables below mark them as "second pass"). What is left is under "Known limitations".
+
 ## Fixed
 
 ### Data integrity
@@ -26,6 +28,10 @@ No critical or high security issue was found. One data-integrity problem was cri
 | Masked emails and logins could collide. | Longer fake identifiers. |
 | Removing foreign keys could leave a missing comma before a `CHECK` line. | Definition lines are re-joined correctly. |
 | A table without a key could skip a row that was deleted between two slices. | Cannot be avoided without a key; a warning is written to the log. |
+| (second pass) A table with a `UNIQUE` key but no primary key was read with an offset, with the same risk. | A unique key whose columns can never be `NULL` (the shortest one) is used like a primary key, in export and in search and replace, which no longer skips such tables. Only a table with neither is read by offset. |
+| (second pass) A table with generated columns failed on import ("the value specified for generated column is not allowed"). | Columns are named in the read, generated columns are left out of the package, and the table computes them again. Search and replace never writes to them. |
+| (second pass) An invisible column (MySQL 8.0.23+, MariaDB 10.3+) was left out of a `SELECT *`, so its data was silently lost. | Columns are named in the read, so invisible columns are copied. |
+| (second pass) `TIMESTAMP` values moved when the two servers used different session time zones (13 hours in the test). | While a job works, the connection uses UTC and the earlier zone is put back afterwards. Tested against two connections with different zones. |
 
 ### Security
 
@@ -41,6 +47,11 @@ No critical or high security issue was found. One data-integrity problem was cri
 | No minimum password length for packages in the REST API or the command line. | At least 8 characters. |
 | Declared sizes of uploads and received parts were not enforced. | A part cannot run past the announced size; an upload larger than 64 GB is refused (filter `estasoft_migrate_max_package_size`). |
 | `?estm_remote[]=x` raised a PHP notice. | Ignored. |
+| (second pass) Replay protection was a read followed by a write in a transient. Two identical requests at the same moment could both pass, and a flushed cache or an import forgot used numbers. | A used request number is one `INSERT IGNORE` into the options table, whose unique index lets exactly one request through, with or without an object cache. The rows carry the plugin's option prefix, so an import keeps them and a package never carries them; old ones are removed as they expire and when the plugin is deleted. A number that cannot be written is refused. Tested on a real database with two connections and an empty cache. |
+| (second pass) A connection key stayed usable for as long as "Accept incoming migrations" was on. | It switches itself off after 24 hours without a migration (choices: 1 hour, 24 hours, 7 days, never). Every accepted request moves the time forward, so a running migration is never cut off. The Settings screen says when it will switch off, and when it did. |
+| (second pass) A replaced key kept working for 10 minutes with no way to stop it. | "Stop the old key now" on the Settings screen, "Stop the old key at once" when replacing it, `POST /settings/key/revoke-previous`, and `wp estasoft-migrate key --regenerate --stop-old` / `--revoke-old`. |
+| (second pass) Push, pull and the connection test used `wp_remote_post`, so an administrator could point them at an internal address. | They use `wp_safe_remote_post`, which refuses localhost, private network addresses and unusual ports. A person who connects two sites of their own on one machine or network turns on "Allow local and private addresses" in Settings (or uses the filter `estasoft_migrate_allow_private_hosts`); the message says where. |
+| (second pass) Scheduled-event arguments (`cron` option) and user meta whose value is only an IP or email address were not masked. | Both are masked by the IP and email rules. An event whose arguments change gets the key WordPress would give it, so it stays findable. |
 | The settings were read from the database on every page view. | The version check runs only in the admin, in cron, on the command line and for REST requests. |
 
 ### Screens
@@ -65,16 +76,11 @@ No critical or high security issue was found. One data-integrity problem was cri
 
 ## Known limitations
 
-These were found and are not fixed in 1.0.0. None puts data at risk without an administrator's key or permission.
+These are known and are not fixed in 1.0.0. None puts data at risk without an administrator's key or permission.
 
-- **A connection key gives full access while "Accept incoming migrations" is on.** That is what the key is for. The switch is off by default, requests are signed, HTTPS is required by default, every action that starts something is logged with the caller's address, and an IP allow-list can narrow it. There is no automatic switch-off timer; the Settings screen asks to switch it off when not migrating.
-- **Push and pull use `wp_remote_post`, not `wp_safe_remote_post`.** An administrator can therefore point a connection test at an internal address. It needs the `manage_options` capability, and migrating to or from a local development site (`localhost`) is a normal use of the plugin. Redirects are not followed.
-- **Replay protection depends on the object cache and the options table.** A signed request that was captured can be replayed within five minutes (the clock tolerance) if the cache was flushed, or an import replaced the options table, in between. With HTTPS required, capturing a request needs access to the connection itself. Two identical requests at the same moment could both be accepted; a second import cannot start while another job is writing to the tables.
+- **A connection key gives full access while "Accept incoming migrations" is on.** That is what the key is for. The switch is off by default and switches itself off after 24 hours without a migration; requests are signed, a request works once, HTTPS is required by default, every action that starts something is logged with the caller's address, and an IP allow-list can narrow it. A person who chooses "never" for the switch-off time, or who leaves it on during a long project, accepts the risk of a leaked key for that time. The key can be replaced, and the old one stopped at once.
 - **Failed attempts with a bad key are counted per IP address in transients.** Behind a proxy that hides the real address, all callers share one counter. The filter `estasoft_migrate_remote_ip` exists for hosts that pass the real address in a trusted header.
-- **A replaced connection key keeps working for 10 minutes** so that two sites can be updated one after the other. There is no "revoke now".
 - **The block on outgoing email on a staging copy lives in the plugin.** If the plugin is deactivated on that copy, email flows again. Deactivate it only after you have changed the addresses.
-- **Some data is not masked:** arguments of scheduled events (`cron` option), custom user meta that holds IP addresses, and the file-system path of the source site in the package manifest (needed to rewrite paths). The sanitizer shows what it masked, and a column list can be added in the filter `estasoft_migrate_sanitizer_columns`.
-- **Tables without a primary key** are read with an offset, so a row that is deleted while the export runs can be missed; a warning is logged. Tables with only a `UNIQUE` key take the same path.
-- **Generated columns** are not skipped on import; such a table fails loudly rather than losing data.
-- **Time zones:** `TIMESTAMP` columns are copied as they are. If the two servers use different session time zones, such values can shift.
+- **Some data is not masked:** personal data in places the sanitizer has no rule for (for example a name inside the arguments of a scheduled event, or a column of another plugin that the filter `estasoft_migrate_sanitizer_columns` does not list), and the file-system path of the source site in the package manifest (needed to rewrite paths). The sanitizer shows what it masked.
+- **Tables with neither a primary key nor a unique key of columns that are never `NULL`** are read with an offset, so a row that is deleted while the export runs can be missed; a warning is logged. Search and replace skips such tables, because a row cannot be updated safely without a key.
 - **A statement that failed because the connection dropped** is repeated once after reconnecting. Imports write with `REPLACE`, which gives the same result when repeated.

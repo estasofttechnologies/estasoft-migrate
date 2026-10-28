@@ -45,7 +45,8 @@ interface Database {
 	public function table_statuses( $prefix = '' );
 
 	/**
-	 * Primary key columns in key order, empty when the table has no primary key.
+	 * The columns that tell one row from another, in key order: the primary key or, when there is none, the shortest
+	 * unique key whose columns can never be NULL. Empty when the table has neither.
 	 *
 	 * @param string $table Table name.
 	 * @return string[]
@@ -53,12 +54,20 @@ interface Database {
 	public function primary_key( $table );
 
 	/**
-	 * Column details.
+	 * Column details. A generated column (one the table computes itself) is marked with generated = true.
 	 *
 	 * @param string $table Table name.
-	 * @return array<string, array{type:string, binary:bool, numeric:bool}>
+	 * @return array<string, array{type:string, binary:bool, numeric:bool, generated?:bool}>
 	 */
 	public function columns( $table );
+
+	/**
+	 * Names of the columns whose values are copied: every column except the generated ones, which the table fills in itself.
+	 *
+	 * @param string $table Table name.
+	 * @return string[]
+	 */
+	public function writable_columns( $table );
 
 	/**
 	 * CREATE TABLE statement.
@@ -211,6 +220,16 @@ interface Database {
 	 * @return string
 	 */
 	public function quote( $value );
+
+	/**
+	 * Read and write dates the same way on every server. A TIMESTAMP column is stored as a moment in time and shown in
+	 * the time zone of the connection, so two servers with different zones would otherwise copy "the same" row to a
+	 * different moment. While this is on, the connection uses UTC; turning it off puts the earlier zone back.
+	 *
+	 * @param bool $on True at the start of a piece of work, false at its end.
+	 * @return void
+	 */
+	public function utc_session( $on );
 
 	/**
 	 * Forget cached column details (after a table was created, dropped or renamed).

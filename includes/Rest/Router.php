@@ -269,8 +269,16 @@ class Router {
 		$this->add(
 			'/settings/key',
 			$create,
+			static function ( Api $api, \WP_REST_Request $r ) {
+				$in = self::input( $r );
+				return $api->regenerate_key( ! array_key_exists( 'grace', $in ) || filter_var( $in['grace'], FILTER_VALIDATE_BOOLEAN ) );
+			}
+		);
+		$this->add(
+			'/settings/key/revoke-previous',
+			$create,
 			static function ( Api $api ) {
-				return $api->regenerate_key();
+				return $api->revoke_previous_key();
 			}
 		);
 		$this->add(

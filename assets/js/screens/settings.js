@@ -3,7 +3,7 @@
  *
  * The form is built once from GET settings and is never redrawn while someone uses it. After a save only the
  * values that were not edited in the meantime are filled in from the answer. Only the changed values are sent.
- * Data: GET settings, POST settings, POST settings/key.
+ * Data: GET settings, POST settings, POST settings/key, POST settings/key/revoke-previous.
  */
 ( function () {
 	'use strict';
@@ -19,7 +19,9 @@
 	/** The limits are the ones Settings::sanitize() applies on the server. */
 	var FIELDS = {
 		accept_incoming: { type: 'bool' },
+		accept_hours: { type: 'hours' },
 		require_https: { type: 'bool' },
+		allow_private_hosts: { type: 'bool' },
 		ip_allowlist: { type: 'ips' },
 		runner: { type: 'choice' },
 		max_batch: { type: 'int', min: 100, max: 100000 },
@@ -31,6 +33,7 @@
 		delete_on_uninstall: { type: 'bool' },
 	};
 	var KEYS = Object.keys( FIELDS );
+	var INCOMING_HOURS = [ 1, 24, 168, 0 ];
 
 	/* ---------------------------------------------------------------- Helpers */
 
@@ -74,6 +77,19 @@
 		}
 		var names = { mariadb: 'MariaDB', mysql: 'MySQL' };
 		return ( names[ db.type ] || db.type || '' ) + ' ' + ( db.version || '' );
+	}
+
+	/** How long incoming migrations stay on without a migration. The choices are the ones Settings::INCOMING_HOURS allows. */
+	function hoursLabel( hours ) {
+		if ( 168 === hours ) {
+			/* translators: %d: number of days */
+			return sprintf( _n( '%d day', '%d days', 7, 'estasoft-migrate' ), 7 );
+		}
+		if ( hours > 0 ) {
+			/* translators: %d: number of hours */
+			return sprintf( _n( '%d hour', '%d hours', hours, 'estasoft-migrate' ), hours );
+		}
+		return __( 'Never (stay on until I switch it off)', 'estasoft-migrate' );
 	}
 
 	function limitText( n, none ) {
@@ -210,6 +226,7 @@
 				case 'bool': return !! el.checked;
 				case 'ips': return ipList( el.value ).join( '\n' );
 				case 'choice': return el.value;
+				case 'hours': return parseInt( el.value, 10 );
 				default:
 					return /^\s*\d+\s*$/.test( el.value ) ? parseInt( el.value, 10 ) : null;
 			}
@@ -295,7 +312,7 @@
 			if ( 'runner' === key ) {
 				updateRunnerInfo();
 			}
-			if ( 'require_https' === key || 'accept_incoming' === key ) {
+			if ( 'require_https' === key || 'accept_incoming' === key || 'accept_hours' === key || 'allow_private_hosts' === key ) {
 				updateConnectionNotes();
 			}
 			if ( 'encrypt_packages' === key ) {
@@ -307,6 +324,7 @@
 		/* -------- connection and security */
 
 		var keyInput;
+		var replaceKeyBtn;
 		var keyIdHint = h( 'span.hint' );
 		var graceBox = h( 'div', { 'aria-live': 'polite' } );
 
@@ -323,10 +341,27 @@
 			var when = gmtFromUnix( until );
 			return ui.note(
 				'warn',
-				/* translators: %s: time of day, for example 14:32 */
-				sprintf( __( 'The previous key still works until %s. Paste the new key into the other sites before then.', 'estasoft-migrate' ), fmt.clock( when ) ),
+				[
+					/* translators: %s: time of day, for example 14:32 */
+					sprintf( __( 'The previous key still works until %s. Paste the new key into the other sites before then.', 'estasoft-migrate' ), fmt.clock( when ) ),
+					' ',
+					ui.btn( __( 'Stop the old key now', 'estasoft-migrate' ), { kind: 'quiet', size: 'sm', onClick: function ( ev, el ) { revokePrevious( el ); } } ),
+				],
 				{ title: __( 'A new key was created.', 'estasoft-migrate' ) }
 			);
+		}
+
+		function revokePrevious( button ) {
+			ui.busy( button, ESTM.post( 'settings/key/revoke-previous' ) ).then( function ( res ) {
+				state.conn = clone( res.connection );
+				ESTM.replace( graceBox, graceNote() );
+				if ( replaceKeyBtn ) {
+					replaceKeyBtn.focus();
+				}
+				ui.toast( __( 'The old key no longer works.', 'estasoft-migrate' ) );
+			}, function ( err ) {
+				ui.toast( ESTM.errorMessage( err ), 'err' );
+			} );
 		}
 
 		function connectionKey() {
@@ -345,6 +380,7 @@
 			keyIdHint.textContent = keyIdText();
 			ESTM.replace( graceBox, graceNote() );
 			var replaceBtn = ui.btn( __( 'Replace key', 'estasoft-migrate' ), { kind: 'danger', size: 'sm', onClick: function ( ev, el ) { replaceKey( el ); } } );
+			replaceKeyBtn = replaceBtn;
 			return h(
 				'div.set.estm-set-block',
 				h(
@@ -360,16 +396,21 @@
 		}
 
 		function replaceKey( button ) {
+			var stopOld = ui.checkbox( { id: ESTM.uid( 'stop-old' ) } );
 			ui.confirm( {
 				title: __( 'Replace the connection key?', 'estasoft-migrate' ),
-				message: __( 'A new key is created. The current key keeps working for a few minutes so you can paste the new key into the other sites. After that, any site that still uses the old key is disconnected.', 'estasoft-migrate' ),
+				message: h(
+					'div',
+					h( 'p', __( 'A new key is created. The current key keeps working for a few minutes so you can paste the new key into the other sites. After that, any site that still uses the old key is disconnected.', 'estasoft-migrate' ) ),
+					h( 'div.row', { style: 'gap:8px;align-items:flex-start' }, stopOld, h( 'label', { for: stopOld.id }, __( 'Stop the old key at once. Choose this if the key may have been seen by someone else.', 'estasoft-migrate' ) ) )
+				),
 				confirm: __( 'Replace key', 'estasoft-migrate' ),
 				danger: true,
 			} ).then( function ( ok ) {
 				if ( ! ok ) {
 					return;
 				}
-				ui.busy( button, ESTM.post( 'settings/key' ) ).then( function ( res ) {
+				ui.busy( button, ESTM.post( 'settings/key', { grace: ! stopOld.checked } ) ).then( function ( res ) {
 					state.conn = clone( res.connection );
 					state.env = clone( res.environment );
 					keyInput.value = state.conn.key;
@@ -385,6 +426,9 @@
 		var httpsNote = note( 'warn', __( 'Without HTTPS, the connection key stays hidden, but the data that is sent can be read on its way. Turn this off only on a private network.', 'estasoft-migrate' ) );
 		var insecureNote = note( 'warn', __( 'This site is not served over HTTPS, so other sites cannot connect while this is on.', 'estasoft-migrate' ) );
 		var incomingNote = note( '', __( 'Incoming migrations are off. Other sites cannot connect, send packages or pull from this site.', 'estasoft-migrate' ) );
+		var endedNote = note( 'warn', '' );
+		var timerNote = note( '', '' );
+		var privateNote = note( 'warn', __( 'While this is on, this site can send its signed migration requests to addresses inside its own network, not only to the internet. Turn it off when you no longer connect to a site that way.', 'estasoft-migrate' ) );
 		var ipNote = note( 'warn', '' );
 
 		function updateConnectionNotes() {
@@ -393,6 +437,36 @@
 			httpsNote.hidden = https;
 			insecureNote.hidden = ! ( https && 0 === String( state.conn.endpoint ).indexOf( 'http://' ) );
 			incomingNote.hidden = accept;
+			privateNote.hidden = ! controls.allow_private_hosts.checked;
+			rows.accept_hours.hidden = ! accept;
+
+			// When incoming migrations switch themselves off, and when they already did.
+			var hours = parseInt( controls.accept_hours.value, 10 );
+			var ended = Number( state.conn.accept_ended ) || 0;
+			var until = Number( state.conn.accept_until ) || 0;
+			endedNote.hidden = accept || !! state.values.accept_incoming || ended <= 0;
+			if ( ! endedNote.hidden ) {
+				ESTM.replace(
+					endedNote.lastChild,
+					/* translators: %s: date and time */
+					sprintf( __( 'Incoming migrations switched themselves off on %s because no migration arrived. Switch them on again when you need them.', 'estasoft-migrate' ), fmt.date( gmtFromUnix( ended ) ) )
+				);
+			}
+			timerNote.hidden = ! accept;
+			timerNote.classList.toggle( 'warn', accept && hours <= 0 );
+			if ( accept ) {
+				var text;
+				if ( hours <= 0 ) {
+					text = __( 'Incoming migrations stay on until you switch them off. Switch them off when you are not migrating.', 'estasoft-migrate' );
+				} else if ( state.values.accept_incoming && hours === state.values.accept_hours && until > 0 ) {
+					/* translators: %s: date and time */
+					text = sprintf( __( 'They switch themselves off on %s unless a migration arrives before then. Each migration moves that time forward.', 'estasoft-migrate' ), fmt.date( gmtFromUnix( until ) ) );
+				} else {
+					/* translators: %s: how long, for example 24 hours */
+					text = sprintf( __( 'After you save, they switch themselves off after %s without a migration.', 'estasoft-migrate' ), hoursLabel( hours ) );
+				}
+				ESTM.replace( timerNote.lastChild, text );
+			}
 		}
 
 		function connectionCard() {
@@ -406,8 +480,20 @@
 				'accept_incoming',
 				__( 'Accept incoming migrations', 'estasoft-migrate' ),
 				__( 'Lets another site that has the connection key send packages to this site or pull this site\u2019s database. Switch it off when you are not migrating.', 'estasoft-migrate' ),
-				[ incomingNote ]
+				[ incomingNote, endedNote ]
 			);
+			// How long it stays on. Shown only while it is on.
+			var hoursSelect = ui.select(
+				INCOMING_HOURS.map( function ( v ) { return { value: v, label: hoursLabel( v ) }; } ),
+				{ value: state.values.accept_hours, onChange: function () { changed( 'accept_hours' ); } }
+			);
+			var hoursRow = setting( {
+				title: __( 'Switch off automatically after', 'estasoft-migrate' ),
+				text: __( 'Without a migration for this long, incoming migrations switch themselves off, so the connection key does not stay usable by accident. A migration that is running keeps them on.', 'estasoft-migrate' ),
+				control: hoursSelect,
+				extra: [ timerNote ],
+			} );
+			register( 'accept_hours', hoursSelect, hoursRow );
 			// What turning it on allows, in plain words.
 			accept.querySelector( '.tx' ).insertBefore(
 				h( 'span', { style: 'margin-top:4px' }, __( 'With the key, a site can send a package and start an import here, which replaces this site\u2019s data, or ask for a copy of the database. It cannot reach anything else.', 'estasoft-migrate' ) ),
@@ -420,6 +506,13 @@
 			endpoint.querySelectorAll( '.btn' ).forEach( function ( b ) { b.classList.remove( 'btn-quiet' ); } );
 
 			var https = switchRow( 'require_https', __( 'Require HTTPS', 'estasoft-migrate' ), __( 'Refuse connections that are not encrypted.', 'estasoft-migrate' ), [ httpsNote, insecureNote ] );
+
+			var privateHosts = switchRow(
+				'allow_private_hosts',
+				__( 'Allow local and private addresses', 'estasoft-migrate' ),
+				__( 'For connecting this site to a site of your own on this computer or network, such as localhost or 192.168.x.x, for example while you build a site locally. WordPress refuses these addresses unless you allow them, so a mistyped address cannot make this server call something inside its own network. This applies to the sites this one connects to (push, pull and the connection test).', 'estasoft-migrate' ),
+				[ privateNote ]
+			);
 
 			var ipRow = h(
 				'div.set.estm-set-block',
@@ -437,6 +530,7 @@
 				'section.card',
 				h( 'h2', { style: 'margin-bottom: 14px' }, __( 'Connection and security', 'estasoft-migrate' ) ),
 				accept,
+				hoursRow,
 				connectionKey(),
 				h(
 					'div.set.estm-set-block',
@@ -448,6 +542,7 @@
 					)
 				),
 				https,
+				privateHosts,
 				ipRow
 			);
 		}
@@ -679,7 +774,7 @@
 		function reset() {
 			ui.confirm( {
 				title: __( 'Reset to defaults?', 'estasoft-migrate' ),
-				message: __( 'The form is filled with the factory values: incoming migrations off, HTTPS required, automatic runner, and the standard limits and clean-up times. Nothing is saved until you press Save changes. Your connection key does not change.', 'estasoft-migrate' ),
+				message: __( 'The form is filled with the factory values: incoming migrations off (and, once on, switching themselves off after 24 hours), HTTPS required, local and private addresses refused, automatic runner, and the standard limits and clean-up times. Nothing is saved until you press Save changes. Your connection key does not change.', 'estasoft-migrate' ),
 				confirm: __( 'Fill in the defaults', 'estasoft-migrate' ),
 			} ).then( function ( ok ) {
 				if ( ! ok ) {

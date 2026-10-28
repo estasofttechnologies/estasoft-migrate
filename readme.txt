@@ -82,6 +82,14 @@ A single file with your database, split into checked blocks, optionally compress
 
 On the destination site, turn on **Accept incoming migrations** in Settings and copy the connection key. On the source site, choose **Push** or **Pull** under New migration and paste the address and key.
 
+= Is it safe to leave "Accept incoming migrations" on? =
+
+It switches itself off after 24 hours without a migration (you can choose 1 hour, 7 days or never), and each migration moves that time forward, so a running migration is never cut off. While it is on, a site that has the connection key can send a package and start an import, which replaces this site's data, or ask for a copy of the database. Requests are signed, a request can be used only once, HTTPS is required by default, and you can limit the addresses that may connect. If a key may have been seen by someone else, use **Replace key** and tick "Stop the old key at once".
+
+= Can I connect two sites on my own computer or network? =
+
+Yes. WordPress refuses to connect to localhost and private network addresses (such as 192.168.x.x) unless you allow it, so turn on **Allow local and private addresses** in Settings on the site that starts the push or pull. Turn it off again when you no longer need it.
+
 = Are my packages safe from being downloaded by other people? =
 
 They are kept in a folder with a random name inside your uploads directory, with rules that deny web access and an empty index file. Downloads go through your admin session and a permission check. The plugin tests this by requesting a throw-away file from that folder and shows the result on the Packages and Settings screens. If your web server ignores `.htaccess` files (nginx does), add a rule that denies access to `wp-content/uploads/estasoft-migrate-*`, or protect the package with a password.

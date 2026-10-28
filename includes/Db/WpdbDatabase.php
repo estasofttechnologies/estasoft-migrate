@@ -176,6 +176,42 @@ class WpdbDatabase extends AbstractDatabase {
 	}
 
 	/**
+	 * Time zone the connection had before utc_session( true ).
+	 *
+	 * @var string|null
+	 */
+	private $saved_zone = null;
+
+	/**
+	 * {@inheritdoc}
+	 *
+	 * @param bool $on Start or end.
+	 * @return void
+	 */
+	public function utc_session( $on ) {
+		try {
+			if ( $on ) {
+				if ( null === $this->saved_zone ) {
+					$rows = $this->rows( 'SELECT @@session.time_zone AS zone' );
+					$zone = isset( $rows[0]['zone'] ) ? (string) $rows[0]['zone'] : '';
+					if ( '' === $zone ) {
+						return;
+					}
+					$this->saved_zone = $zone;
+				}
+				$this->run( "SET time_zone = '+00:00'" );
+			} elseif ( null !== $this->saved_zone ) {
+				$zone             = $this->saved_zone;
+				$this->saved_zone = null;
+				$this->run( 'SET time_zone = ' . $this->quote( $zone ) );
+			}
+		} catch ( DatabaseException $e ) {
+			// A server that refuses the setting keeps working the way it did before.
+			$this->saved_zone = null;
+		}
+	}
+
+	/**
 	 * Escape text for a single-quoted literal.
 	 *
 	 * @param string $text Text.
@@ -272,9 +308,41 @@ class WpdbDatabase extends AbstractDatabase {
 	 * @return string[]
 	 */
 	public function primary_key( $table ) {
-		$rows = $this->rows( 'SHOW KEYS FROM ' . Identifier::quote( $table ) . " WHERE Key_name = 'PRIMARY'" );
+		$keys = array();
+		foreach ( $this->rows( 'SHOW KEYS FROM ' . Identifier::quote( $table ) ) as $row ) {
+			$keys[ (string) $row['Key_name'] ][] = $row;
+		}
+		if ( isset( $keys['PRIMARY'] ) ) {
+			return self::key_columns( $keys['PRIMARY'] );
+		}
+
+		// No primary key: a unique key whose columns can never be NULL tells the rows apart just as well (InnoDB itself uses it that way).
+		ksort( $keys, SORT_STRING );
+		$best = null;
+		foreach ( $keys as $parts ) {
+			$usable = true;
+			foreach ( $parts as $part ) {
+				if ( '0' !== (string) $part['Non_unique'] || 'YES' === strtoupper( (string) ( $part['Null'] ?? '' ) ) || '' === (string) ( $part['Column_name'] ?? '' ) ) {
+					$usable = false;
+					break;
+				}
+			}
+			if ( $usable && ( null === $best || count( $parts ) < count( $best ) ) ) {
+				$best = $parts;
+			}
+		}
+		return null === $best ? array() : self::key_columns( $best );
+	}
+
+	/**
+	 * Column names of one key, in key order.
+	 *
+	 * @param array[] $parts Rows of SHOW KEYS for one key.
+	 * @return string[]
+	 */
+	private static function key_columns( array $parts ) {
 		usort(
-			$rows,
+			$parts,
 			static function ( $a, $b ) {
 				return (int) $a['Seq_in_index'] <=> (int) $b['Seq_in_index'];
 			}
@@ -283,7 +351,7 @@ class WpdbDatabase extends AbstractDatabase {
 			static function ( $row ) {
 				return (string) $row['Column_name'];
 			},
-			$rows
+			$parts
 		);
 	}
 
@@ -301,9 +369,11 @@ class WpdbDatabase extends AbstractDatabase {
 		foreach ( $this->rows( 'SHOW FULL COLUMNS FROM ' . Identifier::quote( $table ) ) as $row ) {
 			$type                    = (string) $row['Type'];
 			$result[ $row['Field'] ] = array(
-				'type'    => $type,
-				'binary'  => self::is_binary_type( $type ),
-				'numeric' => self::is_numeric_type( $type ),
+				'type'      => $type,
+				'binary'    => self::is_binary_type( $type ),
+				'numeric'   => self::is_numeric_type( $type ),
+				// The Extra column says VIRTUAL GENERATED or STORED GENERATED on MySQL and MariaDB, and PERSISTENT on older MariaDB.
+				'generated' => 1 === preg_match( '/\b(?:VIRTUAL|STORED)\s+GENERATED\b|\bPERSISTENT\b/i', (string) ( $row['Extra'] ?? '' ) ),
 			);
 		}
 		$this->columns_cache[ $table ] = $result;

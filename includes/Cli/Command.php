@@ -717,10 +717,19 @@ class Command {
 	 * ## OPTIONS
 	 *
 	 * [--regenerate]
-	 * : Make a new key. The old one keeps working for a short while.
+	 * : Make a new key. The old one keeps working for a few minutes.
+	 *
+	 * [--stop-old]
+	 * : With --regenerate, stop the old key at once instead of after a few minutes.
+	 *
+	 * [--revoke-old]
+	 * : Stop the previous key now, if it still works.
 	 *
 	 * [--accept-incoming=<on|off>]
 	 * : Allow or refuse migrations sent to this site by other sites.
+	 *
+	 * [--accept-hours=<hours>]
+	 * : How long incoming migrations stay on without a migration: 1, 24, 168 (7 days) or 0 (until switched off). Starts again from now.
 	 *
 	 * @param array $args  Positional arguments.
 	 * @param array $assoc Named arguments.
@@ -729,14 +738,38 @@ class Command {
 	public function key( $args, $assoc ) {
 		unset( $args );
 		$api = $this->plugin->api( false );
+
+		$change = array();
 		if ( isset( $assoc['accept-incoming'] ) ) {
-			$api->save_settings( array( 'accept_incoming' => in_array( strtolower( (string) $assoc['accept-incoming'] ), array( 'on', '1', 'true', 'yes' ), true ) ) );
+			$change['accept_incoming'] = in_array( strtolower( (string) $assoc['accept-incoming'] ), array( 'on', '1', 'true', 'yes' ), true );
 		}
-		$s = isset( $assoc['regenerate'] ) ? $api->regenerate_key() : $api->settings();
+		if ( isset( $assoc['accept-hours'] ) ) {
+			$change['accept_hours'] = (int) $assoc['accept-hours'];
+		}
+		if ( $change ) {
+			$api->save_settings( $change );
+		}
+
+		if ( isset( $assoc['regenerate'] ) ) {
+			$s = $api->regenerate_key( ! isset( $assoc['stop-old'] ) );
+		} elseif ( isset( $assoc['revoke-old'] ) ) {
+			$s = $api->revoke_previous_key();
+		} else {
+			$s = $api->settings();
+		}
+
 		\WP_CLI::log( $s['connection']['key'] );
 		\WP_CLI::log( sprintf( /* translators: %s: address */ __( 'Address: %s', 'estasoft-migrate' ), $s['connection']['endpoint'] ) );
 		if ( empty( $s['values']['accept_incoming'] ) ) {
 			\WP_CLI::warning( __( 'This site does not accept incoming migrations yet. Turn it on in Settings, or run: wp estasoft-migrate key --accept-incoming=on', 'estasoft-migrate' ) );
+		} elseif ( (int) $s['connection']['accept_until'] > 0 ) {
+			\WP_CLI::log(
+				sprintf(
+					/* translators: %s: date and time */
+					__( 'Incoming migrations switch themselves off on %s unless a migration arrives before then.', 'estasoft-migrate' ),
+					wp_date( 'Y-m-d H:i', (int) $s['connection']['accept_until'] )
+				)
+			);
 		}
 	}
 

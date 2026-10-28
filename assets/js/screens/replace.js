@@ -777,7 +777,7 @@
 					'warn',
 					sprintf(
 						/* translators: 1: number of tables, 2: list of table names */
-						_n( '%1$s table was skipped because it has no primary key, so its rows cannot be updated safely: %2$s.', '%1$s tables were skipped because they have no primary key, so their rows cannot be updated safely: %2$s.', skipped.length, 'estasoft-migrate' ),
+						_n( '%1$s table was skipped because it has no primary or unique key, so its rows cannot be updated safely: %2$s.', '%1$s tables were skipped because they have no primary or unique key, so their rows cannot be updated safely: %2$s.', skipped.length, 'estasoft-migrate' ),
 						fmt.number( skipped.length ),
 						shortList( skipped.map( function ( t ) { return t.name; } ), 5 )
 					)

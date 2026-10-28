@@ -186,7 +186,7 @@ class SearchReplaceTask extends Task {
 			if ( ! $pk ) {
 				$entry['skipped'] = 'no_primary_key';
 				$entry['done']    = true;
-				$ctx->log( 'warning', sprintf( 'Table %s was skipped because it has no primary key, so rows cannot be updated safely.', $name ) );
+				$ctx->log( 'warning', sprintf( 'Table %s was skipped because it has no primary key and no unique key of columns that are never NULL, so rows cannot be updated safely.', $name ) );
 				$state['index']  = $i + 1;
 				$state['cursor'] = null;
 				unset( $entry );
@@ -195,7 +195,7 @@ class SearchReplaceTask extends Task {
 
 			$text = array();
 			foreach ( $db->columns( $name ) as $col => $spec ) {
-				if ( ! empty( $spec['binary'] ) || ! empty( $spec['numeric'] ) || in_array( $col, $pk, true ) ) {
+				if ( ! empty( $spec['binary'] ) || ! empty( $spec['numeric'] ) || ! empty( $spec['generated'] ) || in_array( $col, $pk, true ) ) {
 					continue;
 				}
 				if ( $skipguid && 'posts' === $entry['logical'] && 'guid' === $col ) {
