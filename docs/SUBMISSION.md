@@ -6,7 +6,7 @@ Everything the review team asks for is in the repository. What is left needs a p
 
 | Check | State |
 | --- | --- |
-| `readme.txt` `Contributors` | **You must change it.** It lists `estasofttechnologies`, which has to be a real WordPress.org username (the account that will own the plugin). Several usernames can be listed, comma separated. |
+| `readme.txt` `Contributors` | `estasoft`, the WordPress.org username of the account that owns the plugin. It must stay a real WordPress.org username; several can be listed, comma separated. |
 | `Tested up to` | 7.1, the newest stable WordPress when this was written. Raise it only after testing on a newer release. |
 | Minimum versions | WordPress 5.8, PHP 7.4. The CI runs the integration tests on exactly that combination (WordPress 5.8, PHP 7.4, MySQL 5.7) as well as the newest. |
 | License | GPL v2 or later, stated in the plugin header, `readme.txt` and `license.txt`. Every file is original or MIT/GPL-compatible; there are no bundled libraries. |

@@ -1,5 +1,5 @@
 === Estasoft Migration & Database Sanitizer ===
-Contributors: estasofttechnologies
+Contributors: estasoft
 Tags: migration, database, search replace, staging, gdpr
 Requires at least: 5.8
 Tested up to: 7.1
