@@ -39,14 +39,14 @@ class VerifyTask extends Task {
 	public function prepare( array $params, array &$state, JobContext $ctx ) {
 		$id = (string) ( $params['package_id'] ?? '' );
 		if ( ! Storage::is_valid_id( $id ) || ! is_file( $ctx->storage->package_path( $id ) ) ) {
-			throw new TaskException( __( 'The package file could not be found.', 'estasoft-migrate' ) );
+			throw new TaskException( __( 'The package file could not be found.', 'estasoft-migration-database-sanitizer' ) );
 		}
 		$path = $ctx->storage->package_path( $id );
 		try {
 			$header = PackageReader::read_header( $path );
 		} catch ( PackageException $e ) {
 			$this->record( $ctx, $id, false, $e->getMessage() );
-			throw new TaskException( $e->getMessage(), array( 'advice' => __( 'This is not a usable package file.', 'estasoft-migrate' ) ) );
+			throw new TaskException( $e->getMessage(), array( 'advice' => __( 'This is not a usable package file.', 'estasoft-migration-database-sanitizer' ) ) );
 		}
 		clearstatcache( true, $path );
 		$state['package']   = $id;
@@ -98,7 +98,7 @@ class VerifyTask extends Task {
 			$this->record( $ctx, $state['package'], false, $e->getMessage() );
 			throw new TaskException(
 				$e->getMessage(),
-				array( 'advice' => __( 'Upload or download the package again.', 'estasoft-migrate' ) )
+				array( 'advice' => __( 'Upload or download the package again.', 'estasoft-migration-database-sanitizer' ) )
 			);
 		}
 		$ctx->checkpoint();
@@ -163,7 +163,7 @@ class VerifyTask extends Task {
 	 */
 	public function describe( array $params, array $state ) {
 		return ! empty( $state['done'] )
-			? __( 'The package is complete and undamaged.', 'estasoft-migrate' )
-			: __( 'Checking the package.', 'estasoft-migrate' );
+			? __( 'The package is complete and undamaged.', 'estasoft-migration-database-sanitizer' )
+			: __( 'Checking the package.', 'estasoft-migration-database-sanitizer' );
 	}
 }

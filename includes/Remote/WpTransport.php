@@ -61,7 +61,7 @@ class WpTransport implements Transport {
 				'estm_private_host',
 				sprintf(
 					/* translators: %s: address of the other site */
-					__( 'WordPress does not connect to %s because it is a local or private network address, or uses an unusual port. If this is a site of your own on this machine or network, turn on "Allow local and private addresses" in Settings and try again.', 'estasoft-migrate' ),
+					__( 'WordPress does not connect to %s because it is a local or private network address, or uses an unusual port. If this is a site of your own on this machine or network, turn on "Allow local and private addresses" in Settings and try again.', 'estasoft-migration-database-sanitizer' ),
 					$url
 				),
 				0
@@ -74,19 +74,19 @@ class WpTransport implements Transport {
 			$code    = 'estm_unreachable';
 			$text    = sprintf(
 				/* translators: %s: technical error message */
-				__( 'The other site could not be reached: %s', 'estasoft-migrate' ),
+				__( 'The other site could not be reached: %s', 'estasoft-migration-database-sanitizer' ),
 				$message
 			);
 			if ( false !== stripos( $message, 'ssl' ) || false !== stripos( $message, 'certificate' ) ) {
 				$code = 'estm_ssl';
 				$text = sprintf(
 					/* translators: %s: technical error message */
-					__( 'A secure connection to the other site could not be made (%s). Check that its SSL certificate is valid.', 'estasoft-migrate' ),
+					__( 'A secure connection to the other site could not be made (%s). Check that its SSL certificate is valid.', 'estasoft-migration-database-sanitizer' ),
 					$message
 				);
 			} elseif ( false !== stripos( $message, 'timed out' ) || false !== stripos( $message, 'timeout' ) ) {
 				$code = 'estm_timeout';
-				$text = __( 'The other site did not answer in time.', 'estasoft-migrate' );
+				$text = __( 'The other site did not answer in time.', 'estasoft-migration-database-sanitizer' );
 			}
 			throw new RemoteException( $code, $text, 0, array(), true );
 		}

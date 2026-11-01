@@ -210,10 +210,10 @@ class Checker {
 	 */
 	private function check_php() {
 		if ( version_compare( $this->env['php'], '7.4', '<' ) ) {
-			$this->add( self::BLOCK, 'php', __( 'PHP version', 'estasoft-migrate' ), sprintf( /* translators: %s: version */ __( 'This server runs PHP %s. Estasoft Migrate needs PHP 7.4 or newer. Ask your host to switch the site to a newer PHP.', 'estasoft-migrate' ), $this->env['php'] ) );
+			$this->add( self::BLOCK, 'php', __( 'PHP version', 'estasoft-migration-database-sanitizer' ), sprintf( /* translators: %s: version */ __( 'This server runs PHP %s. Estasoft Migrate needs PHP 7.4 or newer. Ask your host to switch the site to a newer PHP.', 'estasoft-migration-database-sanitizer' ), $this->env['php'] ) );
 			return;
 		}
-		$this->add( self::PASS, 'php', __( 'PHP version', 'estasoft-migrate' ), sprintf( /* translators: %s: version */ __( 'PHP %s on this site.', 'estasoft-migrate' ), $this->env['php'] ) );
+		$this->add( self::PASS, 'php', __( 'PHP version', 'estasoft-migration-database-sanitizer' ), sprintf( /* translators: %s: version */ __( 'PHP %s on this site.', 'estasoft-migration-database-sanitizer' ), $this->env['php'] ) );
 	}
 
 	/**
@@ -225,15 +225,15 @@ class Checker {
 		$info = is_array( $this->env['db'] ) ? $this->env['db'] : $this->ctx->db->server_info();
 		$name = 'mariadb' === $info['type'] ? 'MariaDB' : ( 'mysql' === $info['type'] ? 'MySQL' : ucfirst( $info['type'] ) );
 		if ( ! in_array( $info['type'], array( 'mysql', 'mariadb' ), true ) ) {
-			$this->add( self::BLOCK, 'database', __( 'Database server', 'estasoft-migrate' ), __( 'Only MySQL and MariaDB are supported.', 'estasoft-migrate' ) );
+			$this->add( self::BLOCK, 'database', __( 'Database server', 'estasoft-migration-database-sanitizer' ), __( 'Only MySQL and MariaDB are supported.', 'estasoft-migration-database-sanitizer' ) );
 			return;
 		}
 		$old = 'mariadb' === $info['type'] ? version_compare( $info['version'], '10.3', '<' ) : version_compare( $info['version'], '5.7', '<' );
 		if ( $old ) {
-			$this->add( self::WARN, 'database', __( 'Database server', 'estasoft-migrate' ), sprintf( /* translators: 1: server, 2: version */ __( '%1$s %2$s is old. It should work, but newer versions are better tested.', 'estasoft-migrate' ), $name, $info['version'] ) );
+			$this->add( self::WARN, 'database', __( 'Database server', 'estasoft-migration-database-sanitizer' ), sprintf( /* translators: 1: server, 2: version */ __( '%1$s %2$s is old. It should work, but newer versions are better tested.', 'estasoft-migration-database-sanitizer' ), $name, $info['version'] ) );
 			return;
 		}
-		$this->add( self::PASS, 'database', __( 'Database server', 'estasoft-migrate' ), sprintf( /* translators: 1: server, 2: version */ __( '%1$s %2$s is supported.', 'estasoft-migrate' ), $name, $info['version'] ) );
+		$this->add( self::PASS, 'database', __( 'Database server', 'estasoft-migration-database-sanitizer' ), sprintf( /* translators: 1: server, 2: version */ __( '%1$s %2$s is supported.', 'estasoft-migration-database-sanitizer' ), $name, $info['version'] ) );
 	}
 
 	/**
@@ -243,7 +243,7 @@ class Checker {
 	 */
 	private function check_multisite() {
 		if ( $this->env['multisite'] ) {
-			$this->add( self::BLOCK, 'multisite', __( 'Single site', 'estasoft-migrate' ), __( 'This is a WordPress multisite network. This version migrates single sites only.', 'estasoft-migrate' ) );
+			$this->add( self::BLOCK, 'multisite', __( 'Single site', 'estasoft-migration-database-sanitizer' ), __( 'This is a WordPress multisite network. This version migrates single sites only.', 'estasoft-migration-database-sanitizer' ) );
 		}
 	}
 
@@ -255,16 +255,16 @@ class Checker {
 	private function check_memory() {
 		$mem = (int) $this->env['memory'];
 		if ( $mem <= 0 ) {
-			$this->add( self::PASS, 'memory', __( 'Memory limit', 'estasoft-migrate' ), __( 'No limit is set.', 'estasoft-migrate' ) );
+			$this->add( self::PASS, 'memory', __( 'Memory limit', 'estasoft-migration-database-sanitizer' ), __( 'No limit is set.', 'estasoft-migration-database-sanitizer' ) );
 			return;
 		}
 		$text = Util::format_bytes( $mem );
 		if ( $mem < 64 * 1048576 ) {
-			$this->add( self::BLOCK, 'memory', __( 'Memory limit', 'estasoft-migrate' ), sprintf( /* translators: %s: size */ __( 'The memory limit is only %s. At least 64 MB is needed. Raise WP_MEMORY_LIMIT in wp-config.php or ask your host.', 'estasoft-migrate' ), $text ) );
+			$this->add( self::BLOCK, 'memory', __( 'Memory limit', 'estasoft-migration-database-sanitizer' ), sprintf( /* translators: %s: size */ __( 'The memory limit is only %s. At least 64 MB is needed. Raise WP_MEMORY_LIMIT in wp-config.php or ask your host.', 'estasoft-migration-database-sanitizer' ), $text ) );
 		} elseif ( $mem < 128 * 1048576 ) {
-			$this->add( self::WARN, 'memory', __( 'Memory limit', 'estasoft-migrate' ), sprintf( /* translators: %s: size */ __( 'The memory limit is %s. Estasoft Migrate will use smaller batches. 128 MB or more is faster.', 'estasoft-migrate' ), $text ) );
+			$this->add( self::WARN, 'memory', __( 'Memory limit', 'estasoft-migration-database-sanitizer' ), sprintf( /* translators: %s: size */ __( 'The memory limit is %s. Estasoft Migrate will use smaller batches. 128 MB or more is faster.', 'estasoft-migration-database-sanitizer' ), $text ) );
 		} else {
-			$this->add( self::PASS, 'memory', __( 'Memory limit', 'estasoft-migrate' ), sprintf( /* translators: %s: size */ __( '%s. At least 128 MB is recommended.', 'estasoft-migrate' ), $text ) );
+			$this->add( self::PASS, 'memory', __( 'Memory limit', 'estasoft-migration-database-sanitizer' ), sprintf( /* translators: %s: size */ __( '%s. At least 128 MB is recommended.', 'estasoft-migration-database-sanitizer' ), $text ) );
 		}
 	}
 
@@ -276,14 +276,14 @@ class Checker {
 	private function check_time() {
 		$sec = (int) $this->env['max_exec'];
 		if ( 0 === $sec || $sec >= 120 ) {
-			$this->add( self::PASS, 'time', __( 'Maximum execution time', 'estasoft-migrate' ), 0 === $sec ? __( 'No limit.', 'estasoft-migrate' ) : sprintf( /* translators: %d: seconds */ __( '%d seconds.', 'estasoft-migrate' ), $sec ) );
+			$this->add( self::PASS, 'time', __( 'Maximum execution time', 'estasoft-migration-database-sanitizer' ), 0 === $sec ? __( 'No limit.', 'estasoft-migration-database-sanitizer' ) : sprintf( /* translators: %d: seconds */ __( '%d seconds.', 'estasoft-migration-database-sanitizer' ), $sec ) );
 			return;
 		}
 		$this->add(
 			self::WARN,
 			'time',
-			sprintf( /* translators: %d: seconds */ __( 'Maximum execution time is %d seconds', 'estasoft-migrate' ), $sec ),
-			__( 'Estasoft Migrate will use small batches that finish inside the limit and resume on their own. The run takes a little longer.', 'estasoft-migrate' )
+			sprintf( /* translators: %d: seconds */ __( 'Maximum execution time is %d seconds', 'estasoft-migration-database-sanitizer' ), $sec ),
+			__( 'Estasoft Migrate will use small batches that finish inside the limit and resume on their own. The run takes a little longer.', 'estasoft-migration-database-sanitizer' )
 		);
 	}
 
@@ -298,7 +298,7 @@ class Checker {
 	private function check_storage( array $stats, $mode, array $input ) {
 		$storage = $this->ctx->storage;
 		if ( ! $storage->is_writable() ) {
-			$this->add( self::BLOCK, 'storage', __( 'Package folder', 'estasoft-migrate' ), __( 'The folder for packages is not writable. Make wp-content/uploads writable by the web server.', 'estasoft-migrate' ) );
+			$this->add( self::BLOCK, 'storage', __( 'Package folder', 'estasoft-migration-database-sanitizer' ), __( 'The folder for packages is not writable. Make wp-content/uploads writable by the web server.', 'estasoft-migration-database-sanitizer' ) );
 			return;
 		}
 		$dir     = $storage->dir();
@@ -308,19 +308,19 @@ class Checker {
 			$this->add(
 				self::WARN,
 				'storage',
-				__( 'Package folder can be downloaded from directly', 'estasoft-migrate' ),
-				__( 'A test file in the package folder could be fetched without signing in. Ask your host to deny access to wp-content/uploads/estasoft-migrate-* (on nginx the .htaccess file has no effect), or protect the package with a password.', 'estasoft-migrate' )
+				__( 'Package folder can be downloaded from directly', 'estasoft-migration-database-sanitizer' ),
+				__( 'A test file in the package folder could be fetched without signing in. Ask your host to deny access to wp-content/uploads/estasoft-migrate-* (on nginx the .htaccess file has no effect), or protect the package with a password.', 'estasoft-migration-database-sanitizer' )
 			);
 		} elseif ( true === $blocked ) {
-			$this->add( self::PASS, 'storage', __( 'Package folder is writable and protected', 'estasoft-migrate' ), __( 'Direct downloads are blocked; packages are served only to signed-in administrators.', 'estasoft-migrate' ) );
+			$this->add( self::PASS, 'storage', __( 'Package folder is writable and protected', 'estasoft-migration-database-sanitizer' ), __( 'Direct downloads are blocked; packages are served only to signed-in administrators.', 'estasoft-migration-database-sanitizer' ) );
 		} else {
 			$this->add(
 				$guarded ? self::PASS : self::WARN,
 				'storage',
-				__( 'Package folder is writable', 'estasoft-migrate' ),
+				__( 'Package folder is writable', 'estasoft-migration-database-sanitizer' ),
 				$guarded
-					? __( 'Guard files are in place, but this server could not test them. If your site runs on nginx, they have no effect: deny access to the folder in the server settings, or protect the package with a password.', 'estasoft-migrate' )
-					: __( 'The folder could not be fully protected. On nginx, deny access to the folder in the server settings.', 'estasoft-migrate' )
+					? __( 'Guard files are in place, but this server could not test them. If your site runs on nginx, they have no effect: deny access to the folder in the server settings, or protect the package with a password.', 'estasoft-migration-database-sanitizer' )
+					: __( 'The folder could not be fully protected. On nginx, deny access to the folder in the server settings.', 'estasoft-migration-database-sanitizer' )
 			);
 		}
 
@@ -339,11 +339,11 @@ class Checker {
 		}
 		$total = $need + $snapshot;
 		if ( $free < $total * 1.1 ) {
-			$this->add( self::BLOCK, 'disk', __( 'Free disk space', 'estasoft-migrate' ), sprintf( /* translators: 1: free, 2: needed */ __( 'Only %1$s is free, and about %2$s is needed for the package and the rollback snapshot. Free some space or exclude large tables.', 'estasoft-migrate' ), Util::format_bytes( $free ), Util::format_bytes( $total ) ) );
+			$this->add( self::BLOCK, 'disk', __( 'Free disk space', 'estasoft-migration-database-sanitizer' ), sprintf( /* translators: 1: free, 2: needed */ __( 'Only %1$s is free, and about %2$s is needed for the package and the rollback snapshot. Free some space or exclude large tables.', 'estasoft-migration-database-sanitizer' ), Util::format_bytes( $free ), Util::format_bytes( $total ) ) );
 		} elseif ( $free < $total * 2 ) {
-			$this->add( self::WARN, 'disk', __( 'Free disk space is tight', 'estasoft-migrate' ), sprintf( /* translators: 1: free, 2: needed */ __( '%1$s free; about %2$s is needed. It should fit, but there is little to spare.', 'estasoft-migrate' ), Util::format_bytes( $free ), Util::format_bytes( $total ) ) );
+			$this->add( self::WARN, 'disk', __( 'Free disk space is tight', 'estasoft-migration-database-sanitizer' ), sprintf( /* translators: 1: free, 2: needed */ __( '%1$s free; about %2$s is needed. It should fit, but there is little to spare.', 'estasoft-migration-database-sanitizer' ), Util::format_bytes( $free ), Util::format_bytes( $total ) ) );
 		} else {
-			$this->add( self::PASS, 'disk', __( 'Free disk space', 'estasoft-migrate' ), sprintf( /* translators: 1: free, 2: needed */ __( '%1$s free here. The run needs about %2$s, including the snapshot.', 'estasoft-migrate' ), Util::format_bytes( $free ), Util::format_bytes( $total ) ) );
+			$this->add( self::PASS, 'disk', __( 'Free disk space', 'estasoft-migration-database-sanitizer' ), sprintf( /* translators: 1: free, 2: needed */ __( '%1$s free here. The run needs about %2$s, including the snapshot.', 'estasoft-migration-database-sanitizer' ), Util::format_bytes( $free ), Util::format_bytes( $total ) ) );
 		}
 	}
 
@@ -359,14 +359,14 @@ class Checker {
 			$this->add(
 				$wants_enc ? self::BLOCK : self::WARN,
 				'sodium',
-				__( 'Encryption', 'estasoft-migrate' ),
+				__( 'Encryption', 'estasoft-migration-database-sanitizer' ),
 				$wants_enc
-					? __( 'Password protection needs the PHP sodium extension, which this server does not have. Ask your host to enable it, or continue without a password.', 'estasoft-migrate' )
-					: __( 'The PHP sodium extension is missing, so packages cannot be encrypted. Snapshots and packages are stored unencrypted in the protected folder.', 'estasoft-migrate' )
+					? __( 'Password protection needs the PHP sodium extension, which this server does not have. Ask your host to enable it, or continue without a password.', 'estasoft-migration-database-sanitizer' )
+					: __( 'The PHP sodium extension is missing, so packages cannot be encrypted. Snapshots and packages are stored unencrypted in the protected folder.', 'estasoft-migration-database-sanitizer' )
 			);
 		}
 		if ( ! $this->env['zlib'] ) {
-			$this->add( self::WARN, 'zlib', __( 'Compression', 'estasoft-migrate' ), __( 'PHP zlib is missing, so packages are not compressed and will be larger.', 'estasoft-migrate' ) );
+			$this->add( self::WARN, 'zlib', __( 'Compression', 'estasoft-migration-database-sanitizer' ), __( 'PHP zlib is missing, so packages are not compressed and will be larger.', 'estasoft-migration-database-sanitizer' ) );
 		}
 	}
 
@@ -382,7 +382,7 @@ class Checker {
 		}
 		$runner = (string) $this->env['runner'];
 		if ( $this->env['cron_off'] && in_array( $runner, array( 'auto', 'cron' ), true ) && ! function_exists( 'as_enqueue_async_action' ) ) {
-			$this->add( self::WARN, 'cron', __( 'WP-Cron is switched off', 'estasoft-migrate' ), __( 'The job keeps running while the Progress screen is open. To let it continue on its own, enable WP-Cron, install Action Scheduler, or run it with WP-CLI.', 'estasoft-migrate' ) );
+			$this->add( self::WARN, 'cron', __( 'WP-Cron is switched off', 'estasoft-migration-database-sanitizer' ), __( 'The job keeps running while the Progress screen is open. To let it continue on its own, enable WP-Cron, install Action Scheduler, or run it with WP-CLI.', 'estasoft-migration-database-sanitizer' ) );
 		}
 	}
 
@@ -394,7 +394,7 @@ class Checker {
 	private function check_packet() {
 		$packet = $this->ctx->db->max_allowed_packet();
 		if ( $packet < 1048576 ) {
-			$this->add( self::WARN, 'packet', __( 'Database packet size is small', 'estasoft-migrate' ), sprintf( /* translators: %s: size */ __( 'max_allowed_packet is %s. Rows are written in smaller groups, which is slower. Rows larger than this cannot be copied.', 'estasoft-migrate' ), Util::format_bytes( $packet ) ) );
+			$this->add( self::WARN, 'packet', __( 'Database packet size is small', 'estasoft-migration-database-sanitizer' ), sprintf( /* translators: %s: size */ __( 'max_allowed_packet is %s. Rows are written in smaller groups, which is slower. Rows larger than this cannot be copied.', 'estasoft-migration-database-sanitizer' ), Util::format_bytes( $packet ) ) );
 		}
 	}
 
@@ -419,10 +419,10 @@ class Checker {
 		$this->add(
 			self::PASS,
 			'large',
-			__( 'Large tables', 'estasoft-migrate' ),
+			__( 'Large tables', 'estasoft-migration-database-sanitizer' ),
 			sprintf(
 				/* translators: 1: table, 2: row count, 3: chunk count, 4: chunk size */
-				__( '%1$s has about %2$s rows. It will be copied in about %3$s chunks of up to %4$s rows, so no single request runs for long.', 'estasoft-migrate' ),
+				__( '%1$s has about %2$s rows. It will be copied in about %3$s chunks of up to %4$s rows, so no single request runs for long.', 'estasoft-migration-database-sanitizer' ),
 				$top['name'],
 				Util::number( $top['rows_est'] ),
 				Util::number( (int) ceil( $top['rows_est'] / $chunk ) ),
@@ -452,10 +452,10 @@ class Checker {
 		$this->add(
 			self::WARN,
 			'nokey',
-			sprintf( /* translators: %d: number of tables */ _n( '%d table has no primary or unique key', '%d tables have no primary or unique key', count( $none ), 'estasoft-migrate' ), count( $none ) ),
+			sprintf( /* translators: %d: number of tables */ _n( '%d table has no primary or unique key', '%d tables have no primary or unique key', count( $none ), 'estasoft-migration-database-sanitizer' ), count( $none ) ),
 			'search_replace' === $mode
-				? sprintf( /* translators: %s: table names */ __( 'Rows cannot be updated safely without a key, so these tables are skipped: %s', 'estasoft-migrate' ), $list )
-				: sprintf( /* translators: %s: table names */ __( 'They are copied in order with a slower method and are fine to migrate: %s', 'estasoft-migrate' ), $list )
+				? sprintf( /* translators: %s: table names */ __( 'Rows cannot be updated safely without a key, so these tables are skipped: %s', 'estasoft-migration-database-sanitizer' ), $list )
+				: sprintf( /* translators: %s: table names */ __( 'They are copied in order with a slower method and are fine to migrate: %s', 'estasoft-migration-database-sanitizer' ), $list )
 		);
 	}
 
@@ -474,12 +474,12 @@ class Checker {
 			$this->add(
 				self::BLOCK,
 				'busy',
-				__( 'Another job is running', 'estasoft-migrate' ),
-				sprintf( /* translators: %s: job title */ __( 'Wait for it to finish, or cancel it: %s', 'estasoft-migrate' ), $job->title )
+				__( 'Another job is running', 'estasoft-migration-database-sanitizer' ),
+				sprintf( /* translators: %s: job title */ __( 'Wait for it to finish, or cancel it: %s', 'estasoft-migration-database-sanitizer' ), $job->title )
 			);
 			return;
 		}
-		$this->add( self::PASS, 'busy', __( 'Nothing else is running', 'estasoft-migrate' ), __( 'No other migration or search and replace job is active.', 'estasoft-migrate' ) );
+		$this->add( self::PASS, 'busy', __( 'Nothing else is running', 'estasoft-migration-database-sanitizer' ), __( 'No other migration or search and replace job is active.', 'estasoft-migration-database-sanitizer' ) );
 	}
 
 	/**
@@ -497,7 +497,7 @@ class Checker {
 			$key = (string) Secrets::open( (string) $input['key_enc'], $this->ctx->secret );
 		}
 		if ( '' === $url || '' === $key ) {
-			$this->add( self::BLOCK, 'connection', __( 'Connection to the other site', 'estasoft-migrate' ), __( 'Enter the address and the connection key of the other site.', 'estasoft-migrate' ) );
+			$this->add( self::BLOCK, 'connection', __( 'Connection to the other site', 'estasoft-migration-database-sanitizer' ), __( 'Enter the address and the connection key of the other site.', 'estasoft-migration-database-sanitizer' ) );
 			return null;
 		}
 
@@ -507,7 +507,7 @@ class Checker {
 			$hello  = ClientFactory::make( $this->ctx, $url, $key )->call( 'hello', array(), 20, 1 );
 			$took   = microtime( true ) - $before;
 		} catch ( RemoteException $e ) {
-			$this->add( self::BLOCK, 'connection', __( 'Connection to the other site', 'estasoft-migrate' ), $e->getMessage() );
+			$this->add( self::BLOCK, 'connection', __( 'Connection to the other site', 'estasoft-migration-database-sanitizer' ), $e->getMessage() );
 			return null;
 		}
 
@@ -517,20 +517,20 @@ class Checker {
 		$this->add(
 			$https ? self::PASS : self::WARN,
 			'connection',
-			$https ? __( 'Secure connection', 'estasoft-migrate' ) : __( 'The connection is not secure', 'estasoft-migrate' ),
+			$https ? __( 'Secure connection', 'estasoft-migration-database-sanitizer' ) : __( 'The connection is not secure', 'estasoft-migration-database-sanitizer' ),
 			$https
-				? sprintf( /* translators: 1: seconds of clock difference, 2: milliseconds */ __( 'HTTPS. Connection key accepted, clock difference %1$d seconds, answered in %2$d ms.', 'estasoft-migrate' ), $skew, (int) ( $took * 1000 ) )
-				: __( 'The address starts with http://. Data is signed and packages are encrypted, but use https:// if the other site has it.', 'estasoft-migrate' )
+				? sprintf( /* translators: 1: seconds of clock difference, 2: milliseconds */ __( 'HTTPS. Connection key accepted, clock difference %1$d seconds, answered in %2$d ms.', 'estasoft-migration-database-sanitizer' ), $skew, (int) ( $took * 1000 ) )
+				: __( 'The address starts with http://. Data is signed and packages are encrypted, but use https:// if the other site has it.', 'estasoft-migration-database-sanitizer' )
 		);
 		if ( $skew > 60 ) {
-			$this->add( self::WARN, 'clock', __( 'Clocks differ', 'estasoft-migrate' ), sprintf( /* translators: %d: seconds */ __( 'The two sites differ by %d seconds. Requests are refused above five minutes, so set the time correctly on one of them.', 'estasoft-migrate' ), $skew ) );
+			$this->add( self::WARN, 'clock', __( 'Clocks differ', 'estasoft-migration-database-sanitizer' ), sprintf( /* translators: %d: seconds */ __( 'The two sites differ by %d seconds. Requests are refused above five minutes, so set the time correctly on one of them.', 'estasoft-migration-database-sanitizer' ), $skew ) );
 		}
 
 		if ( ! empty( $site['multisite'] ) ) {
-			$this->add( self::BLOCK, 'remote_multisite', __( 'Other site is a multisite network', 'estasoft-migrate' ), __( 'This version migrates single sites only.', 'estasoft-migrate' ) );
+			$this->add( self::BLOCK, 'remote_multisite', __( 'Other site is a multisite network', 'estasoft-migration-database-sanitizer' ), __( 'This version migrates single sites only.', 'estasoft-migration-database-sanitizer' ) );
 		}
 		if ( empty( $hello['writable'] ) ) {
-			$this->add( self::BLOCK, 'remote_storage', __( 'Other site cannot store packages', 'estasoft-migrate' ), __( 'Its uploads folder is not writable.', 'estasoft-migrate' ) );
+			$this->add( self::BLOCK, 'remote_storage', __( 'Other site cannot store packages', 'estasoft-migration-database-sanitizer' ), __( 'Its uploads folder is not writable.', 'estasoft-migration-database-sanitizer' ) );
 		}
 
 		$mine = $this->ctx->site_info();
@@ -539,8 +539,8 @@ class Checker {
 		$this->add(
 			self::PASS,
 			'php_pair',
-			__( 'PHP versions', 'estasoft-migrate' ),
-			$a === $b ? sprintf( /* translators: %s: version */ __( 'PHP %s on both sites.', 'estasoft-migrate' ), $a ) : sprintf( /* translators: 1: version, 2: version */ __( 'PHP %1$s here and %2$s on the other site.', 'estasoft-migrate' ), $a, $b )
+			__( 'PHP versions', 'estasoft-migration-database-sanitizer' ),
+			$a === $b ? sprintf( /* translators: %s: version */ __( 'PHP %s on both sites.', 'estasoft-migration-database-sanitizer' ), $a ) : sprintf( /* translators: 1: version, 2: version */ __( 'PHP %1$s here and %2$s on the other site.', 'estasoft-migration-database-sanitizer' ), $a, $b )
 		);
 
 		$db_a = is_array( $this->env['db'] ) ? $this->env['db'] : $this->ctx->db->server_info();
@@ -549,8 +549,8 @@ class Checker {
 			$this->add(
 				self::PASS,
 				'db_pair',
-				__( 'Database servers', 'estasoft-migrate' ),
-				sprintf( /* translators: 1: server and version, 2: server and version */ __( '%1$s here and %2$s on the other site. Both are supported.', 'estasoft-migrate' ), self::db_label( $db_a ), self::db_label( $db_b ) )
+				__( 'Database servers', 'estasoft-migration-database-sanitizer' ),
+				sprintf( /* translators: 1: server and version, 2: server and version */ __( '%1$s here and %2$s on the other site. Both are supported.', 'estasoft-migration-database-sanitizer' ), self::db_label( $db_a ), self::db_label( $db_b ) )
 			);
 			$source = 'push' === $mode ? $db_a : $db_b;
 			$dest   = 'push' === $mode ? $db_b : $db_a;
@@ -563,10 +563,10 @@ class Checker {
 					$this->add(
 						self::WARN,
 						'collation',
-						__( 'Charset and collation differ', 'estasoft-migrate' ),
+						__( 'Charset and collation differ', 'estasoft-migration-database-sanitizer' ),
 						sprintf(
 							/* translators: 1: collation, 2: server and version, 3: replacement */
-							__( 'The source uses %1$s, which %2$s does not have. Tables will be converted to %3$s automatically.', 'estasoft-migrate' ),
+							__( 'The source uses %1$s, which %2$s does not have. Tables will be converted to %3$s automatically.', 'estasoft-migration-database-sanitizer' ),
 							$col,
 							self::db_label( $dest ),
 							'utf8mb4_unicode_520_ci'
@@ -580,17 +580,17 @@ class Checker {
 		$prefix_b = (string) ( $site['prefix'] ?? '' );
 		if ( '' !== $prefix_b && $prefix_a !== $prefix_b ) {
 			$dest_prefix = 'push' === $mode ? $prefix_b : $prefix_a;
-			$this->add( self::WARN, 'prefix', sprintf( /* translators: 1: prefix, 2: prefix */ __( 'Table prefix differs: %1$s and %2$s', 'estasoft-migrate' ), $prefix_a, $prefix_b ), sprintf( /* translators: %s: prefix */ __( 'Table names, and option and user meta keys that contain the prefix, will be rewritten to %s.', 'estasoft-migrate' ), $dest_prefix ) );
+			$this->add( self::WARN, 'prefix', sprintf( /* translators: 1: prefix, 2: prefix */ __( 'Table prefix differs: %1$s and %2$s', 'estasoft-migration-database-sanitizer' ), $prefix_a, $prefix_b ), sprintf( /* translators: %s: prefix */ __( 'Table names, and option and user meta keys that contain the prefix, will be rewritten to %s.', 'estasoft-migration-database-sanitizer' ), $dest_prefix ) );
 		}
 
 		if ( 'push' === $mode && ! empty( $hello['free_bytes'] ) ) {
 			$need = (int) $stats['package'] * 2;
 			if ( (int) $hello['free_bytes'] < $need * 1.1 ) {
-				$this->add( self::BLOCK, 'remote_disk', __( 'Other site is low on disk space', 'estasoft-migrate' ), sprintf( /* translators: 1: free, 2: needed */ __( 'It has %1$s free and needs about %2$s for the package and its rollback snapshot.', 'estasoft-migrate' ), Util::format_bytes( (int) $hello['free_bytes'] ), Util::format_bytes( $need ) ) );
+				$this->add( self::BLOCK, 'remote_disk', __( 'Other site is low on disk space', 'estasoft-migration-database-sanitizer' ), sprintf( /* translators: 1: free, 2: needed */ __( 'It has %1$s free and needs about %2$s for the package and its rollback snapshot.', 'estasoft-migration-database-sanitizer' ), Util::format_bytes( (int) $hello['free_bytes'] ), Util::format_bytes( $need ) ) );
 			}
 		}
 		if ( ! empty( $hello['cron_off'] ) ) {
-			$this->add( self::WARN, 'remote_cron', __( 'WP-Cron is off on the other site', 'estasoft-migrate' ), __( 'This site drives the other site step by step while the Progress screen is open, so the job still finishes. Keep the page open.', 'estasoft-migrate' ) );
+			$this->add( self::WARN, 'remote_cron', __( 'WP-Cron is off on the other site', 'estasoft-migration-database-sanitizer' ), __( 'This site drives the other site step by step while the Progress screen is open, so the job still finishes. Keep the page open.', 'estasoft-migration-database-sanitizer' ) );
 		}
 		return $hello;
 	}
@@ -625,24 +625,24 @@ class Checker {
 	private function check_package( array $input ) {
 		$id = (string) ( $input['package_id'] ?? '' );
 		if ( ! Storage::is_valid_id( $id ) || ! is_file( $this->ctx->storage->package_path( $id ) ) ) {
-			$this->add( self::BLOCK, 'package', __( 'Package', 'estasoft-migrate' ), __( 'The package file could not be found.', 'estasoft-migrate' ) );
+			$this->add( self::BLOCK, 'package', __( 'Package', 'estasoft-migration-database-sanitizer' ), __( 'The package file could not be found.', 'estasoft-migration-database-sanitizer' ) );
 			return;
 		}
 		$path = $this->ctx->storage->package_path( $id );
 		try {
 			$header = PackageReader::read_header( $path );
 		} catch ( PackageException $e ) {
-			$this->add( self::BLOCK, 'package', __( 'Package', 'estasoft-migrate' ), $e->getMessage() );
+			$this->add( self::BLOCK, 'package', __( 'Package', 'estasoft-migration-database-sanitizer' ), $e->getMessage() );
 			return;
 		}
 		$meta = (array) $this->ctx->storage->read_meta( $id );
 		$this->add(
 			self::PASS,
 			'package',
-			__( 'Package', 'estasoft-migrate' ),
+			__( 'Package', 'estasoft-migration-database-sanitizer' ),
 			sprintf(
 				/* translators: 1: size, 2: date */
-				__( '%1$s, made %2$s UTC.', 'estasoft-migrate' ),
+				__( '%1$s, made %2$s UTC.', 'estasoft-migration-database-sanitizer' ),
 				Util::format_bytes( (int) filesize( $path ) ),
 				(string) ( $meta['created_gmt'] ?? '?' )
 			)
@@ -661,10 +661,10 @@ class Checker {
 			$this->add(
 				self::PASS,
 				'rewrite',
-				__( 'Addresses will be updated', 'estasoft-migrate' ),
+				__( 'Addresses will be updated', 'estasoft-migration-database-sanitizer' ),
 				sprintf(
 					/* translators: 1: old address, 2: new address */
-					__( 'Links to %1$s become links to %2$s, including inside serialized and JSON data.', 'estasoft-migrate' ),
+					__( 'Links to %1$s become links to %2$s, including inside serialized and JSON data.', 'estasoft-migration-database-sanitizer' ),
 					$source,
 					$local
 				)
@@ -676,22 +676,22 @@ class Checker {
 			$this->add(
 				self::WARN,
 				'prefix',
-				sprintf( /* translators: 1: prefix, 2: prefix */ __( 'Table prefix differs: %1$s and %2$s', 'estasoft-migrate' ), $source_prefix, $local_prefix ),
-				sprintf( /* translators: %s: prefix */ __( 'Table names, and option and user meta keys that contain the prefix, will be rewritten to %s.', 'estasoft-migrate' ), $local_prefix )
+				sprintf( /* translators: 1: prefix, 2: prefix */ __( 'Table prefix differs: %1$s and %2$s', 'estasoft-migration-database-sanitizer' ), $source_prefix, $local_prefix ),
+				sprintf( /* translators: %s: prefix */ __( 'Table names, and option and user meta keys that contain the prefix, will be rewritten to %s.', 'estasoft-migration-database-sanitizer' ), $local_prefix )
 			);
 		}
 		if ( ! empty( $manifest['source']['multisite'] ) ) {
-			$this->add( self::BLOCK, 'package_multisite', __( 'Package comes from a multisite network', 'estasoft-migrate' ), __( 'This version imports single sites only.', 'estasoft-migrate' ) );
+			$this->add( self::BLOCK, 'package_multisite', __( 'Package comes from a multisite network', 'estasoft-migration-database-sanitizer' ), __( 'This version imports single sites only.', 'estasoft-migration-database-sanitizer' ) );
 		}
 		$col = (string) ( $manifest['source']['db']['collation'] ?? '' );
 		if ( '' !== $col && ! $this->ctx->db->has_collation( $col ) ) {
 			$this->add(
 				self::WARN,
 				'collation',
-				__( 'Charset and collation differ', 'estasoft-migrate' ),
+				__( 'Charset and collation differ', 'estasoft-migration-database-sanitizer' ),
 				sprintf(
 					/* translators: 1: collation, 2: replacement */
-					__( 'The package uses %1$s, which this database does not have. Tables will be converted to %2$s automatically.', 'estasoft-migrate' ),
+					__( 'The package uses %1$s, which this database does not have. Tables will be converted to %2$s automatically.', 'estasoft-migration-database-sanitizer' ),
 					$col,
 					'utf8mb4_unicode_520_ci'
 				)
@@ -708,9 +708,9 @@ class Checker {
 	 * @return array|null Manifest, null when it could not be read.
 	 */
 	private function check_package_key( $path, array $header, array $input ) {
-		$title = __( 'Package is encrypted', 'estasoft-migrate' );
+		$title = __( 'Package is encrypted', 'estasoft-migration-database-sanitizer' );
 		if ( ! $this->env['sodium'] ) {
-			$this->add( self::BLOCK, 'package_enc', $title, __( 'This server has no PHP sodium extension, so it cannot open it.', 'estasoft-migrate' ) );
+			$this->add( self::BLOCK, 'package_enc', $title, __( 'This server has no PHP sodium extension, so it cannot open it.', 'estasoft-migration-database-sanitizer' ) );
 			return null;
 		}
 		$options = array( 'secret' => (string) $this->ctx->secret );
@@ -722,22 +722,22 @@ class Checker {
 			$manifest = $this->read_manifest( $path, $options, true );
 		} catch ( PackageException $e ) {
 			if ( PackageException::NEEDS_KEY === $e->reason && Crypto::KDF_PASSPHRASE === $header['kdf'] ) {
-				$this->add( self::BLOCK, 'package_enc', __( 'Package password needed', 'estasoft-migrate' ), __( 'Enter the password that was used when the package was made.', 'estasoft-migrate' ) );
+				$this->add( self::BLOCK, 'package_enc', __( 'Package password needed', 'estasoft-migration-database-sanitizer' ), __( 'Enter the password that was used when the package was made.', 'estasoft-migration-database-sanitizer' ) );
 			} elseif ( PackageException::BAD_PASSPHRASE === $e->reason ) {
 				$this->add(
 					self::BLOCK,
 					'package_enc',
-					Crypto::KDF_SECRET === $header['kdf'] ? __( 'Package belongs to another site', 'estasoft-migrate' ) : __( 'The password is not correct', 'estasoft-migrate' ),
+					Crypto::KDF_SECRET === $header['kdf'] ? __( 'Package belongs to another site', 'estasoft-migration-database-sanitizer' ) : __( 'The password is not correct', 'estasoft-migration-database-sanitizer' ),
 					Crypto::KDF_SECRET === $header['kdf']
-						? __( 'It was locked with the connection key of the site that made it. Export it again with a password to use it on another site.', 'estasoft-migrate' )
-						: __( 'Check the password and try again.', 'estasoft-migrate' )
+						? __( 'It was locked with the connection key of the site that made it. Export it again with a password to use it on another site.', 'estasoft-migration-database-sanitizer' )
+						: __( 'Check the password and try again.', 'estasoft-migration-database-sanitizer' )
 				);
 			} else {
 				$this->add( self::BLOCK, 'package_enc', $title, $e->getMessage() );
 			}
 			return null;
 		}
-		$this->add( self::PASS, 'package_enc', $title, __( 'The password is correct. The package is decrypted while it is read.', 'estasoft-migrate' ) );
+		$this->add( self::PASS, 'package_enc', $title, __( 'The password is correct. The package is decrypted while it is read.', 'estasoft-migration-database-sanitizer' ) );
 		return $manifest;
 	}
 
@@ -773,7 +773,7 @@ class Checker {
 	 */
 	private function check_search_replace( array $input, array $tables ) {
 		if ( empty( $input['dry_run'] ) ) {
-			$this->add( self::PASS, 'sr_snapshot', __( 'Rollback snapshot', 'estasoft-migrate' ), $this->wants_snapshot( $input ) ? __( 'The tables are saved first, so the change can be undone from Packages.', 'estasoft-migrate' ) : __( 'No snapshot will be saved. The change cannot be undone.', 'estasoft-migrate' ) );
+			$this->add( self::PASS, 'sr_snapshot', __( 'Rollback snapshot', 'estasoft-migration-database-sanitizer' ), $this->wants_snapshot( $input ) ? __( 'The tables are saved first, so the change can be undone from Packages.', 'estasoft-migration-database-sanitizer' ) : __( 'No snapshot will be saved. The change cannot be undone.', 'estasoft-migration-database-sanitizer' ) );
 		}
 	}
 

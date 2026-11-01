@@ -46,17 +46,17 @@ class SearchReplaceTask extends Task {
 	public function prepare( array $params, array &$state, JobContext $ctx ) {
 		$pairs = $this->pairs( $params );
 		if ( ! $pairs ) {
-			throw new TaskException( __( 'Enter the text to search for.', 'estasoft-migrate' ), array( 'untouched' => __( 'Nothing was changed.', 'estasoft-migrate' ) ) );
+			throw new TaskException( __( 'Enter the text to search for.', 'estasoft-migration-database-sanitizer' ), array( 'untouched' => __( 'Nothing was changed.', 'estasoft-migration-database-sanitizer' ) ) );
 		}
 		try {
 			$this->replacer( $params );
 		} catch ( \InvalidArgumentException $e ) {
-			throw new TaskException( $e->getMessage(), array( 'untouched' => __( 'Nothing was changed.', 'estasoft-migrate' ) ) );
+			throw new TaskException( $e->getMessage(), array( 'untouched' => __( 'Nothing was changed.', 'estasoft-migration-database-sanitizer' ) ) );
 		}
 
 		$tables = TableSelector::select( $ctx->db, $params );
 		if ( ! $tables ) {
-			throw new TaskException( __( 'There are no tables to search.', 'estasoft-migrate' ) );
+			throw new TaskException( __( 'There are no tables to search.', 'estasoft-migration-database-sanitizer' ) );
 		}
 
 		$state['phase']       = ( ! $this->dry( $params ) && ! empty( $params['snapshot'] ) ) ? 'snapshot' : 'scan';
@@ -95,7 +95,7 @@ class SearchReplaceTask extends Task {
 			'info',
 			sprintf(
 				/* translators: 1: dry run or live run, 2: number of tables */
-				_n( '%1$s: searching %2$d table.', '%1$s: searching %2$d tables.', count( $tables ), 'estasoft-migrate' ),
+				_n( '%1$s: searching %2$d table.', '%1$s: searching %2$d tables.', count( $tables ), 'estasoft-migration-database-sanitizer' ),
 				$this->dry( $params ) ? 'Dry run' : 'Search and replace',
 				count( $tables )
 			)
@@ -470,15 +470,15 @@ class SearchReplaceTask extends Task {
 	public function describe( array $params, array $state ) {
 		$phase = (string) ( $state['phase'] ?? '' );
 		if ( 'done' === $phase ) {
-			return $this->dry( $params ) ? __( 'Dry run finished. Nothing was written.', 'estasoft-migrate' ) : __( 'Replacement finished.', 'estasoft-migrate' );
+			return $this->dry( $params ) ? __( 'Dry run finished. Nothing was written.', 'estasoft-migration-database-sanitizer' ) : __( 'Replacement finished.', 'estasoft-migration-database-sanitizer' );
 		}
 		if ( 'snapshot' === $phase ) {
-			return __( 'Saving a rollback snapshot first.', 'estasoft-migrate' );
+			return __( 'Saving a rollback snapshot first.', 'estasoft-migration-database-sanitizer' );
 		}
 		$i = (int) ( $state['index'] ?? 0 );
 		if ( isset( $state['tables'][ $i ] ) ) {
 			/* translators: %s: table name */
-			return sprintf( __( 'Searching %s.', 'estasoft-migrate' ), $state['tables'][ $i ]['name'] );
+			return sprintf( __( 'Searching %s.', 'estasoft-migration-database-sanitizer' ), $state['tables'][ $i ]['name'] );
 		}
 		return '';
 	}

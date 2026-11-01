@@ -145,16 +145,16 @@
 		sec = Math.max( 0, Math.round( Number( sec ) || 0 ) );
 		if ( sec < 60 ) {
 			/* translators: %d: seconds */
-			return sprintf( __( '%d s', 'estasoft-migrate' ), sec );
+			return sprintf( __( '%d s', 'estasoft-migration-database-sanitizer' ), sec );
 		}
 		var m = Math.floor( sec / 60 );
 		var s = sec % 60;
 		if ( m < 60 ) {
 			/* translators: 1: minutes, 2: seconds */
-			return sprintf( __( '%1$d min %2$02d s', 'estasoft-migrate' ), m, s );
+			return sprintf( __( '%1$d min %2$02d s', 'estasoft-migration-database-sanitizer' ), m, s );
 		}
 		/* translators: 1: hours, 2: minutes */
-		return sprintf( __( '%1$d h %2$02d min', 'estasoft-migrate' ), Math.floor( m / 60 ), m % 60 );
+		return sprintf( __( '%1$d h %2$02d min', 'estasoft-migration-database-sanitizer' ), Math.floor( m / 60 ), m % 60 );
 	}
 
 	/** The server sends UTC as "YYYY-MM-DD HH:MM:SS". */
@@ -224,15 +224,15 @@
 		}
 		var sec = Math.max( 0, Math.round( ( Date.now() - d.getTime() ) / 1000 ) );
 		if ( sec < 45 ) {
-			return __( 'just now', 'estasoft-migrate' );
+			return __( 'just now', 'estasoft-migration-database-sanitizer' );
 		}
 		if ( sec < 3600 ) {
 			/* translators: %d: minutes */
-			return sprintf( _n( '%d minute ago', '%d minutes ago', Math.round( sec / 60 ), 'estasoft-migrate' ), Math.round( sec / 60 ) );
+			return sprintf( _n( '%d minute ago', '%d minutes ago', Math.round( sec / 60 ), 'estasoft-migration-database-sanitizer' ), Math.round( sec / 60 ) );
 		}
 		if ( sec < 86400 ) {
 			/* translators: %d: hours */
-			return sprintf( _n( '%d hour ago', '%d hours ago', Math.round( sec / 3600 ), 'estasoft-migrate' ), Math.round( sec / 3600 ) );
+			return sprintf( _n( '%d hour ago', '%d hours ago', Math.round( sec / 3600 ), 'estasoft-migration-database-sanitizer' ), Math.round( sec / 3600 ) );
 		}
 		return date( s );
 	}
@@ -322,7 +322,7 @@
 			if ( err && 'AbortError' === err.name ) {
 				throw err;
 			}
-			throw new ApiError( __( 'Could not reach the server. Check your connection. Jobs that are already running keep going on the server.', 'estasoft-migrate' ), 'estm_network', 0 );
+			throw new ApiError( __( 'Could not reach the server. Check your connection. Jobs that are already running keep going on the server.', 'estasoft-migration-database-sanitizer' ), 'estm_network', 0 );
 		} );
 	}
 
@@ -330,12 +330,12 @@
 		var code = data && data.code ? data.code : 'estm_http';
 		var message = data && data.message ? data.message : '';
 		if ( 'rest_cookie_invalid_nonce' === code ) {
-			message = __( 'Your login session has ended. This can happen after an import, because it replaces this site’s users. Reload the page and sign in again; jobs keep going on the server.', 'estasoft-migrate' );
+			message = __( 'Your login session has ended. This can happen after an import, because it replaces this site’s users. Reload the page and sign in again; jobs keep going on the server.', 'estasoft-migration-database-sanitizer' );
 		} else if ( 'rest_forbidden' === code || 401 === res.status || 403 === res.status ) {
-			message = message || __( 'You are not allowed to do that.', 'estasoft-migrate' );
+			message = message || __( 'You are not allowed to do that.', 'estasoft-migration-database-sanitizer' );
 		} else if ( ! message ) {
 			/* translators: %d: HTTP status code */
-			message = sprintf( __( 'The server answered with an error (HTTP %d). The PHP error log has the details.', 'estasoft-migrate' ), res.status );
+			message = sprintf( __( 'The server answered with an error (HTTP %d). The PHP error log has the details.', 'estasoft-migration-database-sanitizer' ), res.status );
 		}
 		return new ApiError( message, code, res.status, data && data.data ? data.data : {} );
 	}
@@ -351,7 +351,7 @@
 		if ( e && e.message ) {
 			return e.message;
 		}
-		return __( 'Something went wrong. Try again.', 'estasoft-migrate' );
+		return __( 'Something went wrong. Try again.', 'estasoft-migration-database-sanitizer' );
 	}
 
 	/* ------------------------------------------------------------------ Jobs */
@@ -461,15 +461,15 @@
 
 	var TYPE_LABELS = function () {
 		return {
-			export: __( 'Export', 'estasoft-migrate' ),
-			sanitize: __( 'Sanitize', 'estasoft-migrate' ),
-			import: __( 'Import', 'estasoft-migrate' ),
-			restore: __( 'Restore', 'estasoft-migrate' ),
-			snapshot: __( 'Snapshot', 'estasoft-migrate' ),
-			push: __( 'Push', 'estasoft-migrate' ),
-			pull: __( 'Pull', 'estasoft-migrate' ),
-			search_replace: __( 'Search & replace', 'estasoft-migrate' ),
-			verify: __( 'Check package', 'estasoft-migrate' ),
+			export: __( 'Export', 'estasoft-migration-database-sanitizer' ),
+			sanitize: __( 'Sanitize', 'estasoft-migration-database-sanitizer' ),
+			import: __( 'Import', 'estasoft-migration-database-sanitizer' ),
+			restore: __( 'Restore', 'estasoft-migration-database-sanitizer' ),
+			snapshot: __( 'Snapshot', 'estasoft-migration-database-sanitizer' ),
+			push: __( 'Push', 'estasoft-migration-database-sanitizer' ),
+			pull: __( 'Pull', 'estasoft-migration-database-sanitizer' ),
+			search_replace: __( 'Search & replace', 'estasoft-migration-database-sanitizer' ),
+			verify: __( 'Check package', 'estasoft-migration-database-sanitizer' ),
 		};
 	};
 
@@ -483,15 +483,15 @@
 	function jobBadge( job ) {
 		var status = job.status;
 		if ( 'completed' === status && job.dry_run ) {
-			return badge( __( 'Dry run', 'estasoft-migrate' ), 'warn' );
+			return badge( __( 'Dry run', 'estasoft-migration-database-sanitizer' ), 'warn' );
 		}
 		switch ( status ) {
-			case 'queued': return badge( __( 'Queued', 'estasoft-migrate' ), 'idle' );
-			case 'running': return badge( __( 'Running', 'estasoft-migrate' ), 'run' );
-			case 'paused': return badge( __( 'Paused', 'estasoft-migrate' ), 'pause' );
-			case 'failed': return badge( __( 'Failed', 'estasoft-migrate' ), 'block' );
-			case 'completed': return badge( __( 'Completed', 'estasoft-migrate' ), 'ready' );
-			case 'cancelled': return badge( __( 'Cancelled', 'estasoft-migrate' ), 'idle' );
+			case 'queued': return badge( __( 'Queued', 'estasoft-migration-database-sanitizer' ), 'idle' );
+			case 'running': return badge( __( 'Running', 'estasoft-migration-database-sanitizer' ), 'run' );
+			case 'paused': return badge( __( 'Paused', 'estasoft-migration-database-sanitizer' ), 'pause' );
+			case 'failed': return badge( __( 'Failed', 'estasoft-migration-database-sanitizer' ), 'block' );
+			case 'completed': return badge( __( 'Completed', 'estasoft-migration-database-sanitizer' ), 'ready' );
+			case 'cancelled': return badge( __( 'Cancelled', 'estasoft-migration-database-sanitizer' ), 'idle' );
 		}
 		return badge( status, 'plain' );
 	}
@@ -680,7 +680,7 @@
 			var describe = [ hintId, errId ].filter( Boolean ).join( ' ' );
 			target.setAttribute( 'aria-describedby', describe );
 		}
-		var el = h( 'div.field', o.className ? { class: o.className } : null, o.label ? h( 'label', { for: id }, o.label, o.optional ? h( 'span.muted', ' ' + __( '(optional)', 'estasoft-migrate' ) ) : null ) : null, control, o.hint ? h( 'span.hint', { id: hintId }, o.hint ) : null, err );
+		var el = h( 'div.field', o.className ? { class: o.className } : null, o.label ? h( 'label', { for: id }, o.label, o.optional ? h( 'span.muted', ' ' + __( '(optional)', 'estasoft-migration-database-sanitizer' ) ) : null ) : null, control, o.hint ? h( 'span.hint', { id: hintId }, o.hint ) : null, err );
 		el.setError = function ( message ) {
 			el.classList.toggle( 'has-error', !! message );
 			err.hidden = ! message;
@@ -726,10 +726,10 @@
 		o = o || {};
 		var input = ui.input( { type: 'password', autocomplete: 'new-password', id: o.id, placeholder: o.placeholder, onInput: o.onInput, mono: true } );
 		var shown = false;
-		var toggle = ui.btn( __( 'Show', 'estasoft-migrate' ), { kind: 'quiet', onClick: function () {
+		var toggle = ui.btn( __( 'Show', 'estasoft-migration-database-sanitizer' ), { kind: 'quiet', onClick: function () {
 			shown = ! shown;
 			input.type = shown ? 'text' : 'password';
-			toggle.textContent = shown ? __( 'Hide', 'estasoft-migrate' ) : __( 'Show', 'estasoft-migrate' );
+			toggle.textContent = shown ? __( 'Hide', 'estasoft-migration-database-sanitizer' ) : __( 'Show', 'estasoft-migration-database-sanitizer' );
 		} } );
 		var el = h( 'div.input-group', input, toggle );
 		el.input = input;
@@ -802,7 +802,7 @@
 	};
 
 	ui.spinner = function ( label ) {
-		return h( 'span.spinner', { role: 'status', 'aria-label': label || __( 'Loading', 'estasoft-migrate' ) } );
+		return h( 'span.spinner', { role: 'status', 'aria-label': label || __( 'Loading', 'estasoft-migration-database-sanitizer' ) } );
 	};
 
 	ui.empty = function ( title, text, action ) {
@@ -853,7 +853,7 @@
 
 	/** Message at the top of a screen when loading failed, with a retry button. */
 	ui.loadError = function ( err, retry ) {
-		return h( 'div.stack', ui.note( 'err', errorMessage( err ), { title: __( 'This screen could not load.', 'estasoft-migrate' ) } ), retry ? h( 'div', ui.btn( __( 'Try again', 'estasoft-migrate' ), { onClick: retry } ) ) : null );
+		return h( 'div.stack', ui.note( 'err', errorMessage( err ), { title: __( 'This screen could not load.', 'estasoft-migration-database-sanitizer' ) } ), retry ? h( 'div', ui.btn( __( 'Try again', 'estasoft-migration-database-sanitizer' ), { onClick: retry } ) ) : null );
 	};
 
 	/* Dialogs and toasts ------------------------------------------------- */
@@ -903,8 +903,8 @@
 	 */
 	ui.confirm = function ( o ) {
 		var d;
-		var cancel = ui.btn( o.cancel || __( 'Cancel', 'estasoft-migrate' ), { kind: 'quiet', onClick: function () { d.close( false ); } } );
-		var ok = ui.btn( o.confirm || __( 'Continue', 'estasoft-migrate' ), { kind: o.danger ? 'danger' : 'primary', onClick: function () { d.close( true ); } } );
+		var cancel = ui.btn( o.cancel || __( 'Cancel', 'estasoft-migration-database-sanitizer' ), { kind: 'quiet', onClick: function () { d.close( false ); } } );
+		var ok = ui.btn( o.confirm || __( 'Continue', 'estasoft-migration-database-sanitizer' ), { kind: o.danger ? 'danger' : 'primary', onClick: function () { d.close( true ); } } );
 		d = ui.dialog( { title: o.title, body: [ 'string' === typeof o.message ? h( 'p', o.message ) : o.message ], actions: [ cancel, ok ] } );
 		( o.danger ? cancel : ok ).focus();
 		return d.result.then( function ( v ) { return true === v; } );
@@ -927,7 +927,7 @@
 		var err = 'err' === kind;
 		var t = h( 'div', { class: 'estm-toast' + ( err ? ' err' : '' ), role: err ? 'alert' : null }, h( 'span.estm-toast-text', message ) );
 		if ( err ) {
-			t.appendChild( h( 'button', { type: 'button', class: 'estm-toast-x', 'aria-label': __( 'Dismiss', 'estasoft-migrate' ), onclick: function () { t.remove(); } }, '\u00d7' ) );
+			t.appendChild( h( 'button', { type: 'button', class: 'estm-toast-x', 'aria-label': __( 'Dismiss', 'estasoft-migration-database-sanitizer' ), onclick: function () { t.remove(); } }, '\u00d7' ) );
 			// Keep a handful at most: the oldest goes when a sixth arrives.
 			var errors = host.querySelectorAll( '.estm-toast.err' );
 			if ( errors.length >= 5 ) {
@@ -957,7 +957,7 @@
 
 	/** Copy text and say so. */
 	ui.copy = function ( text ) {
-		function done() { ui.toast( __( 'Copied to the clipboard.', 'estasoft-migrate' ) ); }
+		function done() { ui.toast( __( 'Copied to the clipboard.', 'estasoft-migration-database-sanitizer' ) ); }
 		function fallback() {
 			var ta = h( 'textarea', { style: 'position:fixed;opacity:0', 'aria-hidden': 'true' } );
 			ta.value = text;
@@ -973,7 +973,7 @@
 			if ( ok ) {
 				done();
 			} else {
-				ui.toast( __( 'Copying did not work here. Select the text and copy it yourself.', 'estasoft-migrate' ), 'err' );
+				ui.toast( __( 'Copying did not work here. Select the text and copy it yourself.', 'estasoft-migration-database-sanitizer' ), 'err' );
 			}
 		}
 		if ( navigator.clipboard && window.isSecureContext ) {
@@ -988,7 +988,7 @@
 		o = o || {};
 		var input = ui.input( { value: value, readonly: true, mono: true, ariaLabel: o.label } );
 		input.addEventListener( 'focus', function () { input.select(); } );
-		return h( 'div.copy', input, ui.btn( __( 'Copy', 'estasoft-migrate' ), { kind: 'quiet', onClick: function () { ui.copy( input.value ); } } ) );
+		return h( 'div.copy', input, ui.btn( __( 'Copy', 'estasoft-migration-database-sanitizer' ), { kind: 'quiet', onClick: function () { ui.copy( input.value ); } } ) );
 	};
 
 	/** Escape-free highlighting: wrap the first occurrence of `needle` in <mark>. */
@@ -1026,7 +1026,7 @@
 		appRoot = root.closest( '.estm' ) || root;
 		var fn = screens[ ESTM.screenId ];
 		if ( ! fn ) {
-			replace( root, ui.note( 'err', __( 'This screen could not be started because its script did not load.', 'estasoft-migrate' ) ) );
+			replace( root, ui.note( 'err', __( 'This screen could not be started because its script did not load.', 'estasoft-migration-database-sanitizer' ) ) );
 			root.setAttribute( 'aria-busy', 'false' );
 			return;
 		}
@@ -1034,7 +1034,7 @@
 		toastRoot();
 		function failed( e ) {
 			window.console && window.console.error( e );
-			replace( root, ui.note( 'err', e && e.message ? e.message : '', { title: __( 'Something went wrong while drawing this screen.', 'estasoft-migrate' ) } ) );
+			replace( root, ui.note( 'err', e && e.message ? e.message : '', { title: __( 'Something went wrong while drawing this screen.', 'estasoft-migration-database-sanitizer' ) } ) );
 		}
 		function finished() {
 			root.setAttribute( 'aria-busy', 'false' );

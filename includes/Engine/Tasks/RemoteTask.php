@@ -64,10 +64,10 @@ abstract class RemoteTask extends Task {
 		$key = ! empty( $params['key_enc'] ) ? Secrets::open( (string) $params['key_enc'], $ctx->secret ) : '';
 		if ( '' === $url || '' === $key ) {
 			throw new TaskException(
-				__( 'The address or the connection key of the other site is missing.', 'estasoft-migrate' ),
+				__( 'The address or the connection key of the other site is missing.', 'estasoft-migration-database-sanitizer' ),
 				array(
-					'untouched' => __( 'Nothing was changed on either site.', 'estasoft-migrate' ),
-					'advice'    => __( 'Start the migration again and enter both.', 'estasoft-migrate' ),
+					'untouched' => __( 'Nothing was changed on either site.', 'estasoft-migration-database-sanitizer' ),
+					'advice'    => __( 'Start the migration again and enter both.', 'estasoft-migration-database-sanitizer' ),
 				)
 			);
 		}
@@ -108,13 +108,13 @@ abstract class RemoteTask extends Task {
 			case 'estm_bad_sig':
 			case 'estm_https':
 			case 'estm_ip':
-				$advice = __( 'Check the connection details, then start again.', 'estasoft-migrate' );
+				$advice = __( 'Check the connection details, then start again.', 'estasoft-migration-database-sanitizer' );
 				break;
 			case 'estm_no_space':
-				$advice = __( 'Free some disk space on that site, then retry.', 'estasoft-migrate' );
+				$advice = __( 'Free some disk space on that site, then retry.', 'estasoft-migration-database-sanitizer' );
 				break;
 			default:
-				$advice = $e->retryable ? __( 'Retry in a few minutes.', 'estasoft-migrate' ) : __( 'Check the Logs screen on both sites for details.', 'estasoft-migrate' );
+				$advice = $e->retryable ? __( 'Retry in a few minutes.', 'estasoft-migration-database-sanitizer' ) : __( 'Check the Logs screen on both sites for details.', 'estasoft-migration-database-sanitizer' );
 		}
 		return new TaskException(
 			$e->getMessage(),
@@ -137,22 +137,22 @@ abstract class RemoteTask extends Task {
 	 * @throws TaskException When it cannot.
 	 */
 	protected function connect( Client $client, array $params, JobContext $ctx ) {
-		$untouched = __( 'Nothing was changed on either site.', 'estasoft-migrate' );
+		$untouched = __( 'Nothing was changed on either site.', 'estasoft-migration-database-sanitizer' );
 		$hello     = $this->call( $client, 'hello', array(), $untouched, 30 );
 
 		$site = (array) ( $hello['site'] ?? array() );
 		if ( ! empty( $site['multisite'] ) ) {
 			throw new TaskException(
-				__( 'The other site is a WordPress multisite network, which this version cannot migrate.', 'estasoft-migrate' ),
+				__( 'The other site is a WordPress multisite network, which this version cannot migrate.', 'estasoft-migration-database-sanitizer' ),
 				array( 'untouched' => $untouched )
 			);
 		}
 		if ( empty( $hello['writable'] ) ) {
 			throw new TaskException(
-				__( 'The other site cannot write to its storage folder.', 'estasoft-migrate' ),
+				__( 'The other site cannot write to its storage folder.', 'estasoft-migration-database-sanitizer' ),
 				array(
 					'untouched' => $untouched,
-					'advice'    => __( 'Make wp-content/uploads writable on that site.', 'estasoft-migrate' ),
+					'advice'    => __( 'Make wp-content/uploads writable on that site.', 'estasoft-migration-database-sanitizer' ),
 				)
 			);
 		}
@@ -163,7 +163,7 @@ abstract class RemoteTask extends Task {
 			throw new TaskException(
 				sprintf(
 					/* translators: 1: local version, 2: other version */
-					__( 'The two sites run different major versions of Estasoft Migration (%1$s and %2$s). Update the plugin on both.', 'estasoft-migrate' ),
+					__( 'The two sites run different major versions of Estasoft Migration (%1$s and %2$s). Update the plugin on both.', 'estasoft-migration-database-sanitizer' ),
 					$mine,
 					$hello['version']
 				),
@@ -174,7 +174,7 @@ abstract class RemoteTask extends Task {
 			'info',
 			sprintf(
 				/* translators: %s: address */
-				__( 'Connected to %s.', 'estasoft-migrate' ),
+				__( 'Connected to %s.', 'estasoft-migration-database-sanitizer' ),
 				(string) ( $site['url'] ?? $client->base() )
 			)
 		);
@@ -222,12 +222,12 @@ abstract class RemoteTask extends Task {
 		return new TaskException(
 			sprintf(
 				/* translators: %s: message from the other site */
-				__( 'The other site stopped the job: %s', 'estasoft-migrate' ),
-				'' !== $message ? $message : __( 'no reason was given.', 'estasoft-migrate' )
+				__( 'The other site stopped the job: %s', 'estasoft-migration-database-sanitizer' ),
+				'' !== $message ? $message : __( 'no reason was given.', 'estasoft-migration-database-sanitizer' )
 			),
 			array(
 				'untouched' => $untouched,
-				'advice'    => __( 'Open the Logs screen on the other site for details, fix the cause and start again.', 'estasoft-migrate' ),
+				'advice'    => __( 'Open the Logs screen on the other site for details, fix the cause and start again.', 'estasoft-migration-database-sanitizer' ),
 			)
 		);
 	}

@@ -47,9 +47,9 @@ final class JobParams {
 				return self::pull( $in, $ctx );
 			case 'verify':
 				$id = self::package_id( $in, $ctx );
-				return array( __( 'Check package', 'estasoft-migrate' ), array( 'package_id' => $id ) );
+				return array( __( 'Check package', 'estasoft-migration-database-sanitizer' ), array( 'package_id' => $id ) );
 		}
-		throw new \InvalidArgumentException( __( 'Unknown job type.', 'estasoft-migrate' ) );
+		throw new \InvalidArgumentException( __( 'Unknown job type.', 'estasoft-migration-database-sanitizer' ) );
 	}
 
 	/**
@@ -72,7 +72,7 @@ final class JobParams {
 			$params['kind']     = 'sanitize';
 			$params['label']    = self::label( $in, 'sanitized' );
 		}
-		return array( $san ? __( 'Sanitized copy', 'estasoft-migrate' ) : __( 'Export', 'estasoft-migrate' ), $params );
+		return array( $san ? __( 'Sanitized copy', 'estasoft-migration-database-sanitizer' ) : __( 'Export', 'estasoft-migration-database-sanitizer' ), $params );
 	}
 
 	/**
@@ -101,7 +101,7 @@ final class JobParams {
 		if ( $extra ) {
 			$params['replace'] = array( 'pairs' => $extra['replace']['pairs'] );
 		}
-		$title = 'restore' === $params['kind'] ? __( 'Restore snapshot', 'estasoft-migrate' ) : __( 'Import package', 'estasoft-migrate' );
+		$title = 'restore' === $params['kind'] ? __( 'Restore snapshot', 'estasoft-migration-database-sanitizer' ) : __( 'Import package', 'estasoft-migration-database-sanitizer' );
 		return array( $title, $params );
 	}
 
@@ -116,7 +116,7 @@ final class JobParams {
 	private static function search_replace( array $in, JobContext $ctx ) {
 		$pairs = self::pairs( isset( $in['pairs'] ) ? $in['pairs'] : array() );
 		if ( ! $pairs ) {
-			throw new \InvalidArgumentException( __( 'Enter the text to search for.', 'estasoft-migrate' ) );
+			throw new \InvalidArgumentException( __( 'Enter the text to search for.', 'estasoft-migration-database-sanitizer' ) );
 		}
 		$regex = ! empty( $in['regex'] ) && self::truthy( $in['regex'] );
 		if ( $regex ) {
@@ -124,7 +124,7 @@ final class JobParams {
 			try {
 				new Replacer( $pairs, array( 'regex' => true ) );
 			} catch ( \InvalidArgumentException $e ) {
-				throw new \InvalidArgumentException( __( 'The search pattern is not a valid regular expression.', 'estasoft-migrate' ) );
+				throw new \InvalidArgumentException( __( 'The search pattern is not a valid regular expression.', 'estasoft-migration-database-sanitizer' ) );
 			}
 		}
 		$dry    = ! isset( $in['dry_run'] ) || self::truthy( $in['dry_run'] );
@@ -140,7 +140,7 @@ final class JobParams {
 			'skip_columns'   => self::string_list( $in['skip_columns'] ?? array() ),
 		);
 		$params = array_merge( $params, self::table_choice( $in, $ctx ) );
-		return array( $dry ? __( 'Search and replace preview', 'estasoft-migrate' ) : __( 'Search and replace', 'estasoft-migrate' ), $params );
+		return array( $dry ? __( 'Search and replace preview', 'estasoft-migration-database-sanitizer' ) : __( 'Search and replace', 'estasoft-migration-database-sanitizer' ), $params );
 	}
 
 	/**
@@ -169,7 +169,7 @@ final class JobParams {
 		if ( isset( $in['safety'] ) && is_array( $in['safety'] ) ) {
 			$params['safety'] = self::safety( $in['safety'] );
 		}
-		return array( __( 'Push to another site', 'estasoft-migrate' ), $params );
+		return array( __( 'Push to another site', 'estasoft-migration-database-sanitizer' ), $params );
 	}
 
 	/**
@@ -200,7 +200,7 @@ final class JobParams {
 		if ( ! empty( $in['sanitize'] ) && is_array( $in['sanitize'] ) ) {
 			$profile = (string) ( $in['sanitize']['profile'] ?? 'staging' );
 			if ( ! isset( Profiles::all()[ $profile ] ) ) {
-				throw new \InvalidArgumentException( __( 'Choose one of the sanitizer profiles.', 'estasoft-migrate' ) );
+				throw new \InvalidArgumentException( __( 'Choose one of the sanitizer profiles.', 'estasoft-migration-database-sanitizer' ) );
 			}
 			$params['sanitize'] = array(
 				'profile'   => $profile,
@@ -210,7 +210,7 @@ final class JobParams {
 		if ( isset( $in['safety'] ) && is_array( $in['safety'] ) ) {
 			$params['safety'] = self::safety( $in['safety'] );
 		}
-		return array( __( 'Pull from another site', 'estasoft-migrate' ), $params );
+		return array( __( 'Pull from another site', 'estasoft-migration-database-sanitizer' ), $params );
 	}
 
 	/**
@@ -225,13 +225,13 @@ final class JobParams {
 		$url = rtrim( trim( (string) ( $in['remote_url'] ?? '' ) ), '/' );
 		$key = trim( (string) ( $in['remote_key'] ?? '' ) );
 		if ( ! preg_match( '#^https?://[^\s/]+(?:/[^\s?\#]*)?$#i', $url ) ) {
-			throw new \InvalidArgumentException( __( 'Enter the full address of the other site, for example https://example.com', 'estasoft-migrate' ) );
+			throw new \InvalidArgumentException( __( 'Enter the full address of the other site, for example https://example.com', 'estasoft-migration-database-sanitizer' ) );
 		}
 		if ( '' === $key ) {
-			throw new \InvalidArgumentException( __( 'Enter the connection key from the other site’s Settings screen.', 'estasoft-migrate' ) );
+			throw new \InvalidArgumentException( __( 'Enter the connection key from the other site’s Settings screen.', 'estasoft-migration-database-sanitizer' ) );
 		}
 		if ( 0 !== strpos( $key, 'esm_' ) ) {
-			throw new \InvalidArgumentException( __( 'That does not look like a connection key. Keys start with esm_.', 'estasoft-migrate' ) );
+			throw new \InvalidArgumentException( __( 'That does not look like a connection key. Keys start with esm_.', 'estasoft-migration-database-sanitizer' ) );
 		}
 		return array(
 			'remote_url' => $url,
@@ -250,7 +250,7 @@ final class JobParams {
 	private static function package_id( array $in, JobContext $ctx ) {
 		$id = (string) ( $in['package_id'] ?? '' );
 		if ( ! Storage::is_valid_id( $id ) || ! is_file( $ctx->storage->package_path( $id ) ) ) {
-			throw new \InvalidArgumentException( __( 'The package file could not be found.', 'estasoft-migrate' ) );
+			throw new \InvalidArgumentException( __( 'The package file could not be found.', 'estasoft-migration-database-sanitizer' ) );
 		}
 		return $id;
 	}
@@ -276,7 +276,7 @@ final class JobParams {
 					throw new \InvalidArgumentException(
 						sprintf(
 							/* translators: %s: table name */
-							__( 'The table %s does not exist on this site.', 'estasoft-migrate' ),
+							__( 'The table %s does not exist on this site.', 'estasoft-migration-database-sanitizer' ),
 							$name
 						)
 					);
@@ -301,7 +301,7 @@ final class JobParams {
 		$out = array();
 		if ( isset( $in['password'] ) && '' !== (string) $in['password'] ) {
 			if ( mb_strlen( (string) $in['password'], 'UTF-8' ) < 8 ) {
-				throw new \InvalidArgumentException( __( 'Use at least 8 characters for the package password.', 'estasoft-migrate' ) );
+				throw new \InvalidArgumentException( __( 'Use at least 8 characters for the package password.', 'estasoft-migration-database-sanitizer' ) );
 			}
 			$out['passphrase_enc'] = Secrets::seal( (string) $in['password'], $ctx->secret );
 		} elseif ( ! empty( $in['protect_with_site_key'] ) && self::truthy( $in['protect_with_site_key'] ) ) {
@@ -343,7 +343,7 @@ final class JobParams {
 		}
 		$profile = (string) ( $in['sanitize']['profile'] ?? 'staging' );
 		if ( ! isset( Profiles::all()[ $profile ] ) ) {
-			throw new \InvalidArgumentException( __( 'Choose one of the sanitizer profiles.', 'estasoft-migrate' ) );
+			throw new \InvalidArgumentException( __( 'Choose one of the sanitizer profiles.', 'estasoft-migration-database-sanitizer' ) );
 		}
 		return Profiles::build_config( $profile, (array) ( $in['sanitize']['overrides'] ?? array() ) );
 	}

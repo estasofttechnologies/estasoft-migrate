@@ -169,7 +169,7 @@ class Command {
 					}
 				}
 			}
-			\WP_CLI::success( __( 'Nothing was changed. This is only a preview.', 'estasoft-migrate' ) );
+			\WP_CLI::success( __( 'Nothing was changed. This is only a preview.', 'estasoft-migration-database-sanitizer' ) );
 			return;
 		}
 
@@ -222,7 +222,7 @@ class Command {
 	 */
 	public function import( $args, $assoc ) {
 		$id = $this->package_arg( (string) $args[0] );
-		\WP_CLI::confirm( __( 'This replaces the database of this site with the contents of the package. Continue?', 'estasoft-migrate' ), $assoc );
+		\WP_CLI::confirm( __( 'This replaces the database of this site with the contents of the package. Continue?', 'estasoft-migration-database-sanitizer' ), $assoc );
 		$in = array_merge( array( 'package_id' => $id ), $this->replace_input( $assoc ) );
 		$pw = $this->password( $assoc );
 		if ( '' !== $pw ) {
@@ -256,9 +256,9 @@ class Command {
 		$id   = (string) $args[0];
 		$meta = $this->plugin->storage()->read_meta( $id );
 		if ( ! is_array( $meta ) || 'snapshot' !== ( $meta['type'] ?? '' ) ) {
-			\WP_CLI::error( __( 'That is not a rollback snapshot. Run “wp estasoft-migrate snapshots” for the list.', 'estasoft-migrate' ) );
+			\WP_CLI::error( __( 'That is not a rollback snapshot. Run “wp estasoft-migrate snapshots” for the list.', 'estasoft-migration-database-sanitizer' ) );
 		}
-		\WP_CLI::confirm( __( 'This puts the database back to the state in the snapshot. Changes made since then are lost. Continue?', 'estasoft-migrate' ), $assoc );
+		\WP_CLI::confirm( __( 'This puts the database back to the state in the snapshot. Changes made since then are lost. Continue?', 'estasoft-migration-database-sanitizer' ), $assoc );
 		$this->say_result(
 			$this->run_job(
 				'import',
@@ -319,7 +319,7 @@ class Command {
 	public function search_replace( $args, $assoc ) {
 		$apply = isset( $assoc['apply'] );
 		if ( $apply ) {
-			\WP_CLI::confirm( __( 'This changes the database. A rollback snapshot is saved first. Continue?', 'estasoft-migrate' ), $assoc );
+			\WP_CLI::confirm( __( 'This changes the database. A rollback snapshot is saved first. Continue?', 'estasoft-migration-database-sanitizer' ), $assoc );
 		}
 		$in = array_merge(
 			$this->table_input( $assoc ),
@@ -340,7 +340,7 @@ class Command {
 		$view = $this->run_job( 'search_replace', $in );
 		$this->say_result( $view );
 		if ( ! $apply ) {
-			\WP_CLI::log( __( 'This was a dry run. Add --apply to write the changes.', 'estasoft-migrate' ) );
+			\WP_CLI::log( __( 'This was a dry run. Add --apply to write the changes.', 'estasoft-migration-database-sanitizer' ) );
 		}
 	}
 
@@ -385,9 +385,9 @@ class Command {
 		}
 		\WP_CLI::log( '' );
 		if ( 'blocked' === $r['status'] ) {
-			\WP_CLI::error( __( 'Blocked: fix the items marked BLOCKED first.', 'estasoft-migrate' ) );
+			\WP_CLI::error( __( 'Blocked: fix the items marked BLOCKED first.', 'estasoft-migration-database-sanitizer' ) );
 		}
-		\WP_CLI::success( 'warnings' === $r['status'] ? __( 'Ready, with warnings.', 'estasoft-migrate' ) : __( 'Ready.', 'estasoft-migrate' ) );
+		\WP_CLI::success( 'warnings' === $r['status'] ? __( 'Ready, with warnings.', 'estasoft-migration-database-sanitizer' ) : __( 'Ready.', 'estasoft-migration-database-sanitizer' ) );
 	}
 
 	/**
@@ -421,7 +421,7 @@ class Command {
 	 * @return void
 	 */
 	public function push( $args, $assoc ) {
-		\WP_CLI::confirm( sprintf( /* translators: %s: address */ __( 'This replaces the database of %s with this site\'s database. Continue?', 'estasoft-migrate' ), $args[0] ), $assoc );
+		\WP_CLI::confirm( sprintf( /* translators: %s: address */ __( 'This replaces the database of %s with this site\'s database. Continue?', 'estasoft-migration-database-sanitizer' ), $args[0] ), $assoc );
 		$this->say_result( $this->run_job( 'push', $this->remote_input( $args[0], $assoc, true ) ) );
 	}
 
@@ -450,7 +450,7 @@ class Command {
 	 * @return void
 	 */
 	public function pull( $args, $assoc ) {
-		\WP_CLI::confirm( __( 'This replaces the database of this site with the other site\'s database. Continue?', 'estasoft-migrate' ), $assoc );
+		\WP_CLI::confirm( __( 'This replaces the database of this site with the other site\'s database. Continue?', 'estasoft-migration-database-sanitizer' ), $assoc );
 		$this->say_result( $this->run_job( 'pull', $this->remote_input( $args[0], $assoc, false ) ) );
 	}
 
@@ -470,7 +470,7 @@ class Command {
 		unset( $assoc );
 		$id = $this->package_arg( (string) $args[0] );
 		$this->run_job( 'verify', array( 'package_id' => $id ) );
-		\WP_CLI::success( __( 'The package is complete and undamaged.', 'estasoft-migrate' ) );
+		\WP_CLI::success( __( 'The package is complete and undamaged.', 'estasoft-migration-database-sanitizer' ) );
 	}
 
 	/**
@@ -604,7 +604,7 @@ class Command {
 		} catch ( ApiException $e ) {
 			\WP_CLI::error( $e->getMessage() );
 		}
-		\WP_CLI::success( __( 'The job was cancelled.', 'estasoft-migrate' ) );
+		\WP_CLI::success( __( 'The job was cancelled.', 'estasoft-migration-database-sanitizer' ) );
 	}
 
 	/**
@@ -702,13 +702,13 @@ class Command {
 	 * @return void
 	 */
 	public function delete( $args, $assoc ) {
-		\WP_CLI::confirm( __( 'Delete this package? It cannot be brought back.', 'estasoft-migrate' ), $assoc );
+		\WP_CLI::confirm( __( 'Delete this package? It cannot be brought back.', 'estasoft-migration-database-sanitizer' ), $assoc );
 		try {
 			$this->plugin->api( false )->delete_package( (string) $args[0] );
 		} catch ( ApiException $e ) {
 			\WP_CLI::error( $e->getMessage() );
 		}
-		\WP_CLI::success( __( 'Deleted.', 'estasoft-migrate' ) );
+		\WP_CLI::success( __( 'Deleted.', 'estasoft-migration-database-sanitizer' ) );
 	}
 
 	/**
@@ -759,14 +759,14 @@ class Command {
 		}
 
 		\WP_CLI::log( $s['connection']['key'] );
-		\WP_CLI::log( sprintf( /* translators: %s: address */ __( 'Address: %s', 'estasoft-migrate' ), $s['connection']['endpoint'] ) );
+		\WP_CLI::log( sprintf( /* translators: %s: address */ __( 'Address: %s', 'estasoft-migration-database-sanitizer' ), $s['connection']['endpoint'] ) );
 		if ( empty( $s['values']['accept_incoming'] ) ) {
-			\WP_CLI::warning( __( 'This site does not accept incoming migrations yet. Turn it on in Settings, or run: wp estasoft-migrate key --accept-incoming=on', 'estasoft-migrate' ) );
+			\WP_CLI::warning( __( 'This site does not accept incoming migrations yet. Turn it on in Settings, or run: wp estasoft-migrate key --accept-incoming=on', 'estasoft-migration-database-sanitizer' ) );
 		} elseif ( (int) $s['connection']['accept_until'] > 0 ) {
 			\WP_CLI::log(
 				sprintf(
 					/* translators: %s: date and time */
-					__( 'Incoming migrations switch themselves off on %s unless a migration arrives before then.', 'estasoft-migrate' ),
+					__( 'Incoming migrations switch themselves off on %s unless a migration arrives before then.', 'estasoft-migration-database-sanitizer' ),
 					wp_date( 'Y-m-d H:i', (int) $s['connection']['accept_until'] )
 				)
 			);
@@ -858,10 +858,10 @@ class Command {
 		if ( ! $job || Job::COMPLETED !== $job->status ) {
 			$status = $job ? $job->status : 'missing';
 			if ( Job::PAUSED === $status ) {
-				\WP_CLI::error( sprintf( /* translators: %d: job id */ __( 'The job is paused. Continue with: wp estasoft-migrate resume %d', 'estasoft-migrate' ), $id ) );
+				\WP_CLI::error( sprintf( /* translators: %d: job id */ __( 'The job is paused. Continue with: wp estasoft-migrate resume %d', 'estasoft-migration-database-sanitizer' ), $id ) );
 			}
 			$why = ! empty( $view['error']['message'] ) ? $view['error']['message'] : ( $job ? $job->message : '' );
-			\WP_CLI::error( sprintf( /* translators: 1: job id, 2: reason */ __( 'The job did not finish (#%1$d). %2$s Fix the cause, then run: wp estasoft-migrate resume %1$d', 'estasoft-migrate' ), $id, $why ) );
+			\WP_CLI::error( sprintf( /* translators: 1: job id, 2: reason */ __( 'The job did not finish (#%1$d). %2$s Fix the cause, then run: wp estasoft-migrate resume %1$d', 'estasoft-migration-database-sanitizer' ), $id, $why ) );
 		}
 		return $view;
 	}
@@ -880,30 +880,30 @@ class Command {
 		switch ( $r['type'] ) {
 			case 'export':
 				$path = $this->plugin->storage()->package_path( $r['package'] );
-				\WP_CLI::success( sprintf( /* translators: 1: tables, 2: rows, 3: size */ __( 'Package created: %1$d tables, %2$s rows, %3$s.', 'estasoft-migrate' ), $r['tables'], Util::number( $r['rows'] ), Util::format_bytes( $r['size'] ) ) );
+				\WP_CLI::success( sprintf( /* translators: 1: tables, 2: rows, 3: size */ __( 'Package created: %1$d tables, %2$s rows, %3$s.', 'estasoft-migration-database-sanitizer' ), $r['tables'], Util::number( $r['rows'] ), Util::format_bytes( $r['size'] ) ) );
 				\WP_CLI::log( $r['package'] . '  →  ' . $path );
 				if ( 'none' !== $r['protection'] ) {
-					\WP_CLI::log( 'password' === $r['protection'] ? __( 'Protected with the password you gave.', 'estasoft-migrate' ) : __( 'Protected with this site\'s key.', 'estasoft-migrate' ) );
+					\WP_CLI::log( 'password' === $r['protection'] ? __( 'Protected with the password you gave.', 'estasoft-migration-database-sanitizer' ) : __( 'Protected with this site\'s key.', 'estasoft-migration-database-sanitizer' ) );
 				}
 				break;
 			case 'import':
 			case 'pull':
 				$text = ! empty( $r['restore'] )
 					/* translators: 1: tables, 2: rows */
-					? __( 'Restored %1$d tables, %2$s rows.', 'estasoft-migrate' )
+					? __( 'Restored %1$d tables, %2$s rows.', 'estasoft-migration-database-sanitizer' )
 					/* translators: 1: tables, 2: rows */
-					: __( 'Imported %1$d tables, %2$s rows.', 'estasoft-migrate' );
+					: __( 'Imported %1$d tables, %2$s rows.', 'estasoft-migration-database-sanitizer' );
 				\WP_CLI::success( sprintf( $text, $r['tables'], Util::number( $r['rows'] ) ) );
 				if ( ! empty( $r['snapshot'] ) ) {
-					\WP_CLI::log( sprintf( /* translators: %s: snapshot id */ __( 'Rollback snapshot: %s (restore with: wp estasoft-migrate restore <id>)', 'estasoft-migrate' ), $r['snapshot'] ) );
+					\WP_CLI::log( sprintf( /* translators: %s: snapshot id */ __( 'Rollback snapshot: %s (restore with: wp estasoft-migrate restore <id>)', 'estasoft-migration-database-sanitizer' ), $r['snapshot'] ) );
 				}
 				break;
 			case 'push':
-				\WP_CLI::success( sprintf( /* translators: 1: address, 2: tables, 3: rows */ __( 'Pushed to %1$s: %2$d tables, %3$s rows.', 'estasoft-migrate' ), $r['remote'], $r['tables'], Util::number( $r['rows'] ) ) );
+				\WP_CLI::success( sprintf( /* translators: 1: address, 2: tables, 3: rows */ __( 'Pushed to %1$s: %2$d tables, %3$s rows.', 'estasoft-migration-database-sanitizer' ), $r['remote'], $r['tables'], Util::number( $r['rows'] ) ) );
 				break;
 			case 'search_replace':
 				$t = (array) $r['totals'];
-				\WP_CLI::success( sprintf( /* translators: 1: matches, 2: rows, 3: rows scanned */ __( '%1$s matches in %2$s rows (of %3$s scanned).', 'estasoft-migrate' ), Util::number( $t['matches'] ?? 0 ), Util::number( $t['changed'] ?? 0 ), Util::number( $t['scanned'] ?? 0 ) ) );
+				\WP_CLI::success( sprintf( /* translators: 1: matches, 2: rows, 3: rows scanned */ __( '%1$s matches in %2$s rows (of %3$s scanned).', 'estasoft-migration-database-sanitizer' ), Util::number( $t['matches'] ?? 0 ), Util::number( $t['changed'] ?? 0 ), Util::number( $t['scanned'] ?? 0 ) ) );
 				$rows = array();
 				foreach ( (array) $r['tables'] as $tb ) {
 					if ( ! empty( $tb['matches'] ) ) {
@@ -937,7 +937,7 @@ class Command {
 		$api = $this->plugin->api( false );
 		$fh  = fopen( $arg, 'rb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
 		if ( ! $fh ) {
-			\WP_CLI::error( __( 'The file cannot be read.', 'estasoft-migrate' ) );
+			\WP_CLI::error( __( 'The file cannot be read.', 'estasoft-migration-database-sanitizer' ) );
 		}
 		$size = (int) filesize( $arg );
 		try {
@@ -1039,7 +1039,7 @@ class Command {
 		}
 		if ( isset( $assoc[ $file ] ) ) {
 			if ( ! is_readable( (string) $assoc[ $file ] ) ) {
-				\WP_CLI::error( sprintf( /* translators: %s: path */ __( 'Cannot read %s', 'estasoft-migrate' ), $assoc[ $file ] ) );
+				\WP_CLI::error( sprintf( /* translators: %s: path */ __( 'Cannot read %s', 'estasoft-migration-database-sanitizer' ), $assoc[ $file ] ) );
 			}
 			return trim( (string) file_get_contents( (string) $assoc[ $file ] ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		}

@@ -42,47 +42,47 @@
 		var hi = Math.max( lo, Math.round( Number( range[ 1 ] ) || lo ) );
 		if ( hi < 90 ) {
 			/* translators: 1: shortest time in seconds, 2: longest time in seconds */
-			return sprintf( _n( '%1$d to %2$d second', '%1$d to %2$d seconds', hi, 'estasoft-migrate' ), lo, hi );
+			return sprintf( _n( '%1$d to %2$d second', '%1$d to %2$d seconds', hi, 'estasoft-migration-database-sanitizer' ), lo, hi );
 		}
 		var a = Math.max( 1, Math.round( lo / 60 ) );
 		var b = Math.max( a, Math.round( hi / 60 ) );
 		if ( b < 90 ) {
 			if ( a === b ) {
 				/* translators: %d: minutes */
-				return sprintf( _n( 'About %d minute', 'About %d minutes', b, 'estasoft-migrate' ), b );
+				return sprintf( _n( 'About %d minute', 'About %d minutes', b, 'estasoft-migration-database-sanitizer' ), b );
 			}
 			/* translators: 1: shortest time in minutes, 2: longest time in minutes */
-			return sprintf( _n( '%1$d to %2$d minute', '%1$d to %2$d minutes', b, 'estasoft-migrate' ), a, b );
+			return sprintf( _n( '%1$d to %2$d minute', '%1$d to %2$d minutes', b, 'estasoft-migration-database-sanitizer' ), a, b );
 		}
 		/* translators: 1: shortest time, 2: longest time, each with its unit */
-		return sprintf( __( '%1$s to %2$s', 'estasoft-migrate' ), fmt.duration( lo ), fmt.duration( hi ) );
+		return sprintf( __( '%1$s to %2$s', 'estasoft-migration-database-sanitizer' ), fmt.duration( lo ), fmt.duration( hi ) );
 	}
 
 	function backLabel( screen ) {
 		var labels = {
-			'new': __( 'Back to options', 'estasoft-migrate' ),
-			packages: __( 'Back to packages', 'estasoft-migrate' ),
-			replace: __( 'Back to search & replace', 'estasoft-migrate' ),
-			sanitizer: __( 'Back to sanitizer', 'estasoft-migrate' ),
-			overview: __( 'Back to overview', 'estasoft-migrate' ),
+			'new': __( 'Back to options', 'estasoft-migration-database-sanitizer' ),
+			packages: __( 'Back to packages', 'estasoft-migration-database-sanitizer' ),
+			replace: __( 'Back to search & replace', 'estasoft-migration-database-sanitizer' ),
+			sanitizer: __( 'Back to sanitizer', 'estasoft-migration-database-sanitizer' ),
+			overview: __( 'Back to overview', 'estasoft-migration-database-sanitizer' ),
 		};
-		return labels[ screen ] || __( 'Back', 'estasoft-migrate' );
+		return labels[ screen ] || __( 'Back', 'estasoft-migration-database-sanitizer' );
 	}
 
 	/** Words on the Start button. */
 	function startLabel( plan ) {
 		switch ( plan.mode ) {
 			case 'import':
-				return __( 'Start import', 'estasoft-migrate' );
+				return __( 'Start import', 'estasoft-migration-database-sanitizer' );
 			case 'search_replace':
-				return isOff( plan.input.dry_run ) ? __( 'Apply changes', 'estasoft-migrate' ) : __( 'Run preview', 'estasoft-migrate' );
+				return isOff( plan.input.dry_run ) ? __( 'Apply changes', 'estasoft-migration-database-sanitizer' ) : __( 'Run preview', 'estasoft-migration-database-sanitizer' );
 			case 'export':
 			case 'sanitize':
 			case 'push':
 			case 'pull':
-				return __( 'Start migration', 'estasoft-migrate' );
+				return __( 'Start migration', 'estasoft-migration-database-sanitizer' );
 		}
-		return __( 'Start', 'estasoft-migrate' );
+		return __( 'Start', 'estasoft-migration-database-sanitizer' );
 	}
 
 	/** What the plan does, in plain words, when the screen that made it gave no lines. */
@@ -90,19 +90,19 @@
 		var snap = ! isOff( plan.input.snapshot );
 		switch ( plan.mode ) {
 			case 'export':
-				return [ __( 'The tables of this site are saved in one package file on this site.', 'estasoft-migrate' ), __( 'Nothing on this site is changed.', 'estasoft-migrate' ) ];
+				return [ __( 'The tables of this site are saved in one package file on this site.', 'estasoft-migration-database-sanitizer' ), __( 'Nothing on this site is changed.', 'estasoft-migration-database-sanitizer' ) ];
 			case 'sanitize':
-				return [ __( 'A sanitized copy of this site’s database is saved as a package file.', 'estasoft-migrate' ), __( 'Nothing on this site is changed.', 'estasoft-migrate' ) ];
+				return [ __( 'A sanitized copy of this site’s database is saved as a package file.', 'estasoft-migration-database-sanitizer' ), __( 'Nothing on this site is changed.', 'estasoft-migration-database-sanitizer' ) ];
 			case 'import':
-				return [ __( 'The package is read and its tables replace the tables of this site.', 'estasoft-migrate' ), snap ? __( 'A rollback snapshot of this site is saved first.', 'estasoft-migrate' ) : __( 'No rollback snapshot is saved.', 'estasoft-migrate' ) ];
+				return [ __( 'The package is read and its tables replace the tables of this site.', 'estasoft-migration-database-sanitizer' ), snap ? __( 'A rollback snapshot of this site is saved first.', 'estasoft-migration-database-sanitizer' ) : __( 'No rollback snapshot is saved.', 'estasoft-migration-database-sanitizer' ) ];
 			case 'search_replace':
 				return isOff( plan.input.dry_run )
-					? [ __( 'The text is changed in this site’s database.', 'estasoft-migrate' ), snap ? __( 'A rollback snapshot of this site is saved first.', 'estasoft-migrate' ) : __( 'No rollback snapshot is saved.', 'estasoft-migrate' ) ]
-					: [ __( 'The database is searched and the changes are listed. Nothing is changed.', 'estasoft-migrate' ) ];
+					? [ __( 'The text is changed in this site’s database.', 'estasoft-migration-database-sanitizer' ), snap ? __( 'A rollback snapshot of this site is saved first.', 'estasoft-migration-database-sanitizer' ) : __( 'No rollback snapshot is saved.', 'estasoft-migration-database-sanitizer' ) ]
+					: [ __( 'The database is searched and the changes are listed. Nothing is changed.', 'estasoft-migration-database-sanitizer' ) ];
 			case 'push':
-				return [ __( 'This site’s database is sent to the other site, which replaces its own.', 'estasoft-migrate' ) ];
+				return [ __( 'This site’s database is sent to the other site, which replaces its own.', 'estasoft-migration-database-sanitizer' ) ];
 			case 'pull':
-				return [ __( 'The database of the other site is copied here and replaces this site’s database.', 'estasoft-migrate' ) ];
+				return [ __( 'The database of the other site is copied here and replaces this site’s database.', 'estasoft-migration-database-sanitizer' ) ];
 		}
 		return [];
 	}
@@ -121,7 +121,7 @@
 					mode: 'export',
 					type: 'export',
 					input: {},
-					title: __( 'Export package', 'estasoft-migrate' ),
+					title: __( 'Export package', 'estasoft-migration-database-sanitizer' ),
 					lines: null,
 					back: 'new',
 				},
@@ -151,8 +151,8 @@
 
 		/* ---- Static page */
 
-		var rerun = ui.btn( __( 'Run checks again', 'estasoft-migrate' ), { onClick: function () { run(); } } );
-		var pageHead = ui.pageHead( __( 'Pre-flight check', 'estasoft-migrate' ), '', [ rerun ] );
+		var rerun = ui.btn( __( 'Run checks again', 'estasoft-migration-database-sanitizer' ), { onClick: function () { run(); } } );
+		var pageHead = ui.pageHead( __( 'Pre-flight check', 'estasoft-migration-database-sanitizer' ), '', [ rerun ] );
 		var lede = pageHead.querySelector( '.lede' ) || pageHead.firstChild.appendChild( h( 'p.lede' ) );
 		var statusBox = h( 'div', { 'aria-live': 'polite' } );
 		var tilesBox = h( 'div.g-auto', { style: 'grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))' } );
@@ -164,23 +164,23 @@
 		startBtn.setAttribute( 'aria-describedby', 'estm-pf-ready-text' );
 		var readyCard = h(
 			'section.card',
-			h( 'h2', { style: 'margin-bottom:8px' }, __( 'Ready to run?', 'estasoft-migrate' ) ),
+			h( 'h2', { style: 'margin-bottom:8px' }, __( 'Ready to run?', 'estasoft-migration-database-sanitizer' ) ),
 			readyText,
 			startNote,
 			h( 'div.stack', { style: 'gap:10px' }, startBtn, ui.btn( backLabel( plan.back ), { href: backUrl } ) )
 		);
 
 		var steps = 'new' === plan.back
-			? [ __( 'Method', 'estasoft-migrate' ), __( 'Destination and options', 'estasoft-migrate' ), __( 'Pre-flight check', 'estasoft-migrate' ), __( 'Run', 'estasoft-migrate' ) ]
-			: [ __( 'Choose', 'estasoft-migrate' ), __( 'Pre-flight check', 'estasoft-migrate' ), __( 'Run', 'estasoft-migrate' ) ];
+			? [ __( 'Method', 'estasoft-migration-database-sanitizer' ), __( 'Destination and options', 'estasoft-migration-database-sanitizer' ), __( 'Pre-flight check', 'estasoft-migration-database-sanitizer' ), __( 'Run', 'estasoft-migration-database-sanitizer' ) ]
+			: [ __( 'Choose', 'estasoft-migration-database-sanitizer' ), __( 'Pre-flight check', 'estasoft-migration-database-sanitizer' ), __( 'Run', 'estasoft-migration-database-sanitizer' ) ];
 		var current = steps.length - 2;
-		var stepsEl = h( 'ol.steps', { 'aria-label': __( 'Progress', 'estasoft-migrate' ) }, steps.map( function ( label, i ) {
+		var stepsEl = h( 'ol.steps', { 'aria-label': __( 'Progress', 'estasoft-migration-database-sanitizer' ) }, steps.map( function ( label, i ) {
 			var cls = i < current ? 'done' : ( i === current ? 'cur' : '' );
 			return h( 'li', { class: cls, 'aria-current': i === current ? 'step' : null }, h( 'span.n', { 'aria-hidden': 'true' }, i < current ? '✓' : String( i + 1 ) ), label );
 		} ) );
 
 		var planCard = lines.length
-			? ui.card( { title: __( 'What will happen', 'estasoft-migrate' ) }, h( 'ul.checklist.stack', { style: 'gap:10px;font-size:13.5px' }, lines.map( function ( l ) { return h( 'li', l ); } ) ) )
+			? ui.card( { title: __( 'What will happen', 'estasoft-migration-database-sanitizer' ) }, h( 'ul.checklist.stack', { style: 'gap:10px;font-size:13.5px' }, lines.map( function ( l ) { return h( 'li', l ); } ) ) )
 			: null;
 
 		ESTM.replace(
@@ -199,17 +199,17 @@
 		/* ---- Running the checks */
 
 		function ledeText( when ) {
-			var title = String( plan.title || __( 'Pre-flight check', 'estasoft-migrate' ) ).replace( /[.:\s]+$/, '' );
+			var title = String( plan.title || __( 'Pre-flight check', 'estasoft-migration-database-sanitizer' ) ).replace( /[.:\s]+$/, '' );
 			if ( 'failed' === when ) {
 				/* translators: %s: what is planned, for example "Push to staging.example.com" */
-				return sprintf( __( '%s. The checks could not run.', 'estasoft-migrate' ), title );
+				return sprintf( __( '%s. The checks could not run.', 'estasoft-migration-database-sanitizer' ), title );
 			}
 			if ( ! when ) {
 				/* translators: %s: what is planned, for example "Push to staging.example.com" */
-				return sprintf( __( '%s. Checking now.', 'estasoft-migrate' ), title );
+				return sprintf( __( '%s. Checking now.', 'estasoft-migration-database-sanitizer' ), title );
 			}
 			/* translators: 1: what is planned, for example "Push to staging.example.com", 2: date and time */
-			return sprintf( __( '%1$s. Checked %2$s.', 'estasoft-migrate' ), title, when );
+			return sprintf( __( '%1$s. Checked %2$s.', 'estasoft-migration-database-sanitizer' ), title, when );
 		}
 
 		function setLoading() {
@@ -220,14 +220,14 @@
 				h(
 					'div.note',
 					{ role: 'status' },
-					h( 'span', { style: 'flex:none;padding-top:1px' }, ui.spinner( __( 'Checking', 'estasoft-migrate' ) ) ),
-					h( 'div', h( 'b', __( 'Checking…', 'estasoft-migrate' ) ), ' ', 'push' === mode || 'pull' === mode ? __( 'This site and the other site are being checked. Nothing is changed.', 'estasoft-migrate' ) : __( 'This takes a few seconds. Nothing is changed.', 'estasoft-migrate' ) )
+					h( 'span', { style: 'flex:none;padding-top:1px' }, ui.spinner( __( 'Checking', 'estasoft-migration-database-sanitizer' ) ) ),
+					h( 'div', h( 'b', __( 'Checking…', 'estasoft-migration-database-sanitizer' ) ), ' ', 'push' === mode || 'pull' === mode ? __( 'This site and the other site are being checked. Nothing is changed.', 'estasoft-migration-database-sanitizer' ) : __( 'This takes a few seconds. Nothing is changed.', 'estasoft-migration-database-sanitizer' ) )
 				)
 			);
 			ESTM.replace( tilesBox, [ 1, 2, 3 ].map( function () { return h( 'div.tile', ui.skeleton( 2 ) ); } ) );
 			ESTM.replace( listsBox, h( 'section.card', ui.skeleton( 5 ) ) );
 			ESTM.replace( safetyBox, h( 'section.card.hi', ui.skeleton( 3 ) ) );
-			readyText.textContent = __( 'The checks are running. Start is available when they are done.', 'estasoft-migrate' );
+			readyText.textContent = __( 'The checks are running. Start is available when they are done.', 'estasoft-migration-database-sanitizer' );
 			startBtn.disabled = true;
 		}
 
@@ -254,12 +254,12 @@
 			lede.textContent = ledeText( 'failed' );
 			ESTM.replace(
 				statusBox,
-				h( 'div.stack', ui.note( 'err', ESTM.errorMessage( err ), { title: __( 'The checks could not run.', 'estasoft-migrate' ) } ), h( 'div.row', ui.btn( __( 'Try again', 'estasoft-migrate' ), { onClick: run } ), ui.btn( backLabel( plan.back ), { href: backUrl } ) ) )
+				h( 'div.stack', ui.note( 'err', ESTM.errorMessage( err ), { title: __( 'The checks could not run.', 'estasoft-migration-database-sanitizer' ) } ), h( 'div.row', ui.btn( __( 'Try again', 'estasoft-migration-database-sanitizer' ), { onClick: run } ), ui.btn( backLabel( plan.back ), { href: backUrl } ) ) )
 			);
 			ESTM.replace( tilesBox );
 			ESTM.replace( listsBox );
 			ESTM.replace( safetyBox );
-			readyText.textContent = __( 'Start is switched off because the checks could not run. Try them again, or go back.', 'estasoft-migrate' );
+			readyText.textContent = __( 'Start is switched off because the checks could not run. Try them again, or go back.', 'estasoft-migration-database-sanitizer' );
 			startBtn.disabled = true;
 		}
 
@@ -277,22 +277,22 @@
 
 		function statusNote( r, c ) {
 			if ( 'blocked' === r.status ) {
-				return ui.note( 'err', __( 'Fix what is listed under Problems, then run the checks again. The Start button stays off until nothing is blocked.', 'estasoft-migrate' ), {
+				return ui.note( 'err', __( 'Fix what is listed under Problems, then run the checks again. The Start button stays off until nothing is blocked.', 'estasoft-migration-database-sanitizer' ), {
 					/* translators: %d: number of blocking problems */
-					title: sprintf( _n( 'Blocked by %d problem.', 'Blocked by %d problems.', c.block, 'estasoft-migrate' ), c.block ),
+					title: sprintf( _n( 'Blocked by %d problem.', 'Blocked by %d problems.', c.block, 'estasoft-migration-database-sanitizer' ), c.block ),
 				} );
 			}
 			if ( 'warnings' === r.status ) {
-				return ui.note( 'warn', __( 'Nothing blocks this run. Each warning says what Estasoft Migrate will do about it, so you can start now or fix it first.', 'estasoft-migrate' ), {
+				return ui.note( 'warn', __( 'Nothing blocks this run. Each warning says what Estasoft Migrate will do about it, so you can start now or fix it first.', 'estasoft-migration-database-sanitizer' ), {
 					/* translators: %d: number of warnings */
-					title: sprintf( _n( 'Ready, with %d warning.', 'Ready, with %d warnings.', c.warn, 'estasoft-migrate' ), c.warn ),
+					title: sprintf( _n( 'Ready, with %d warning.', 'Ready, with %d warnings.', c.warn, 'estasoft-migration-database-sanitizer' ), c.warn ),
 				} );
 			}
 			return okNote( [
-				h( 'b', __( 'Ready.', 'estasoft-migrate' ) ),
+				h( 'b', __( 'Ready.', 'estasoft-migration-database-sanitizer' ) ),
 				' ',
 				/* translators: %d: number of checks that passed */
-				sprintf( _n( '%d check passed. Nothing blocks this run.', 'All %d checks passed. Nothing blocks this run.', c.pass, 'estasoft-migrate' ), c.pass ),
+				sprintf( _n( '%d check passed. Nothing blocks this run.', 'All %d checks passed. Nothing blocks this run.', c.pass, 'estasoft-migration-database-sanitizer' ), c.pass ),
 			] );
 		}
 
@@ -303,37 +303,37 @@
 		function tileList( r ) {
 			var sm = r.summary || {};
 			var out = [];
-			var tablesLabel = 'import' === mode ? __( 'This site’s database now', 'estasoft-migrate' ) : ( 'search_replace' === mode ? __( 'Tables searched', 'estasoft-migrate' ) : __( 'Tables to copy', 'estasoft-migrate' ) );
+			var tablesLabel = 'import' === mode ? __( 'This site’s database now', 'estasoft-migration-database-sanitizer' ) : ( 'search_replace' === mode ? __( 'Tables searched', 'estasoft-migration-database-sanitizer' ) : __( 'Tables to copy', 'estasoft-migration-database-sanitizer' ) );
 			var n = Number( sm.tables ) || 0;
 			var rows = Number( sm.rows ) || 0;
 			out.push( ui.tile(
 				tablesLabel,
 				/* translators: %s: number of tables */
-				sprintf( _n( '%s table', '%s tables', n, 'estasoft-migrate' ), fmt.number( n ) ),
+				sprintf( _n( '%s table', '%s tables', n, 'estasoft-migration-database-sanitizer' ), fmt.number( n ) ),
 				/* translators: 1: number of rows, 2: size */
-				sprintf( _n( 'About %1$s row · %2$s', 'About %1$s rows · %2$s', rows, 'estasoft-migrate' ), fmt.number( rows ), fmt.bytes( sm.bytes ) )
+				sprintf( _n( 'About %1$s row · %2$s', 'About %1$s rows · %2$s', rows, 'estasoft-migration-database-sanitizer' ), fmt.number( rows ), fmt.bytes( sm.bytes ) )
 			) );
 
 			var time = timeRange( sm.seconds );
-			out.push( ui.tile( __( 'Estimated time', 'estasoft-migrate' ), time || '–', __( 'A rough guess. Large tables take longer.', 'estasoft-migrate' ), { small: true } ) );
+			out.push( ui.tile( __( 'Estimated time', 'estasoft-migration-database-sanitizer' ), time || '–', __( 'A rough guess. Large tables take longer.', 'estasoft-migration-database-sanitizer' ), { small: true } ) );
 
 			if ( 'push' === mode || 'pull' === mode ) {
 				var addr = ( sm.remote || input.remote_url || '' );
-				out.push( ui.tile( __( 'Other site', 'estasoft-migrate' ), hostOf( addr ) || '–', addr || __( 'Not reached', 'estasoft-migrate' ), { small: true, mono: true } ) );
+				out.push( ui.tile( __( 'Other site', 'estasoft-migration-database-sanitizer' ), hostOf( addr ) || '–', addr || __( 'Not reached', 'estasoft-migration-database-sanitizer' ), { small: true, mono: true } ) );
 			} else if ( 'export' === mode || 'sanitize' === mode ) {
-				out.push( ui.tile( __( 'Package size', 'estasoft-migrate' ), sprintf( /* translators: %s: size, for example 412 MB */ __( 'About %s', 'estasoft-migrate' ), fmt.bytes( sm.package ) ), __( 'An estimate. The real size depends on the data.', 'estasoft-migrate' ), { small: true } ) );
+				out.push( ui.tile( __( 'Package size', 'estasoft-migration-database-sanitizer' ), sprintf( /* translators: %s: size, for example 412 MB */ __( 'About %s', 'estasoft-migration-database-sanitizer' ), fmt.bytes( sm.package ) ), __( 'An estimate. The real size depends on the data.', 'estasoft-migration-database-sanitizer' ), { small: true } ) );
 			} else {
 				var on = snapshotOn( r );
 				/* translators: %s: size, for example 412 MB */
-				out.push( ui.tile( __( 'Rollback snapshot', 'estasoft-migrate' ), on ? sprintf( __( 'About %s', 'estasoft-migrate' ), fmt.bytes( ( r.safety || {} ).snapshot_bytes ) ) : __( 'None', 'estasoft-migrate' ), on ? __( 'Saved before anything changes.', 'estasoft-migrate' ) : __( 'There is nothing to go back to.', 'estasoft-migrate' ), { small: true } ) );
+				out.push( ui.tile( __( 'Rollback snapshot', 'estasoft-migration-database-sanitizer' ), on ? sprintf( __( 'About %s', 'estasoft-migration-database-sanitizer' ), fmt.bytes( ( r.safety || {} ).snapshot_bytes ) ) : __( 'None', 'estasoft-migration-database-sanitizer' ), on ? __( 'Saved before anything changes.', 'estasoft-migration-database-sanitizer' ) : __( 'There is nothing to go back to.', 'estasoft-migration-database-sanitizer' ), { small: true } ) );
 			}
 			return out;
 		}
 
 		function checkRow( c ) {
 			var badge = 'block' === c.status
-				? ui.badge( __( 'Blocked', 'estasoft-migrate' ), 'block' )
-				: ( 'warn' === c.status ? ui.badge( __( 'Warning', 'estasoft-migrate' ), 'warn' ) : ui.badge( __( 'Passed', 'estasoft-migrate' ), 'ready' ) );
+				? ui.badge( __( 'Blocked', 'estasoft-migration-database-sanitizer' ), 'block' )
+				: ( 'warn' === c.status ? ui.badge( __( 'Warning', 'estasoft-migration-database-sanitizer' ), 'warn' ) : ui.badge( __( 'Passed', 'estasoft-migration-database-sanitizer' ), 'ready' ) );
 			return h( 'div.check', h( 'div.st', badge ), h( 'div.tx', h( 'b', c.title ), h( 'span', c.detail ) ) );
 		}
 
@@ -343,10 +343,10 @@
 			var passes = checks.filter( function ( x ) { return 'block' !== x.status && 'warn' !== x.status; } );
 			var cards = [];
 			if ( blocks.length ) {
-				cards.push( h( 'section.card.flush', h( 'div.card-h', h( 'h2', __( 'Problems', 'estasoft-migrate' ) ), ui.badge( String( blocks.length ), 'block' ) ), blocks.map( checkRow ) ) );
+				cards.push( h( 'section.card.flush', h( 'div.card-h', h( 'h2', __( 'Problems', 'estasoft-migration-database-sanitizer' ) ), ui.badge( String( blocks.length ), 'block' ) ), blocks.map( checkRow ) ) );
 			}
 			if ( warns.length ) {
-				cards.push( h( 'section.card.flush', h( 'div.card-h', h( 'h2', __( 'Warnings', 'estasoft-migrate' ) ), ui.badge( String( warns.length ), 'warn' ) ), warns.map( checkRow ) ) );
+				cards.push( h( 'section.card.flush', h( 'div.card-h', h( 'h2', __( 'Warnings', 'estasoft-migration-database-sanitizer' ) ), ui.badge( String( warns.length ), 'warn' ) ), warns.map( checkRow ) ) );
 			}
 			if ( passes.length ) {
 				// With problems or warnings to read, the long list of what is fine starts closed on a small screen.
@@ -354,7 +354,7 @@
 				cards.push( h(
 					'details.card.flush.pf-passed',
 					{ open: open },
-					h( 'summary.card-h', h( 'h2', __( 'Passed', 'estasoft-migrate' ) ), h( 'span.pf-toggle', ui.badge( String( passes.length ), 'ready' ) ) ),
+					h( 'summary.card-h', h( 'h2', __( 'Passed', 'estasoft-migration-database-sanitizer' ) ), h( 'span.pf-toggle', ui.badge( String( passes.length ), 'ready' ) ) ),
 					passes.map( checkRow )
 				) );
 			}
@@ -375,30 +375,30 @@
 
 			if ( on ) {
 				kids.push( h( 'p.sub', 'push' === mode
-					? sprintf( /* translators: 1: address of the other site, 2: size, for example 412 MB */ __( 'A rollback snapshot of %1$s is saved before anything is overwritten. About %2$s.', 'estasoft-migrate' ), remote, size )
-					: sprintf( /* translators: %s: size, for example 412 MB */ __( 'A rollback snapshot of this site is saved before anything is overwritten. About %s.', 'estasoft-migrate' ), size ) ) );
+					? sprintf( /* translators: 1: address of the other site, 2: size, for example 412 MB */ __( 'A rollback snapshot of %1$s is saved before anything is overwritten. About %2$s.', 'estasoft-migration-database-sanitizer' ), remote, size )
+					: sprintf( /* translators: %s: size, for example 412 MB */ __( 'A rollback snapshot of this site is saved before anything is overwritten. About %s.', 'estasoft-migration-database-sanitizer' ), size ) ) );
 			} else if ( s.snapshot ) {
-				kids.push( ui.note( 'warn', __( 'No rollback snapshot will be saved, so this change cannot be undone.', 'estasoft-migrate' ) ) );
+				kids.push( ui.note( 'warn', __( 'No rollback snapshot will be saved, so this change cannot be undone.', 'estasoft-migration-database-sanitizer' ) ) );
 			} else {
 				kids.push( h( 'p.sub', 'search_replace' === mode
-					? __( 'This is a preview. Nothing is changed, so no snapshot is needed.', 'estasoft-migrate' )
-					: __( 'Nothing on this site is changed, so no snapshot is needed.', 'estasoft-migrate' ) ) );
+					? __( 'This is a preview. Nothing is changed, so no snapshot is needed.', 'estasoft-migration-database-sanitizer' )
+					: __( 'Nothing on this site is changed, so no snapshot is needed.', 'estasoft-migration-database-sanitizer' ) ) );
 			}
 
-			pairs.push( [ __( 'Snapshot', 'estasoft-migrate' ), on ? __( 'Saved first', 'estasoft-migrate' ) : ( s.snapshot ? __( 'Off', 'estasoft-migrate' ) : __( 'Not needed', 'estasoft-migrate' ) ) ] );
-			pairs.push( [ __( 'Free space here', 'estasoft-migrate' ), null !== s.free && undefined !== s.free && s.free > 0 ? fmt.bytes( s.free ) : __( 'Unknown', 'estasoft-migrate' ) ] );
+			pairs.push( [ __( 'Snapshot', 'estasoft-migration-database-sanitizer' ), on ? __( 'Saved first', 'estasoft-migration-database-sanitizer' ) : ( s.snapshot ? __( 'Off', 'estasoft-migration-database-sanitizer' ) : __( 'Not needed', 'estasoft-migration-database-sanitizer' ) ) ] );
+			pairs.push( [ __( 'Free space here', 'estasoft-migration-database-sanitizer' ), null !== s.free && undefined !== s.free && s.free > 0 ? fmt.bytes( s.free ) : __( 'Unknown', 'estasoft-migration-database-sanitizer' ) ] );
 			if ( 'push' === mode || 'pull' === mode ) {
-				pairs.push( [ __( 'Free space on the other site', 'estasoft-migrate' ), s.remote_free > 0 ? fmt.bytes( s.remote_free ) : __( 'Unknown', 'estasoft-migrate' ) ] );
+				pairs.push( [ __( 'Free space on the other site', 'estasoft-migration-database-sanitizer' ), s.remote_free > 0 ? fmt.bytes( s.remote_free ) : __( 'Unknown', 'estasoft-migration-database-sanitizer' ) ] );
 			}
 			if ( on ) {
-				pairs.push( [ __( 'Restore', 'estasoft-migrate' ), 'push' === mode ? __( 'One click, from Packages on the other site', 'estasoft-migrate' ) : __( 'One click, from Packages', 'estasoft-migrate' ) ] );
+				pairs.push( [ __( 'Restore', 'estasoft-migration-database-sanitizer' ), 'push' === mode ? __( 'One click, from Packages on the other site', 'estasoft-migration-database-sanitizer' ) : __( 'One click, from Packages', 'estasoft-migration-database-sanitizer' ) ] );
 			}
 			var dl = h( 'dl.kv', { style: 'margin-top:12px' } );
 			pairs.forEach( function ( p ) {
 				dl.appendChild( h( 'dt', p[ 0 ] ) );
 				dl.appendChild( h( 'dd.break', p[ 1 ] ) );
 			} );
-			return h( 'section.card.hi', h( 'h2', { style: 'margin-bottom:8px' }, __( 'Safety net', 'estasoft-migrate' ) ), kids, dl );
+			return h( 'section.card.hi', h( 'h2', { style: 'margin-bottom:8px' }, __( 'Safety net', 'estasoft-migration-database-sanitizer' ) ), kids, dl );
 		}
 
 		function readyState( r, c ) {
@@ -407,17 +407,17 @@
 			var text;
 			if ( 'blocked' === r.status ) {
 				/* translators: 1: what is planned, 2: number of blocked checks */
-				text = sprintf( _n( '%1$s. Start is switched off because %2$d check is blocked. Fix it, then run the checks again.', '%1$s. Start is switched off because %2$d checks are blocked. Fix them, then run the checks again.', c.block, 'estasoft-migrate' ), title, c.block );
+				text = sprintf( _n( '%1$s. Start is switched off because %2$d check is blocked. Fix it, then run the checks again.', '%1$s. Start is switched off because %2$d checks are blocked. Fix them, then run the checks again.', c.block, 'estasoft-migration-database-sanitizer' ), title, c.block );
 			} else if ( 'warnings' === r.status ) {
 				/* translators: 1: what is planned, 2: number of warnings */
-				text = sprintf( _n( '%1$s. The %2$d warning does not stop the run. Start now, or fix it first and run the checks again.', '%1$s. The %2$d warnings do not stop the run. Start now, or fix them first and run the checks again.', c.warn, 'estasoft-migrate' ), title, c.warn );
+				text = sprintf( _n( '%1$s. The %2$d warning does not stop the run. Start now, or fix it first and run the checks again.', '%1$s. The %2$d warnings do not stop the run. Start now, or fix them first and run the checks again.', c.warn, 'estasoft-migration-database-sanitizer' ), title, c.warn );
 			} else {
 				/* translators: %s: what is planned */
-				text = sprintf( __( '%s. Everything checks out.', 'estasoft-migrate' ), title );
+				text = sprintf( __( '%s. Everything checks out.', 'estasoft-migration-database-sanitizer' ), title );
 			}
 			if ( time && 'blocked' !== r.status ) {
 				/* translators: %s: estimated time, for example "6 to 8 minutes" */
-				text += ' ' + sprintf( __( 'Estimated time: %s.', 'estasoft-migrate' ), time );
+				text += ' ' + sprintf( __( 'Estimated time: %s.', 'estasoft-migration-database-sanitizer' ), time );
 			}
 			readyText.textContent = text;
 			startBtn.disabled = started || 'blocked' === r.status;
@@ -429,38 +429,38 @@
 		function replacement() {
 			var type = plan.type;
 			var noSnap = isOff( input.snapshot );
-			var other = hostOf( input.remote_url || '' ) || __( 'the other site', 'estasoft-migrate' );
+			var other = hostOf( input.remote_url || '' ) || __( 'the other site', 'estasoft-migration-database-sanitizer' );
 			var kids = [];
 			var title;
-			var confirm = __( 'Replace and start', 'estasoft-migrate' );
+			var confirm = __( 'Replace and start', 'estasoft-migration-database-sanitizer' );
 
 			if ( 'import' === type ) {
-				title = __( 'Replace this site’s database?', 'estasoft-migrate' );
-				kids.push( h( 'p', __( 'The database of this site will be replaced by the contents of the package.', 'estasoft-migrate' ) ) );
+				title = __( 'Replace this site’s database?', 'estasoft-migration-database-sanitizer' );
+				kids.push( h( 'p', __( 'The database of this site will be replaced by the contents of the package.', 'estasoft-migration-database-sanitizer' ) ) );
 			} else if ( 'pull' === type ) {
-				title = __( 'Replace this site’s database?', 'estasoft-migrate' );
+				title = __( 'Replace this site’s database?', 'estasoft-migration-database-sanitizer' );
 				/* translators: %s: address of the other site */
-				kids.push( h( 'p', sprintf( __( 'The database of this site will be replaced by the database of %s.', 'estasoft-migrate' ), other ) ) );
+				kids.push( h( 'p', sprintf( __( 'The database of this site will be replaced by the database of %s.', 'estasoft-migration-database-sanitizer' ), other ) ) );
 			} else if ( 'push' === type ) {
 				/* translators: %s: address of the other site */
-				title = sprintf( __( 'Replace the database of %s?', 'estasoft-migrate' ), other );
+				title = sprintf( __( 'Replace the database of %s?', 'estasoft-migration-database-sanitizer' ), other );
 				/* translators: %s: address of the other site */
-				kids.push( h( 'p', sprintf( __( 'The database of %s will be replaced by the database of this site.', 'estasoft-migrate' ), other ) ) );
+				kids.push( h( 'p', sprintf( __( 'The database of %s will be replaced by the database of this site.', 'estasoft-migration-database-sanitizer' ), other ) ) );
 			} else if ( 'search_replace' === type && isOff( input.dry_run ) ) {
-				title = __( 'Change this site’s database?', 'estasoft-migrate' );
-				confirm = __( 'Apply changes', 'estasoft-migrate' );
-				kids.push( h( 'p', __( 'The replacements are written to the database of this site.', 'estasoft-migrate' ) ) );
+				title = __( 'Change this site’s database?', 'estasoft-migration-database-sanitizer' );
+				confirm = __( 'Apply changes', 'estasoft-migration-database-sanitizer' );
+				kids.push( h( 'p', __( 'The replacements are written to the database of this site.', 'estasoft-migration-database-sanitizer' ) ) );
 			} else {
 				return null;
 			}
 
 			if ( noSnap ) {
-				kids.push( h( 'p', h( 'b', __( 'No rollback snapshot is saved, so this cannot be undone.', 'estasoft-migrate' ) ) ) );
+				kids.push( h( 'p', h( 'b', __( 'No rollback snapshot is saved, so this cannot be undone.', 'estasoft-migration-database-sanitizer' ) ) ) );
 			} else if ( 'push' === type ) {
 				/* translators: %s: address of the other site */
-				kids.push( h( 'p', sprintf( __( '%s saves a rollback snapshot first, so it can go back from its Packages screen. Nothing on this site is changed.', 'estasoft-migrate' ), other ) ) );
+				kids.push( h( 'p', sprintf( __( '%s saves a rollback snapshot first, so it can go back from its Packages screen. Nothing on this site is changed.', 'estasoft-migration-database-sanitizer' ), other ) ) );
 			} else {
-				kids.push( h( 'p', __( 'A rollback snapshot of the current database is saved first, so you can go back from Packages.', 'estasoft-migrate' ) ) );
+				kids.push( h( 'p', __( 'A rollback snapshot of the current database is saved first, so you can go back from Packages.', 'estasoft-migration-database-sanitizer' ) ) );
 			}
 			return { title: title, message: kids, confirm: confirm };
 		}
@@ -495,15 +495,15 @@
 				var jobId = err.data && err.data.job_id;
 				ESTM.replace( startNote, ui.note( 'warn', [
 					err.message,
-					jobId ? [ ' ', h( 'a', { href: ESTM.url( 'progress', { job: jobId } ) }, __( 'View its progress', 'estasoft-migrate' ) ) ] : null,
-				], { title: __( 'Another job is running.', 'estasoft-migrate' ) } ) );
+					jobId ? [ ' ', h( 'a', { href: ESTM.url( 'progress', { job: jobId } ) }, __( 'View its progress', 'estasoft-migration-database-sanitizer' ) ) ] : null,
+				], { title: __( 'Another job is running.', 'estasoft-migration-database-sanitizer' ) } ) );
 				return;
 			}
 			if ( 'estm_password_required' === err.code ) {
-				ESTM.replace( startNote, h( 'div.stack.tight', ui.note( 'warn', err.message, { title: __( 'A password is needed.', 'estasoft-migrate' ) } ), h( 'div', back ) ) );
+				ESTM.replace( startNote, h( 'div.stack.tight', ui.note( 'warn', err.message, { title: __( 'A password is needed.', 'estasoft-migration-database-sanitizer' ) } ), h( 'div', back ) ) );
 				return;
 			}
-			ESTM.replace( startNote, h( 'div.stack.tight', ui.note( 'err', err.message, { title: __( 'The job could not be started.', 'estasoft-migrate' ) } ), h( 'div', back ) ) );
+			ESTM.replace( startNote, h( 'div.stack.tight', ui.note( 'err', err.message, { title: __( 'The job could not be started.', 'estasoft-migration-database-sanitizer' ) } ), h( 'div', back ) ) );
 		}
 
 		run();
@@ -513,21 +513,21 @@
 
 	function showNoPlan( root, mode ) {
 		var targets = {
-			'import': { screen: 'packages', label: __( 'Open Packages', 'estasoft-migrate' ), text: __( 'Choose a package on the Packages screen and select Import. The checks run here before anything is replaced.', 'estasoft-migrate' ) },
-			search_replace: { screen: 'replace', label: __( 'Open Search & replace', 'estasoft-migrate' ), text: __( 'Enter what to search for on the Search & replace screen. The checks run here before anything is changed.', 'estasoft-migrate' ) },
-			sanitize: { screen: 'sanitizer', label: __( 'Open Sanitizer', 'estasoft-migrate' ), text: __( 'Choose a profile on the Sanitizer screen and make a sanitized copy. The checks run here first.', 'estasoft-migrate' ) },
-			push: { screen: 'new', params: { method: 'push' }, label: __( 'Plan a push', 'estasoft-migrate' ), text: __( 'Enter the other site and the options on the New migration screen. The checks run here first.', 'estasoft-migrate' ) },
-			pull: { screen: 'new', params: { method: 'pull' }, label: __( 'Plan a pull', 'estasoft-migrate' ), text: __( 'Enter the other site and the options on the New migration screen. The checks run here first.', 'estasoft-migrate' ) },
+			'import': { screen: 'packages', label: __( 'Open Packages', 'estasoft-migration-database-sanitizer' ), text: __( 'Choose a package on the Packages screen and select Import. The checks run here before anything is replaced.', 'estasoft-migration-database-sanitizer' ) },
+			search_replace: { screen: 'replace', label: __( 'Open Search & replace', 'estasoft-migration-database-sanitizer' ), text: __( 'Enter what to search for on the Search & replace screen. The checks run here before anything is changed.', 'estasoft-migration-database-sanitizer' ) },
+			sanitize: { screen: 'sanitizer', label: __( 'Open Sanitizer', 'estasoft-migration-database-sanitizer' ), text: __( 'Choose a profile on the Sanitizer screen and make a sanitized copy. The checks run here first.', 'estasoft-migration-database-sanitizer' ) },
+			push: { screen: 'new', params: { method: 'push' }, label: __( 'Plan a push', 'estasoft-migration-database-sanitizer' ), text: __( 'Enter the other site and the options on the New migration screen. The checks run here first.', 'estasoft-migration-database-sanitizer' ) },
+			pull: { screen: 'new', params: { method: 'pull' }, label: __( 'Plan a pull', 'estasoft-migration-database-sanitizer' ), text: __( 'Enter the other site and the options on the New migration screen. The checks run here first.', 'estasoft-migration-database-sanitizer' ) },
 		};
-		var target = targets[ mode ] || { screen: 'new', label: __( 'Start a new migration', 'estasoft-migrate' ), text: __( 'A pre-flight check looks at a planned migration before anything runs. Plan one on the New migration screen and you arrive here with the result.', 'estasoft-migrate' ) };
+		var target = targets[ mode ] || { screen: 'new', label: __( 'Start a new migration', 'estasoft-migration-database-sanitizer' ), text: __( 'A pre-flight check looks at a planned migration before anything runs. Plan one on the New migration screen and you arrive here with the result.', 'estasoft-migration-database-sanitizer' ) };
 		ESTM.replace(
 			root,
-			ui.pageHead( __( 'Pre-flight check', 'estasoft-migrate' ), __( 'The last look before anything runs. Nothing is changed by a check.', 'estasoft-migrate' ) ),
-			ui.note( '', target.text, { title: __( 'Nothing to check yet.', 'estasoft-migrate' ) } ),
+			ui.pageHead( __( 'Pre-flight check', 'estasoft-migration-database-sanitizer' ), __( 'The last look before anything runs. Nothing is changed by a check.', 'estasoft-migration-database-sanitizer' ) ),
+			ui.note( '', target.text, { title: __( 'Nothing to check yet.', 'estasoft-migration-database-sanitizer' ) } ),
 			h(
 				'div.row',
 				ui.btn( target.label, { kind: 'primary', href: ESTM.url( target.screen, target.params ) } ),
-				ui.btn( __( 'Back to overview', 'estasoft-migrate' ), { href: ESTM.url( 'overview' ) } )
+				ui.btn( __( 'Back to overview', 'estasoft-migration-database-sanitizer' ), { href: ESTM.url( 'overview' ) } )
 			)
 		);
 	}

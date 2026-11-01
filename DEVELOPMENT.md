@@ -30,7 +30,7 @@ Free, GPL v2 or later, by ESTASOFT TECHNOLOGIES. Works on WordPress 5.8+, PHP 7.
 * **The live site is untouched until the swap.** Imports build `_estm_<job>_<n>` tables, verify, take a rollback snapshot, then
   switch with one `RENAME TABLE`.
 * **Secrets never reach logs or the page.** Passwords and connection keys are stripped from job views and log lines.
-* **Everything the person sees is translatable** with the text domain `estasoft-migrate` (literal strings only).
+* **Everything the person sees is translatable** with the text domain `estasoft-migration-database-sanitizer`, which is the WordPress.org slug (literal strings only).
 * **No build step.** The JavaScript is plain ES2017 and runs as written.
 
 ## Setting up
@@ -97,7 +97,7 @@ Read `docs/UI.md` first. In short: add `assets/js/screens/<id>.js` (register wit
 ## Translations
 
 ```bash
-wp i18n make-pot . languages/estasoft-migrate.pot --slug=estasoft-migrate --domain=estasoft-migrate \
+wp i18n make-pot . languages/estasoft-migration-database-sanitizer.pot --slug=estasoft-migration-database-sanitizer --domain=estasoft-migration-database-sanitizer \
   --exclude=tests,bin,docs,vendor,node_modules,dist
 ```
 
@@ -108,8 +108,8 @@ JavaScript strings are found through `wp.i18n` calls with the literal text domai
 1. Same version in `estasoft-migrate.php` (header and `ESTASOFT_MIGRATE_VERSION`) and `readme.txt` (`Stable tag`). Add the changelog entry.
 2. Set `Tested up to` in `readme.txt` to the newest stable WordPress you tested on, and `Contributors` to real wordpress.org usernames.
 3. `composer check`, then the integration tests on both MySQL and MariaDB.
-4. Update `languages/estasoft-migrate.pot`.
-5. `bin/build-zip.sh` makes `dist/estasoft-migrate-<version>.zip`. Install it on a clean site, activate, run an export and an import.
+4. Update `languages/estasoft-migration-database-sanitizer.pot`.
+5. `bin/build-zip.sh` makes `dist/estasoft-migration-database-sanitizer-<version>.zip`. Install it on a clean site, activate, run an export and an import.
 6. Tag the release; the zip is also built and attached by CI.
 
 ## Filters worth knowing

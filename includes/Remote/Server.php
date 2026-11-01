@@ -123,7 +123,7 @@ class Server {
 			}
 			$payload = '' === $body ? array() : json_decode( $body, true );
 			if ( ! is_array( $payload ) ) {
-				throw new RemoteException( 'estm_invalid', __( 'The request could not be read.', 'estasoft-migrate' ), 400 );
+				throw new RemoteException( 'estm_invalid', __( 'The request could not be read.', 'estasoft-migration-database-sanitizer' ), 400 );
 			}
 			$data = $this->dispatch( $action, $payload, $matched );
 			return $this->reply( 200, array_merge( array( 'ok' => true ), $data ), $matched, $nonce );
@@ -150,7 +150,7 @@ class Server {
 				array(
 					'ok'      => false,
 					'code'    => 'estm_failed',
-					'message' => __( 'The other site could not complete the request.', 'estasoft-migrate' ),
+					'message' => __( 'The other site could not complete the request.', 'estasoft-migration-database-sanitizer' ),
 					'retry'   => false,
 				),
 				$matched,
@@ -194,27 +194,27 @@ class Server {
 	 */
 	private function authenticate( $action, $body, array $headers, $ip, $https ) {
 		if ( ! $this->settings->incoming_open() ) {
-			throw new RemoteException( 'estm_off', __( 'This site is not accepting migrations. Switch on "Accept incoming migrations" in its Settings.', 'estasoft-migrate' ), 403 );
+			throw new RemoteException( 'estm_off', __( 'This site is not accepting migrations. Switch on "Accept incoming migrations" in its Settings.', 'estasoft-migration-database-sanitizer' ), 403 );
 		}
 		if ( $this->nonces->blocked( $ip ) ) {
-			throw new RemoteException( 'estm_rate', __( 'Too many failed attempts. Try again in a few minutes.', 'estasoft-migrate' ), 429 );
+			throw new RemoteException( 'estm_rate', __( 'Too many failed attempts. Try again in a few minutes.', 'estasoft-migration-database-sanitizer' ), 429 );
 		}
 		if ( $this->settings->get( 'require_https', true ) && ! $https ) {
-			throw new RemoteException( 'estm_https', __( 'This site only accepts migrations over a secure (https) connection.', 'estasoft-migrate' ), 403 );
+			throw new RemoteException( 'estm_https', __( 'This site only accepts migrations over a secure (https) connection.', 'estasoft-migration-database-sanitizer' ), 403 );
 		}
 		if ( ! IpMatcher::matches( $ip, (string) $this->settings->get( 'ip_allowlist', '' ) ) ) {
 			throw new RemoteException(
 				'estm_ip',
 				sprintf(
 					/* translators: %s: IP address */
-					__( 'This site does not accept migrations from the address %s. Add it to the allowed addresses in Settings, or clear that list.', 'estasoft-migrate' ),
+					__( 'This site does not accept migrations from the address %s. Add it to the allowed addresses in Settings, or clear that list.', 'estasoft-migration-database-sanitizer' ),
 					$ip
 				),
 				403
 			);
 		}
 		if ( (int) ( $headers['x-estm-version'] ?? 0 ) !== Signer::VERSION ) {
-			throw new RemoteException( 'estm_protocol', __( 'The two sites run versions of Estasoft Migration that cannot talk to each other. Update the plugin on both.', 'estasoft-migrate' ), 400 );
+			throw new RemoteException( 'estm_protocol', __( 'The two sites run versions of Estasoft Migration that cannot talk to each other. Update the plugin on both.', 'estasoft-migration-database-sanitizer' ), 400 );
 		}
 
 		$key_id = (string) ( $headers['x-estm-key'] ?? '' );
@@ -227,21 +227,21 @@ class Server {
 		}
 		if ( null === $found ) {
 			$this->nonces->failure( $ip );
-			throw new RemoteException( 'estm_bad_key', __( 'The connection key was not accepted.', 'estasoft-migrate' ), 401 );
+			throw new RemoteException( 'estm_bad_key', __( 'The connection key was not accepted.', 'estasoft-migration-database-sanitizer' ), 401 );
 		}
 
 		$time = (string) ( $headers['x-estm-time'] ?? '' );
 		if ( ! ctype_digit( $time ) || abs( $this->now() - (int) $time ) > Signer::MAX_SKEW ) {
-			throw new RemoteException( 'estm_clock', __( 'The clocks of the two sites differ too much.', 'estasoft-migrate' ), 401, array( 'server_time' => $this->now() ) );
+			throw new RemoteException( 'estm_clock', __( 'The clocks of the two sites differ too much.', 'estasoft-migration-database-sanitizer' ), 401, array( 'server_time' => $this->now() ) );
 		}
 
 		$nonce = (string) ( $headers['x-estm-nonce'] ?? '' );
 		if ( ! preg_match( '/^[a-f0-9]{16,64}$/', $nonce ) || ! Signer::verify_request( $found, $action, $time, $nonce, $body, (string) ( $headers['x-estm-sig'] ?? '' ) ) ) {
 			$this->nonces->failure( $ip );
-			throw new RemoteException( 'estm_bad_sig', __( 'The request signature did not match.', 'estasoft-migrate' ), 401 );
+			throw new RemoteException( 'estm_bad_sig', __( 'The request signature did not match.', 'estasoft-migration-database-sanitizer' ), 401 );
 		}
 		if ( ! $this->nonces->use_once( $nonce, Signer::MAX_SKEW * 2 ) ) {
-			throw new RemoteException( 'estm_replay', __( 'This request was already received.', 'estasoft-migrate' ), 401 );
+			throw new RemoteException( 'estm_replay', __( 'This request was already received.', 'estasoft-migration-database-sanitizer' ), 401 );
 		}
 		$this->settings->keep_incoming_open();
 		return $found;
@@ -279,7 +279,7 @@ class Server {
 			case 'drop_package':
 				return $this->drop_package( $payload );
 		}
-		throw new RemoteException( 'estm_unknown_action', __( 'Unknown request.', 'estasoft-migrate' ), 404 );
+		throw new RemoteException( 'estm_unknown_action', __( 'Unknown request.', 'estasoft-migration-database-sanitizer' ), 404 );
 	}
 
 	/**
@@ -350,13 +350,13 @@ class Server {
 	private function put_init( array $p ) {
 		$size = (int) ( $p['size'] ?? 0 );
 		if ( $size < 1 ) {
-			throw new RemoteException( 'estm_invalid', __( 'The package is empty.', 'estasoft-migrate' ), 400 );
+			throw new RemoteException( 'estm_invalid', __( 'The package is empty.', 'estasoft-migration-database-sanitizer' ), 400 );
 		}
 		if ( $size > Storage::max_package_bytes() ) {
-			throw new RemoteException( 'estm_invalid', __( 'The package is larger than the other site accepts.', 'estasoft-migrate' ), 413 );
+			throw new RemoteException( 'estm_invalid', __( 'The package is larger than the other site accepts.', 'estasoft-migration-database-sanitizer' ), 413 );
 		}
 		if ( ! $this->ctx->storage->is_writable() ) {
-			throw new RemoteException( 'estm_no_space', __( 'The other site cannot write to its storage folder.', 'estasoft-migrate' ), 507 );
+			throw new RemoteException( 'estm_no_space', __( 'The other site cannot write to its storage folder.', 'estasoft-migration-database-sanitizer' ), 507 );
 		}
 		$free = $this->ctx->storage->free_space();
 		if ( $free > 0 && $free < $size * 1.1 ) {
@@ -364,7 +364,7 @@ class Server {
 				'estm_no_space',
 				sprintf(
 					/* translators: 1: needed space, 2: free space */
-					__( 'The other site does not have enough disk space: %1$s needed, %2$s free.', 'estasoft-migrate' ),
+					__( 'The other site does not have enough disk space: %1$s needed, %2$s free.', 'estasoft-migration-database-sanitizer' ),
 					\Estasoft\Migrate\Util::format_bytes( $size ),
 					\Estasoft\Migrate\Util::format_bytes( $free )
 				),
@@ -376,7 +376,7 @@ class Server {
 		$path = $this->ctx->storage->package_path( $id );
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 		if ( false === file_put_contents( $path, '' ) ) {
-			throw new RemoteException( 'estm_no_space', __( 'The other site could not create the package file.', 'estasoft-migrate' ), 507 );
+			throw new RemoteException( 'estm_no_space', __( 'The other site could not create the package file.', 'estasoft-migration-database-sanitizer' ), 507 );
 		}
 		$this->ctx->storage->write_meta(
 			$id,
@@ -412,12 +412,12 @@ class Server {
 	private function package_id( array $p, $status = '' ) {
 		$id = (string) ( $p['package_id'] ?? '' );
 		if ( ! Storage::is_valid_id( $id ) || ! is_file( $this->ctx->storage->package_path( $id ) ) ) {
-			throw new RemoteException( 'estm_no_package', __( 'The package was not found on the other site.', 'estasoft-migrate' ), 404 );
+			throw new RemoteException( 'estm_no_package', __( 'The package was not found on the other site.', 'estasoft-migration-database-sanitizer' ), 404 );
 		}
 		if ( '' !== $status ) {
 			$meta = $this->ctx->storage->read_meta( $id );
 			if ( ! is_array( $meta ) || ( $meta['status'] ?? '' ) !== $status ) {
-				throw new RemoteException( 'estm_no_package', __( 'The package is not ready for this step.', 'estasoft-migrate' ), 409 );
+				throw new RemoteException( 'estm_no_package', __( 'The package is not ready for this step.', 'estasoft-migration-database-sanitizer' ), 409 );
 			}
 		}
 		return $id;
@@ -435,26 +435,26 @@ class Server {
 		$offset = (int) ( $p['offset'] ?? -1 );
 		$raw    = base64_decode( (string) ( $p['data'] ?? '' ), true );
 		if ( false === $raw || '' === $raw || $offset < 0 ) {
-			throw new RemoteException( 'estm_invalid', __( 'The part could not be read.', 'estasoft-migrate' ), 400 );
+			throw new RemoteException( 'estm_invalid', __( 'The part could not be read.', 'estasoft-migration-database-sanitizer' ), 400 );
 		}
 		if ( strlen( $raw ) > $this->max_part() + 1024 ) {
-			throw new RemoteException( 'estm_invalid', __( 'The part is too large for the other site.', 'estasoft-migrate' ), 413 );
+			throw new RemoteException( 'estm_invalid', __( 'The part is too large for the other site.', 'estasoft-migration-database-sanitizer' ), 413 );
 		}
 		if ( ! hash_equals( hash( 'sha256', $raw ), (string) ( $p['sha256'] ?? '' ) ) ) {
-			throw new RemoteException( 'estm_bad_part', __( 'A part was damaged on the way.', 'estasoft-migrate' ), 422, array(), true );
+			throw new RemoteException( 'estm_bad_part', __( 'A part was damaged on the way.', 'estasoft-migration-database-sanitizer' ), 422, array(), true );
 		}
 
 		// A part may not run past the size announced when the transfer started.
 		$expected = (int) ( ( (array) $this->ctx->storage->read_meta( $id ) )['expected'] ?? 0 );
 		if ( $expected > 0 && $offset + strlen( $raw ) > $expected ) {
-			throw new RemoteException( 'estm_invalid', __( 'The part is larger than the package announced.', 'estasoft-migrate' ), 413 );
+			throw new RemoteException( 'estm_invalid', __( 'The part is larger than the package announced.', 'estasoft-migration-database-sanitizer' ), 413 );
 		}
 
 		$path = $this->ctx->storage->package_path( $id );
 		clearstatcache( true, $path );
 		$have = (int) filesize( $path );
 		if ( $offset > $have ) {
-			throw new RemoteException( 'estm_offset', __( 'A part is missing.', 'estasoft-migrate' ), 409, array( 'received' => $have ) );
+			throw new RemoteException( 'estm_offset', __( 'A part is missing.', 'estasoft-migration-database-sanitizer' ), 409, array( 'received' => $have ) );
 		}
 		if ( $offset + strlen( $raw ) <= $have ) {
 			// Already stored (the answer to an earlier try was lost). Make sure it is the same data.
@@ -463,20 +463,20 @@ class Server {
 			$same = fread( $fh, strlen( $raw ) ) === $raw; // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fread
 			fclose( $fh ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 			if ( ! $same ) {
-				throw new RemoteException( 'estm_offset', __( 'A part does not match what was already received.', 'estasoft-migrate' ), 409, array( 'received' => $have ) );
+				throw new RemoteException( 'estm_offset', __( 'A part does not match what was already received.', 'estasoft-migration-database-sanitizer' ), 409, array( 'received' => $have ) );
 			}
 			return array( 'received' => $have );
 		}
 
 		$fh = fopen( $path, 'cb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
 		if ( ! $fh ) {
-			throw new RemoteException( 'estm_no_space', __( 'The other site could not write the package.', 'estasoft-migrate' ), 507 );
+			throw new RemoteException( 'estm_no_space', __( 'The other site could not write the package.', 'estasoft-migration-database-sanitizer' ), 507 );
 		}
 		fseek( $fh, $offset );
 		$written = fwrite( $fh, $raw ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
 		fclose( $fh ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		if ( strlen( $raw ) !== $written ) {
-			throw new RemoteException( 'estm_no_space', __( 'The other site ran out of disk space while receiving the package.', 'estasoft-migrate' ), 507 );
+			throw new RemoteException( 'estm_no_space', __( 'The other site ran out of disk space while receiving the package.', 'estasoft-migration-database-sanitizer' ), 507 );
 		}
 		clearstatcache( true, $path );
 		return array( 'received' => (int) filesize( $path ) );
@@ -495,7 +495,7 @@ class Server {
 		clearstatcache( true, $path );
 		$size = (int) filesize( $path );
 		if ( (int) ( $p['size'] ?? -1 ) !== $size ) {
-			throw new RemoteException( 'estm_offset', __( 'The package arrived incomplete.', 'estasoft-migrate' ), 409, array( 'received' => $size ) );
+			throw new RemoteException( 'estm_offset', __( 'The package arrived incomplete.', 'estasoft-migration-database-sanitizer' ), 409, array( 'received' => $size ) );
 		}
 		$this->ctx->storage->update_meta(
 			$id,
@@ -526,7 +526,7 @@ class Server {
 				'estm_busy',
 				sprintf(
 					/* translators: %s: title of the job that is running */
-					__( 'Another job is still in progress on this site: %s.', 'estasoft-migrate' ),
+					__( 'Another job is still in progress on this site: %s.', 'estasoft-migration-database-sanitizer' ),
 					$busy->title
 				),
 				409
@@ -554,7 +554,7 @@ class Server {
 		if ( ! empty( $p['passphrase_sealed'] ) ) {
 			$plain = Secrets::open( (string) $p['passphrase_sealed'], $key );
 			if ( '' === $plain ) {
-				throw new RemoteException( 'estm_invalid', __( 'The package password could not be read.', 'estasoft-migrate' ), 400 );
+				throw new RemoteException( 'estm_invalid', __( 'The package password could not be read.', 'estasoft-migration-database-sanitizer' ), 400 );
 			}
 			// Kept encrypted with this site's own secret while the job runs.
 			$params['passphrase_enc'] = Secrets::seal( $plain, $this->ctx->secret );
@@ -565,7 +565,7 @@ class Server {
 		if ( ! empty( $p['replace']['pairs'] ) && is_array( $p['replace']['pairs'] ) ) {
 			$params['replace'] = array( 'pairs' => $this->clean_pairs( $p['replace']['pairs'] ) );
 		}
-		$job = $this->create_job( 'import', __( 'Import received package', 'estasoft-migrate' ), $params );
+		$job = $this->create_job( 'import', __( 'Import received package', 'estasoft-migration-database-sanitizer' ), $params );
 		return array( 'job_id' => $job->id );
 	}
 
@@ -605,7 +605,7 @@ class Server {
 			$params['passphrase_enc'] = Secrets::seal( $pass, $this->ctx->secret );
 			$sealed                   = Secrets::seal( $pass, $key );
 		}
-		$job = $this->create_job( 'export', __( 'Export for another site', 'estasoft-migrate' ), $params );
+		$job = $this->create_job( 'export', __( 'Export for another site', 'estasoft-migration-database-sanitizer' ), $params );
 		return array(
 			'job_id'            => $job->id,
 			'passphrase_sealed' => $sealed,
@@ -638,7 +638,7 @@ class Server {
 	private function remote_job( array $p ) {
 		$job = $this->runner_store()->find( (int) ( $p['job_id'] ?? 0 ) );
 		if ( ! $job || empty( $job->params['_remote'] ) ) {
-			throw new RemoteException( 'estm_no_job', __( 'The job was not found on the other site.', 'estasoft-migrate' ), 404 );
+			throw new RemoteException( 'estm_no_job', __( 'The job was not found on the other site.', 'estasoft-migration-database-sanitizer' ), 404 );
 		}
 		return $job;
 	}
@@ -726,7 +726,7 @@ class Server {
 		$meta = $this->ctx->storage->read_meta( $id );
 		if ( ! is_array( $meta ) || ! in_array( (string) ( $meta['kind'] ?? '' ), array( 'migration', 'sanitize' ), true ) || 'export' !== ( $meta['type'] ?? '' ) ) {
 			// Only packages made for a remote pull can be downloaded, never a snapshot or a local backup.
-			throw new RemoteException( 'estm_no_package', __( 'This package is not available for download.', 'estasoft-migrate' ), 403 );
+			throw new RemoteException( 'estm_no_package', __( 'This package is not available for download.', 'estasoft-migration-database-sanitizer' ), 403 );
 		}
 		$offset = max( 0, (int) ( $p['offset'] ?? 0 ) );
 		$length = max( 1, min( $this->max_part(), (int) ( $p['length'] ?? $this->max_part() ) ) );

@@ -44,10 +44,10 @@ class PullTask extends RemoteTask {
 		$site = (array) ( $hello['site'] ?? array() );
 		if ( ! $ctx->storage->is_writable() ) {
 			throw new TaskException(
-				__( 'The storage folder is not writable, so the package cannot be downloaded.', 'estasoft-migrate' ),
+				__( 'The storage folder is not writable, so the package cannot be downloaded.', 'estasoft-migration-database-sanitizer' ),
 				array(
-					'untouched' => __( 'Nothing was changed.', 'estasoft-migrate' ),
-					'advice'    => __( 'Make wp-content/uploads writable by the web server, then try again.', 'estasoft-migrate' ),
+					'untouched' => __( 'Nothing was changed.', 'estasoft-migration-database-sanitizer' ),
+					'advice'    => __( 'Make wp-content/uploads writable by the web server, then try again.', 'estasoft-migration-database-sanitizer' ),
 				)
 			);
 		}
@@ -145,7 +145,7 @@ class PullTask extends RemoteTask {
 	 */
 	private function remote_export( array $params, array &$state, Budget $budget, JobContext $ctx ) {
 		$client    = $this->client( $params, $ctx );
-		$untouched = __( 'Your site was not changed. Nothing was changed on the other site either.', 'estasoft-migrate' );
+		$untouched = __( 'Your site was not changed. Nothing was changed on the other site either.', 'estasoft-migration-database-sanitizer' );
 		$exp       = &$state['export'];
 
 		if ( ! $exp['job_id'] ) {
@@ -155,7 +155,7 @@ class PullTask extends RemoteTask {
 			if ( ! empty( $res['passphrase_sealed'] ) ) {
 				$plain = Secrets::open( (string) $res['passphrase_sealed'], $client->key() );
 				if ( '' === $plain ) {
-					throw new TaskException( __( 'The package password sent by the other site could not be read.', 'estasoft-migrate' ), array( 'untouched' => $untouched ) );
+					throw new TaskException( __( 'The package password sent by the other site could not be read.', 'estasoft-migration-database-sanitizer' ), array( 'untouched' => $untouched ) );
 				}
 				$state['_pass'] = Secrets::seal( $plain, $ctx->secret );
 			}
@@ -175,7 +175,7 @@ class PullTask extends RemoteTask {
 
 			if ( 'completed' === $job['status'] ) {
 				if ( empty( $report['package']['id'] ) || empty( $report['package']['size'] ) ) {
-					throw new TaskException( __( 'The other site finished but did not report a package.', 'estasoft-migrate' ), array( 'untouched' => $untouched ) );
+					throw new TaskException( __( 'The other site finished but did not report a package.', 'estasoft-migration-database-sanitizer' ), array( 'untouched' => $untouched ) );
 				}
 				$exp['id']                 = (string) $report['package']['id'];
 				$exp['size']               = (int) $report['package']['size'];
@@ -225,14 +225,14 @@ class PullTask extends RemoteTask {
 	 */
 	private function download( array $params, array &$state, Budget $budget, JobContext $ctx ) {
 		$client    = $this->client( $params, $ctx );
-		$untouched = __( 'Your site was not changed.', 'estasoft-migrate' );
+		$untouched = __( 'Your site was not changed.', 'estasoft-migration-database-sanitizer' );
 		$dl        = &$state['download'];
 		$path      = $ctx->storage->package_path( $dl['package'] );
 		$part      = max( 65536, min( (int) ( $params['part_size'] ?? self::PART ), (int) $state['remote']['max_part'] ) );
 
 		$fh = fopen( $path, is_file( $path ) ? 'c+b' : 'w+b' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
 		if ( ! $fh ) {
-			throw new TaskException( __( 'The package file could not be created.', 'estasoft-migrate' ), array( 'untouched' => $untouched ) );
+			throw new TaskException( __( 'The package file could not be created.', 'estasoft-migration-database-sanitizer' ), array( 'untouched' => $untouched ) );
 		}
 		try {
 			while ( $dl['offset'] < $dl['size'] ) {
@@ -254,17 +254,17 @@ class PullTask extends RemoteTask {
 				}
 				$raw = base64_decode( (string) $res['data'], true );
 				if ( false === $raw || ! hash_equals( hash( 'sha256', $raw ), (string) $res['sha256'] ) ) {
-					throw new TaskException( __( 'A part of the package was damaged on the way.', 'estasoft-migrate' ), array( 'untouched' => $untouched ), true );
+					throw new TaskException( __( 'A part of the package was damaged on the way.', 'estasoft-migration-database-sanitizer' ), array( 'untouched' => $untouched ), true );
 				}
 				if ( '' === $raw ) {
-					throw new TaskException( __( 'The other site sent an empty part.', 'estasoft-migrate' ), array( 'untouched' => $untouched ), true );
+					throw new TaskException( __( 'The other site sent an empty part.', 'estasoft-migration-database-sanitizer' ), array( 'untouched' => $untouched ), true );
 				}
 				if ( (int) $res['size'] !== (int) $dl['size'] ) {
-					throw new TaskException( __( 'The package on the other site changed while it was being downloaded.', 'estasoft-migrate' ), array( 'untouched' => $untouched ) );
+					throw new TaskException( __( 'The package on the other site changed while it was being downloaded.', 'estasoft-migration-database-sanitizer' ), array( 'untouched' => $untouched ) );
 				}
 				fseek( $fh, $dl['offset'] );
 				if ( strlen( $raw ) !== fwrite( $fh, $raw ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
-					throw new TaskException( __( 'This site ran out of disk space while downloading the package.', 'estasoft-migrate' ), array( 'untouched' => $untouched ) );
+					throw new TaskException( __( 'This site ran out of disk space while downloading the package.', 'estasoft-migration-database-sanitizer' ), array( 'untouched' => $untouched ) );
 				}
 				fflush( $fh );
 				$dl['offset'] += strlen( $raw );
@@ -330,7 +330,7 @@ class PullTask extends RemoteTask {
 			'info',
 			sprintf(
 				/* translators: %s: address */
-				__( 'Pulled %s into this site.', 'estasoft-migrate' ),
+				__( 'Pulled %s into this site.', 'estasoft-migration-database-sanitizer' ),
 				$state['remote']['url']
 			)
 		);
@@ -412,17 +412,17 @@ class PullTask extends RemoteTask {
 		switch ( $state['phase'] ?? '' ) {
 			case 'export':
 				/* translators: 1: address, 2: what the other site is doing */
-				return sprintf( __( '%1$s is building the package. %2$s', 'estasoft-migrate' ), $url, (string) ( $state['export']['message'] ?? '' ) );
+				return sprintf( __( '%1$s is building the package. %2$s', 'estasoft-migration-database-sanitizer' ), $url, (string) ( $state['export']['message'] ?? '' ) );
 			case 'download':
 				/* translators: 1: received, 2: total */
-				return sprintf( __( 'Downloading the package: %1$s of %2$s.', 'estasoft-migrate' ), Util::format_bytes( $state['download']['offset'] ), Util::format_bytes( $state['download']['size'] ) );
+				return sprintf( __( 'Downloading the package: %1$s of %2$s.', 'estasoft-migration-database-sanitizer' ), Util::format_bytes( $state['download']['offset'] ), Util::format_bytes( $state['download']['size'] ) );
 			case 'import':
 				return ( new ImportTask() )->describe( $this->import_params( $params, $state ), (array) $state['import'] );
 			case 'finish':
-				return __( 'Finishing up.', 'estasoft-migrate' );
+				return __( 'Finishing up.', 'estasoft-migration-database-sanitizer' );
 			case 'done':
 				/* translators: %s: address */
-				return sprintf( __( 'Pulled %s.', 'estasoft-migrate' ), $url );
+				return sprintf( __( 'Pulled %s.', 'estasoft-migration-database-sanitizer' ), $url );
 		}
 		return '';
 	}
@@ -447,10 +447,10 @@ class PullTask extends RemoteTask {
 	 */
 	public function steps( array $params, array $state ) {
 		$order = array(
-			'export'   => __( 'The other site builds the package', 'estasoft-migrate' ),
-			'download' => __( 'Download it', 'estasoft-migrate' ),
-			'import'   => __( 'Import it here', 'estasoft-migrate' ),
-			'finish'   => __( 'Finish up', 'estasoft-migrate' ),
+			'export'   => __( 'The other site builds the package', 'estasoft-migration-database-sanitizer' ),
+			'download' => __( 'Download it', 'estasoft-migration-database-sanitizer' ),
+			'import'   => __( 'Import it here', 'estasoft-migration-database-sanitizer' ),
+			'finish'   => __( 'Finish up', 'estasoft-migration-database-sanitizer' ),
 		);
 		$phase = (string) ( $state['phase'] ?? 'export' );
 		$ids   = array_keys( $order );

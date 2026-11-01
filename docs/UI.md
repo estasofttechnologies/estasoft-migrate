@@ -31,7 +31,7 @@ contract disagree, the REST contract is the truth: keep the design's look and ad
 	'use strict';
 	var ESTM = window.ESTM, h = ESTM.h, ui = ESTM.ui, fmt = ESTM.fmt;
 	var __ = ESTM.i18n.__, _n = ESTM.i18n._n, sprintf = ESTM.i18n.sprintf;
-	var TD = 'estasoft-migrate';
+	var TD = 'estasoft-migration-database-sanitizer';
 
 	ESTM.screen( 'logs', function ( root ) {
 		// Build the static page once. Keep references to the regions that change.
@@ -56,7 +56,7 @@ contract disagree, the REST contract is the truth: keep the design's look and ad
    lines, from another site (names, URLs, messages) must only ever reach the page as text nodes. This is a security rule.
 2. **Never re-render a region the person is typing in or tabbing through.** Build forms once; update only the regions that
    show changing data (progress, a result table). Polling must not steal focus or reset a field.
-3. **Every string** is `__( 'Text', TD )` / `_n()` / `sprintf()` with the literal text domain `'estasoft-migrate'`
+3. **Every string** is `__( 'Text', TD )` / `_n()` / `sprintf()` with the literal text domain `'estasoft-migration-database-sanitizer'`
    (string literals only, so `wp i18n make-pot` finds them). Put `/* translators: … */` before strings with placeholders.
    Words are plain, short and specific; say what happened and what to do next. No jargon in messages for people.
 4. **Colour never carries meaning alone.** Use `ui.badge` / `ui.note` (they come with an icon glyph and a word).

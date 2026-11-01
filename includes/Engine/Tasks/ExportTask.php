@@ -70,10 +70,10 @@ class ExportTask extends Task {
 
 		if ( ! $ctx->storage->is_writable() ) {
 			throw new TaskException(
-				__( 'The storage folder is not writable, so the package cannot be created.', 'estasoft-migrate' ),
+				__( 'The storage folder is not writable, so the package cannot be created.', 'estasoft-migration-database-sanitizer' ),
 				array(
-					'untouched' => __( 'Your site was not changed.', 'estasoft-migrate' ),
-					'advice'    => __( 'Make wp-content/uploads writable by the web server, then try again.', 'estasoft-migrate' ),
+					'untouched' => __( 'Your site was not changed.', 'estasoft-migration-database-sanitizer' ),
+					'advice'    => __( 'Make wp-content/uploads writable by the web server, then try again.', 'estasoft-migration-database-sanitizer' ),
 				)
 			);
 		}
@@ -81,8 +81,8 @@ class ExportTask extends Task {
 		$tables = TableSelector::select( $db, $params );
 		if ( ! $tables ) {
 			throw new TaskException(
-				__( 'There are no tables to export.', 'estasoft-migrate' ),
-				array( 'advice' => __( 'Choose at least one table.', 'estasoft-migrate' ) )
+				__( 'There are no tables to export.', 'estasoft-migration-database-sanitizer' ),
+				array( 'advice' => __( 'Choose at least one table.', 'estasoft-migration-database-sanitizer' ) )
 			);
 		}
 
@@ -180,7 +180,7 @@ class ExportTask extends Task {
 			'info',
 			sprintf(
 				/* translators: 1: number of tables, 2: package file id */
-				_n( 'Exporting %1$d table into package %2$s.', 'Exporting %1$d tables into package %2$s.', count( $tables ), 'estasoft-migrate' ),
+				_n( 'Exporting %1$d table into package %2$s.', 'Exporting %1$d tables into package %2$s.', count( $tables ), 'estasoft-migration-database-sanitizer' ),
 				count( $tables ),
 				$id
 			)
@@ -222,10 +222,10 @@ class ExportTask extends Task {
 	 */
 	private function protection_lost() {
 		return new TaskException(
-			__( 'The package was meant to be protected, but its password can no longer be read, so nothing was written.', 'estasoft-migrate' ),
+			__( 'The package was meant to be protected, but its password can no longer be read, so nothing was written.', 'estasoft-migration-database-sanitizer' ),
 			array(
-				'untouched' => __( 'Your site was not changed.', 'estasoft-migrate' ),
-				'advice'    => __( 'This happens when the security keys in wp-config.php change while a job is waiting. Start the export again.', 'estasoft-migrate' ),
+				'untouched' => __( 'Your site was not changed.', 'estasoft-migration-database-sanitizer' ),
+				'advice'    => __( 'This happens when the security keys in wp-config.php change while a job is waiting. Start the export again.', 'estasoft-migration-database-sanitizer' ),
 			),
 			false
 		);
@@ -505,7 +505,7 @@ class ExportTask extends Task {
 			'info',
 			sprintf(
 				/* translators: 1: row count, 2: size */
-				__( 'Package ready: %1$s rows, %2$s.', 'estasoft-migrate' ),
+				__( 'Package ready: %1$s rows, %2$s.', 'estasoft-migration-database-sanitizer' ),
 				Util::number( $state['rows'] ),
 				Util::format_bytes( $state['size'] ?? 0 )
 			)
@@ -560,19 +560,19 @@ class ExportTask extends Task {
 	 */
 	public function describe( array $params, array $state ) {
 		if ( 'done' === ( $state['phase'] ?? '' ) ) {
-			return __( 'Package ready.', 'estasoft-migrate' );
+			return __( 'Package ready.', 'estasoft-migration-database-sanitizer' );
 		}
 		$i = (int) ( $state['index'] ?? 0 );
 		if ( isset( $state['tables'][ $i ] ) ) {
 			return sprintf(
 				/* translators: 1: table name, 2: number of tables done, 3: number of tables */
-				__( 'Exporting %1$s (table %2$d of %3$d).', 'estasoft-migrate' ),
+				__( 'Exporting %1$s (table %2$d of %3$d).', 'estasoft-migration-database-sanitizer' ),
 				$state['tables'][ $i ]['name'],
 				$i + 1,
 				count( $state['tables'] )
 			);
 		}
-		return __( 'Finishing the package.', 'estasoft-migrate' );
+		return __( 'Finishing the package.', 'estasoft-migration-database-sanitizer' );
 	}
 
 	/**
@@ -607,12 +607,12 @@ class ExportTask extends Task {
 		return array(
 			array(
 				'id'     => 'tables',
-				'label'  => __( 'Copying tables', 'estasoft-migrate' ),
+				'label'  => __( 'Copying tables', 'estasoft-migration-database-sanitizer' ),
 				'status' => 'tables' === $phase ? 'current' : 'done',
 			),
 			array(
 				'id'     => 'finish',
-				'label'  => __( 'Sealing the package', 'estasoft-migrate' ),
+				'label'  => __( 'Sealing the package', 'estasoft-migration-database-sanitizer' ),
 				'status' => 'done' === $phase ? 'done' : ( 'finish' === $phase ? 'current' : 'pending' ),
 			),
 		);

@@ -128,5 +128,5 @@ jobs:
       - run: bin/build-zip.sh
       - uses: actions/upload-artifact@v4
         with:
-          name: estasoft-migrate
-          path: dist/estasoft-migrate-*.zip
+          name: estasoft-migration-database-sanitizer
+          path: dist/estasoft-migration-database-sanitizer-*.zip

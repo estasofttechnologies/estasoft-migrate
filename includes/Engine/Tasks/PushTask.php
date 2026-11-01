@@ -157,7 +157,7 @@ class PushTask extends RemoteTask {
 				'info',
 				sprintf(
 					/* translators: 1: row count, 2: package size */
-					__( 'Package ready: %1$s rows, %2$s. Sending it now.', 'estasoft-migrate' ),
+					__( 'Package ready: %1$s rows, %2$s. Sending it now.', 'estasoft-migration-database-sanitizer' ),
 					Util::number( $state['export']['rows'] ),
 					Util::format_bytes( $state['upload']['size'] )
 				)
@@ -178,7 +178,7 @@ class PushTask extends RemoteTask {
 	 */
 	private function upload( array $params, array &$state, Budget $budget, JobContext $ctx ) {
 		$client    = $this->client( $params, $ctx );
-		$untouched = __( 'The other site was not changed. Your site was not changed either.', 'estasoft-migrate' );
+		$untouched = __( 'The other site was not changed. Your site was not changed either.', 'estasoft-migration-database-sanitizer' );
 		$up        = &$state['upload'];
 		$path      = $ctx->storage->package_path( $state['package'] );
 		$part      = max( 65536, min( (int) ( $params['part_size'] ?? self::PART ), (int) $state['remote']['max_part'] ) );
@@ -210,7 +210,7 @@ class PushTask extends RemoteTask {
 
 		$fh = fopen( $path, 'rb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
 		if ( ! $fh ) {
-			throw new TaskException( __( 'The package file could not be read.', 'estasoft-migrate' ), array( 'untouched' => $untouched ) );
+			throw new TaskException( __( 'The package file could not be read.', 'estasoft-migration-database-sanitizer' ), array( 'untouched' => $untouched ) );
 		}
 		try {
 			while ( $up['offset'] < $up['size'] ) {
@@ -220,7 +220,7 @@ class PushTask extends RemoteTask {
 				fseek( $fh, $up['offset'] );
 				$raw = (string) fread( $fh, $part ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fread
 				if ( '' === $raw ) {
-					throw new TaskException( __( 'The package file ended earlier than expected.', 'estasoft-migrate' ), array( 'untouched' => $untouched ), true );
+					throw new TaskException( __( 'The package file ended earlier than expected.', 'estasoft-migration-database-sanitizer' ), array( 'untouched' => $untouched ), true );
 				}
 				try {
 					$res          = $client->call(
@@ -281,7 +281,7 @@ class PushTask extends RemoteTask {
 	 */
 	private function remote_import( array $params, array &$state, Budget $budget, JobContext $ctx ) {
 		$client    = $this->client( $params, $ctx );
-		$untouched = __( 'Your site was not changed. The other site keeps a rollback snapshot of what it had before.', 'estasoft-migrate' );
+		$untouched = __( 'Your site was not changed. The other site keeps a rollback snapshot of what it had before.', 'estasoft-migration-database-sanitizer' );
 		$imp       = &$state['import'];
 
 		if ( ! $imp['job_id'] ) {
@@ -354,7 +354,7 @@ class PushTask extends RemoteTask {
 			'info',
 			sprintf(
 				/* translators: 1: row count, 2: address */
-				__( 'Pushed %1$s rows to %2$s.', 'estasoft-migrate' ),
+				__( 'Pushed %1$s rows to %2$s.', 'estasoft-migration-database-sanitizer' ),
 				Util::number( $state['export']['rows'] ),
 				$state['remote']['url']
 			)
@@ -426,16 +426,16 @@ class PushTask extends RemoteTask {
 				return ( new ExportTask() )->describe( array(), (array) $state['export'] );
 			case 'upload':
 				/* translators: 1: sent, 2: total, 3: address */
-				return sprintf( __( 'Sending the package to %3$s: %1$s of %2$s.', 'estasoft-migrate' ), Util::format_bytes( $state['upload']['offset'] ), Util::format_bytes( $state['upload']['size'] ), $url );
+				return sprintf( __( 'Sending the package to %3$s: %1$s of %2$s.', 'estasoft-migration-database-sanitizer' ), Util::format_bytes( $state['upload']['offset'] ), Util::format_bytes( $state['upload']['size'] ), $url );
 			case 'import':
 				$msg = (string) ( $state['import']['message'] ?? '' );
 				/* translators: 1: address, 2: what the other site is doing */
-				return sprintf( __( '%1$s is importing. %2$s', 'estasoft-migrate' ), $url, $msg );
+				return sprintf( __( '%1$s is importing. %2$s', 'estasoft-migration-database-sanitizer' ), $url, $msg );
 			case 'finish':
-				return __( 'Finishing up.', 'estasoft-migrate' );
+				return __( 'Finishing up.', 'estasoft-migration-database-sanitizer' );
 			case 'done':
 				/* translators: %s: address */
-				return sprintf( __( 'Pushed to %s.', 'estasoft-migrate' ), $url );
+				return sprintf( __( 'Pushed to %s.', 'estasoft-migration-database-sanitizer' ), $url );
 		}
 		return '';
 	}
@@ -460,10 +460,10 @@ class PushTask extends RemoteTask {
 	 */
 	public function steps( array $params, array $state ) {
 		$order = array(
-			'export' => __( 'Build the package', 'estasoft-migrate' ),
-			'upload' => __( 'Send it to the other site', 'estasoft-migrate' ),
-			'import' => __( 'The other site imports it', 'estasoft-migrate' ),
-			'finish' => __( 'Finish up', 'estasoft-migrate' ),
+			'export' => __( 'Build the package', 'estasoft-migration-database-sanitizer' ),
+			'upload' => __( 'Send it to the other site', 'estasoft-migration-database-sanitizer' ),
+			'import' => __( 'The other site imports it', 'estasoft-migration-database-sanitizer' ),
+			'finish' => __( 'Finish up', 'estasoft-migration-database-sanitizer' ),
 		);
 		$phase = (string) ( $state['phase'] ?? 'export' );
 		$ids   = array_keys( $order );

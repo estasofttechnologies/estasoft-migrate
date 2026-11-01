@@ -10,7 +10,7 @@
  * Author URI:        https://estasoft.com/
  * License:           GPLv2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       estasoft-migrate
+ * Text Domain:       estasoft-migration-database-sanitizer
  * Domain Path:       /languages
  *
  * @package Estasoft\Migrate
@@ -41,7 +41,7 @@ if ( version_compare( PHP_VERSION, ESTASOFT_MIGRATE_MIN_PHP, '<' ) ) {
 				esc_html(
 					sprintf(
 						/* translators: 1: required PHP version, 2: current PHP version */
-						__( 'Estasoft Migration & Database Sanitizer needs PHP %1$s or newer. This server runs PHP %2$s, so the plugin is switched off.', 'estasoft-migrate' ),
+						__( 'Estasoft Migration & Database Sanitizer needs PHP %1$s or newer. This server runs PHP %2$s, so the plugin is switched off.', 'estasoft-migration-database-sanitizer' ),
 						ESTASOFT_MIGRATE_MIN_PHP,
 						PHP_VERSION
 					)

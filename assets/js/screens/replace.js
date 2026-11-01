@@ -120,7 +120,7 @@
 		}
 		return sprintf(
 			/* translators: 1: comma-separated list of table names, 2: number of further tables */
-			__( '%1$s and %2$d more', 'estasoft-migrate' ),
+			__( '%1$s and %2$d more', 'estasoft-migration-database-sanitizer' ),
 			names.slice( 0, max ).join( ', ' ),
 			names.length - max
 		);
@@ -129,8 +129,8 @@
 	/* ---------------------------------------------------------------- Screen */
 
 	ESTM.screen( 'replace', function ( root ) {
-		var title = __( 'Search & replace', 'estasoft-migrate' );
-		var lede = __( 'Change addresses and text across the whole database. Serialized data and JSON are rewritten safely, so nothing breaks.', 'estasoft-migrate' );
+		var title = __( 'Search & replace', 'estasoft-migration-database-sanitizer' );
+		var lede = __( 'Change addresses and text across the whole database. Serialized data and JSON are rewritten safely, so nothing breaks.', 'estasoft-migration-database-sanitizer' );
 		var jobId = parseInt( ESTM.params().job, 10 ) || 0;
 
 		function load() {
@@ -170,7 +170,7 @@
 		var pairs = [];
 		var pairsBox = h( 'div.stack' );
 		var pairsHint = h( 'span.sub' );
-		var addPairBtn = ui.btn( __( 'Add another pair', 'estasoft-migrate' ), { kind: 'quiet', size: 'sm', onClick: function () {
+		var addPairBtn = ui.btn( __( 'Add another pair', 'estasoft-migration-database-sanitizer' ), { kind: 'quiet', size: 'sm', onClick: function () {
 			addPair( '', '' ).fromInput.focus();
 		} } );
 
@@ -180,10 +180,10 @@
 			pair.toInput = ui.input( { mono: true, placeholder: 'https://staging.example.com', onInput: onFormChange } );
 			pair.fromInput.value = from || '';
 			pair.toInput.value = to || '';
-			pair.fromField = inputField( __( 'Search for', 'estasoft-migrate' ), pair.fromInput );
-			pair.toField = inputField( __( 'Replace with', 'estasoft-migrate' ), pair.toInput );
-			pair.removeBtn = ui.btn( __( 'Remove', 'estasoft-migrate' ), { kind: 'quiet', size: 'sm', onClick: function () { removePair( pair ); } } );
-			pair.off = h( 'span.sub.sr-off', { hidden: true }, __( 'Not used in regular expression mode: only the first pair counts.', 'estasoft-migrate' ) );
+			pair.fromField = inputField( __( 'Search for', 'estasoft-migration-database-sanitizer' ), pair.fromInput );
+			pair.toField = inputField( __( 'Replace with', 'estasoft-migration-database-sanitizer' ), pair.toInput );
+			pair.removeBtn = ui.btn( __( 'Remove', 'estasoft-migration-database-sanitizer' ), { kind: 'quiet', size: 'sm', onClick: function () { removePair( pair ); } } );
+			pair.off = h( 'span.sub.sr-off', { hidden: true }, __( 'Not used in regular expression mode: only the first pair counts.', 'estasoft-migration-database-sanitizer' ) );
 			pair.el = h( 'div.sr-pair', { role: 'group' }, pair.fromField, pair.toField, pair.removeBtn, pair.off );
 			pairs.push( pair );
 			pairsBox.appendChild( pair.el );
@@ -205,9 +205,9 @@
 
 		function syncPairs() {
 			pairs.forEach( function ( p, i ) {
-				p.el.setAttribute( 'aria-label', sprintf( /* translators: %d: position of the pair */ __( 'Pair %d', 'estasoft-migrate' ), i + 1 ) );
+				p.el.setAttribute( 'aria-label', sprintf( /* translators: %d: position of the pair */ __( 'Pair %d', 'estasoft-migration-database-sanitizer' ), i + 1 ) );
 				p.removeBtn.hidden = pairs.length < 2;
-				p.removeBtn.setAttribute( 'aria-label', sprintf( /* translators: %d: position of the pair */ __( 'Remove pair %d', 'estasoft-migrate' ), i + 1 ) );
+				p.removeBtn.setAttribute( 'aria-label', sprintf( /* translators: %d: position of the pair */ __( 'Remove pair %d', 'estasoft-migration-database-sanitizer' ), i + 1 ) );
 				var off = opt.regex && i > 0;
 				p.el.classList.toggle( 'is-off', off );
 				p.fromInput.disabled = off;
@@ -216,8 +216,8 @@
 			} );
 			addPairBtn.disabled = opt.regex;
 			ESTM.replace( pairsHint, opt.regex
-				? __( 'A regular expression uses one pair.', 'estasoft-migrate' )
-				: __( 'Pairs run in order, in a single pass.', 'estasoft-migrate' ) );
+				? __( 'A regular expression uses one pair.', 'estasoft-migration-database-sanitizer' )
+				: __( 'Pairs run in order, in a single pass.', 'estasoft-migration-database-sanitizer' ) );
 		}
 
 		var explainBox = h( 'p.sub.sr-explain', { 'aria-live': 'off' } );
@@ -227,39 +227,39 @@
 			var input = buildInput();
 			var list = input.pairs;
 			if ( ! list.length ) {
-				ESTM.replace( explainBox, __( 'Type the text you want to find and this line will say exactly what is matched.', 'estasoft-migrate' ) );
+				ESTM.replace( explainBox, __( 'Type the text you want to find and this line will say exactly what is matched.', 'estasoft-migration-database-sanitizer' ) );
 				return;
 			}
 			var bits = [];
 			if ( opt.regex ) {
 				var pattern = code( list[ 0 ][ 0 ] );
 				bits.push( list[ 0 ][ 1 ]
-					? fill( /* translators: 1: the search pattern, 2: the replacement text */ __( 'Matches every part of the text that fits the pattern %1$s and replaces each match with %2$s.', 'estasoft-migrate' ), [ pattern, code( list[ 0 ][ 1 ] ) ] )
-					: fill( /* translators: %s: the search pattern */ __( 'Matches every part of the text that fits the pattern %s and removes each match.', 'estasoft-migrate' ), [ pattern ] ) );
-				bits.push( ' ', __( 'Write the pattern without slashes or flags. In the replacement, $1 and $2 stand for the parts in brackets.', 'estasoft-migrate' ), ' ' );
+					? fill( /* translators: 1: the search pattern, 2: the replacement text */ __( 'Matches every part of the text that fits the pattern %1$s and replaces each match with %2$s.', 'estasoft-migration-database-sanitizer' ), [ pattern, code( list[ 0 ][ 1 ] ) ] )
+					: fill( /* translators: %s: the search pattern */ __( 'Matches every part of the text that fits the pattern %s and removes each match.', 'estasoft-migration-database-sanitizer' ), [ pattern ] ) );
+				bits.push( ' ', __( 'Write the pattern without slashes or flags. In the replacement, $1 and $2 stand for the parts in brackets.', 'estasoft-migration-database-sanitizer' ), ' ' );
 			} else if ( 1 === list.length ) {
 				var from = code( list[ 0 ][ 0 ] );
 				var to = list[ 0 ][ 1 ] ? code( list[ 0 ][ 1 ] ) : null;
 				var sentence;
 				if ( opt.cs ) {
 					sentence = to
-						? /* translators: 1: the text to find, 2: the text that replaces it */ __( 'Matches the exact text %1$s (upper and lower case count as different), wherever it is stored, also inside serialized data and JSON, and changes it to %2$s.', 'estasoft-migrate' )
-						: /* translators: %1$s: the text to find */ __( 'Matches the exact text %1$s (upper and lower case count as different), wherever it is stored, also inside serialized data and JSON, and removes it.', 'estasoft-migrate' );
+						? /* translators: 1: the text to find, 2: the text that replaces it */ __( 'Matches the exact text %1$s (upper and lower case count as different), wherever it is stored, also inside serialized data and JSON, and changes it to %2$s.', 'estasoft-migration-database-sanitizer' )
+						: /* translators: %1$s: the text to find */ __( 'Matches the exact text %1$s (upper and lower case count as different), wherever it is stored, also inside serialized data and JSON, and removes it.', 'estasoft-migration-database-sanitizer' );
 				} else {
 					sentence = to
-						? /* translators: 1: the text to find, 2: the text that replaces it */ __( 'Matches the text %1$s (upper and lower case do not matter), wherever it is stored, also inside serialized data and JSON, and changes it to %2$s.', 'estasoft-migrate' )
-						: /* translators: %1$s: the text to find */ __( 'Matches the text %1$s (upper and lower case do not matter), wherever it is stored, also inside serialized data and JSON, and removes it.', 'estasoft-migrate' );
+						? /* translators: 1: the text to find, 2: the text that replaces it */ __( 'Matches the text %1$s (upper and lower case do not matter), wherever it is stored, also inside serialized data and JSON, and changes it to %2$s.', 'estasoft-migration-database-sanitizer' )
+						: /* translators: %1$s: the text to find */ __( 'Matches the text %1$s (upper and lower case do not matter), wherever it is stored, also inside serialized data and JSON, and removes it.', 'estasoft-migration-database-sanitizer' );
 				}
 				bits.push( fill( sentence, [ from, to ] ), ' ' );
 			} else {
-				bits.push( __( 'Matches each of these texts, wherever it is stored, also inside serialized data and JSON:', 'estasoft-migrate' ) );
+				bits.push( __( 'Matches each of these texts, wherever it is stored, also inside serialized data and JSON:', 'estasoft-migration-database-sanitizer' ) );
 				bits.push( h( 'ul.sr-explain-list', list.map( function ( pair ) {
-					return h( 'li', code( pair[ 0 ] ), ' → ', pair[ 1 ] ? code( pair[ 1 ] ) : h( 'em', __( '(removed)', 'estasoft-migrate' ) ) );
+					return h( 'li', code( pair[ 0 ] ), ' → ', pair[ 1 ] ? code( pair[ 1 ] ) : h( 'em', __( '(removed)', 'estasoft-migration-database-sanitizer' ) ) );
 				} ) ) );
-				bits.push( opt.cs ? __( 'Upper and lower case count as different.', 'estasoft-migrate' ) : __( 'Upper and lower case do not matter.', 'estasoft-migrate' ), ' ' );
+				bits.push( opt.cs ? __( 'Upper and lower case count as different.', 'estasoft-migration-database-sanitizer' ) : __( 'Upper and lower case do not matter.', 'estasoft-migration-database-sanitizer' ), ' ' );
 			}
 			if ( list.some( function ( pair ) { return /^\s|\s$/.test( pair[ 0 ] ); } ) ) {
-				bits.push( __( 'Spaces at the start or end of the search text count.', 'estasoft-migrate' ), ' ' );
+				bits.push( __( 'Spaces at the start or end of the search text count.', 'estasoft-migration-database-sanitizer' ), ' ' );
 			}
 			ESTM.replace( explainBox, bits );
 		}
@@ -270,10 +270,10 @@
 			[
 				{ value: 'all', label: sprintf(
 					/* translators: %s: number of tables */
-					_n( 'All %s table', 'All %s tables', allTables.length, 'estasoft-migrate' ),
+					_n( 'All %s table', 'All %s tables', allTables.length, 'estasoft-migration-database-sanitizer' ),
 					fmt.number( allTables.length )
 				) },
-				{ value: 'choose', label: __( 'Choose tables', 'estasoft-migrate' ) },
+				{ value: 'choose', label: __( 'Choose tables', 'estasoft-migration-database-sanitizer' ) },
 			],
 			{ id: ESTM.uid( 'sr-tables' ), onChange: function () {
 				tablesMode = tableSelect.value;
@@ -283,9 +283,9 @@
 				onFormChange();
 			} }
 		);
-		var tablesField = ui.field( { label: __( 'Tables', 'estasoft-migrate' ), id: tableSelect.id }, tableSelect );
+		var tablesField = ui.field( { label: __( 'Tables', 'estasoft-migration-database-sanitizer' ), id: tableSelect.id }, tableSelect );
 
-		var tableFilter = ui.input( { placeholder: __( 'Type part of a table name', 'estasoft-migrate' ), onInput: function () {
+		var tableFilter = ui.input( { placeholder: __( 'Type part of a table name', 'estasoft-migration-database-sanitizer' ), onInput: function () {
 			var q = tableFilter.value.trim().toLowerCase();
 			tableRows.forEach( function ( r ) {
 				r.row.hidden = !! q && r.t.name.toLowerCase().indexOf( q ) < 0;
@@ -309,7 +309,7 @@
 				h( 'span.mono.break', t.name ),
 				h( 'span.sub.num', sprintf(
 					/* translators: %s: number of rows */
-					_n( '%s row', '%s rows', t.rows, 'estasoft-migrate' ),
+					_n( '%s row', '%s rows', t.rows, 'estasoft-migration-database-sanitizer' ),
 					fmt.number( t.rows )
 				) )
 			);
@@ -334,14 +334,14 @@
 		var tablesPanel = h(
 			'div.stack.sr-tpanel',
 			{ hidden: true },
-			inputField( __( 'Find a table', 'estasoft-migrate' ), tableFilter ),
+			inputField( __( 'Find a table', 'estasoft-migration-database-sanitizer' ), tableFilter ),
 			h(
 				'div.row',
-				ui.btn( __( 'Select all', 'estasoft-migrate' ), { size: 'sm', kind: 'quiet', onClick: function () { setVisibleSelected( true ); } } ),
-				ui.btn( __( 'Select none', 'estasoft-migrate' ), { size: 'sm', kind: 'quiet', onClick: function () { setVisibleSelected( false ); } } ),
+				ui.btn( __( 'Select all', 'estasoft-migration-database-sanitizer' ), { size: 'sm', kind: 'quiet', onClick: function () { setVisibleSelected( true ); } } ),
+				ui.btn( __( 'Select none', 'estasoft-migration-database-sanitizer' ), { size: 'sm', kind: 'quiet', onClick: function () { setVisibleSelected( false ); } } ),
 				tableCount
 			),
-			h( 'div.sr-tlist', { role: 'group', 'aria-label': __( 'Tables to search', 'estasoft-migrate' ) }, tableRows.map( function ( r ) { return r.row; } ) )
+			h( 'div.sr-tlist', { role: 'group', 'aria-label': __( 'Tables to search', 'estasoft-migration-database-sanitizer' ) }, tableRows.map( function ( r ) { return r.row; } ) )
 		);
 
 		function selectedNames() {
@@ -353,19 +353,19 @@
 			var shown = tableRows.filter( function ( r ) { return ! r.row.hidden; } ).length;
 			ESTM.replace( tableCount, sprintf(
 				/* translators: 1: number of tables chosen, 2: number of tables */
-				__( '%1$s of %2$s tables chosen', 'estasoft-migrate' ),
+				__( '%1$s of %2$s tables chosen', 'estasoft-migration-database-sanitizer' ),
 				fmt.number( selectedNames().length ),
 				fmt.number( allTables.length )
 			) + ( shown < allTables.length ? ' · ' + sprintf(
 				/* translators: %s: number of tables that match the filter */
-				__( '%s shown', 'estasoft-migrate' ),
+				__( '%s shown', 'estasoft-migration-database-sanitizer' ),
 				fmt.number( shown )
 			) : '' ) );
 		}
 
 		var skipArea = ui.textarea( { rows: 2, mono: true, placeholder: 'posts.post_excerpt', onInput: onFormChange } );
-		var skipHint = h( 'span.hint', __( 'Optional. One per line or separated by commas, written as table.column, for example posts.post_excerpt. Write the table without the prefix.', 'estasoft-migrate' ) );
-		var skipField = inputField( __( 'Also skip these columns', 'estasoft-migrate' ), skipArea, h( 'div.stack.tight', skipArea, skipHint ) );
+		var skipHint = h( 'span.hint', __( 'Optional. One per line or separated by commas, written as table.column, for example posts.post_excerpt. Write the table without the prefix.', 'estasoft-migration-database-sanitizer' ) );
+		var skipField = inputField( __( 'Also skip these columns', 'estasoft-migration-database-sanitizer' ), skipArea, h( 'div.stack.tight', skipArea, skipHint ) );
 
 		function normColumn( path ) {
 			var dot = path.indexOf( '.' );
@@ -448,16 +448,16 @@
 						same = false;
 					}
 				} else if ( '' !== to ) {
-					fail( p.fromField, p.fromInput, __( 'Enter the text to search for, or clear the replacement.', 'estasoft-migrate' ) );
+					fail( p.fromField, p.fromInput, __( 'Enter the text to search for, or clear the replacement.', 'estasoft-migration-database-sanitizer' ) );
 				}
 			} );
 			if ( ! any && ! first ) {
-				fail( pairs[ 0 ].fromField, pairs[ 0 ].fromInput, __( 'Enter the text to search for.', 'estasoft-migrate' ) );
+				fail( pairs[ 0 ].fromField, pairs[ 0 ].fromInput, __( 'Enter the text to search for.', 'estasoft-migration-database-sanitizer' ) );
 			} else if ( any && same && ! opt.regex ) {
-				fail( pairs[ 0 ].toField, pairs[ 0 ].toInput, __( 'The search text and the replacement are the same, so nothing would change.', 'estasoft-migrate' ) );
+				fail( pairs[ 0 ].toField, pairs[ 0 ].toInput, __( 'The search text and the replacement are the same, so nothing would change.', 'estasoft-migration-database-sanitizer' ) );
 			}
 			if ( 'choose' === tablesMode && ! selectedNames().length ) {
-				fail( tablesField, tableSelect, __( 'Choose at least one table, or search all tables.', 'estasoft-migrate' ) );
+				fail( tablesField, tableSelect, __( 'Choose at least one table, or search all tables.', 'estasoft-migration-database-sanitizer' ) );
 			}
 			if ( first ) {
 				first.focus();
@@ -498,7 +498,7 @@
 		var serialId = ESTM.uid( 'sr-opt' );
 		var serialRow = h(
 			'div.set',
-			h( 'div.tx', h( 'b', { id: serialId }, __( 'Read serialized data and JSON', 'estasoft-migrate' ) ), h( 'span', { id: serialId + '-d' }, __( 'Values inside serialized PHP, JSON and block comments are decoded, replaced and encoded again with the right lengths. Always on.', 'estasoft-migrate' ) ) ),
+			h( 'div.tx', h( 'b', { id: serialId }, __( 'Read serialized data and JSON', 'estasoft-migration-database-sanitizer' ) ), h( 'span', { id: serialId + '-d' }, __( 'Values inside serialized PHP, JSON and block comments are decoded, replaced and encoded again with the right lengths. Always on.', 'estasoft-migration-database-sanitizer' ) ) ),
 			h( 'div.ctl', sw( { checked: true, locked: true, labelledBy: serialId, describedBy: serialId + '-d', onToggle: function () {} } ) )
 		);
 
@@ -511,12 +511,12 @@
 
 		function syncRunBtn() {
 			runBtn.textContent = running
-				? __( 'Dry run is running…', 'estasoft-migrate' )
-				: ( opt.dry ? __( 'Run dry run', 'estasoft-migrate' ) : __( 'Review and apply', 'estasoft-migrate' ) );
+				? __( 'Dry run is running…', 'estasoft-migration-database-sanitizer' )
+				: ( opt.dry ? __( 'Run dry run', 'estasoft-migration-database-sanitizer' ) : __( 'Review and apply', 'estasoft-migration-database-sanitizer' ) );
 			runBtn.disabled = running;
 			ESTM.replace( runHint, opt.dry
-				? __( 'Counts the matches and shows examples. Nothing is written.', 'estasoft-migrate' )
-				: __( 'Goes to the pre-flight check, where you confirm before anything is written.', 'estasoft-migrate' ) );
+				? __( 'Counts the matches and shows examples. Nothing is written.', 'estasoft-migration-database-sanitizer' )
+				: __( 'Goes to the pre-flight check, where you confirm before anything is written.', 'estasoft-migration-database-sanitizer' ) );
 		}
 
 		function setRunning( on ) {
@@ -532,15 +532,15 @@
 					[
 						err.message,
 						' ',
-						err.data && err.data.job_id ? h( 'a', { href: ESTM.url( 'progress', { job: err.data.job_id } ) }, __( 'View progress', 'estasoft-migrate' ) ) : null,
+						err.data && err.data.job_id ? h( 'a', { href: ESTM.url( 'progress', { job: err.data.job_id } ) }, __( 'View progress', 'estasoft-migration-database-sanitizer' ) ) : null,
 					],
-					{ title: __( 'Another job is running.', 'estasoft-migrate' ) }
+					{ title: __( 'Another job is running.', 'estasoft-migration-database-sanitizer' ) }
 				);
 			} else if ( 'estm_invalid' === err.code && opt.regex ) {
 				pairs[ 0 ].fromField.setError( err.message );
 				pairs[ 0 ].fromInput.focus();
 			} else {
-				kids = ui.note( 'err', ESTM.errorMessage( err ), { title: __( 'The dry run could not start.', 'estasoft-migrate' ) } );
+				kids = ui.note( 'err', ESTM.errorMessage( err ), { title: __( 'The dry run could not start.', 'estasoft-migration-database-sanitizer' ) } );
 			}
 			ESTM.replace( runNote, kids );
 		}
@@ -568,15 +568,15 @@
 			result = null;
 			current = { id: view.id, input: input, sig: inputSig( input ) };
 			setRunning( true );
-			var bar = ui.bar( view.progress || 0, { large: true, live: true, label: __( 'Dry run progress', 'estasoft-migrate' ) } );
-			var status = h( 'p', { 'aria-live': 'off' }, __( 'Starting…', 'estasoft-migrate' ) );
+			var bar = ui.bar( view.progress || 0, { large: true, live: true, label: __( 'Dry run progress', 'estasoft-migration-database-sanitizer' ) } );
+			var status = h( 'p', { 'aria-live': 'off' }, __( 'Starting…', 'estasoft-migration-database-sanitizer' ) );
 			var detail = h( 'p.sub', { 'aria-live': 'off' } );
-			var cancelBtn = ui.btn( __( 'Cancel dry run', 'estasoft-migrate' ), { kind: 'quiet', size: 'sm', onClick: function () {
+			var cancelBtn = ui.btn( __( 'Cancel dry run', 'estasoft-migration-database-sanitizer' ), { kind: 'quiet', size: 'sm', onClick: function () {
 				ui.confirm( {
-					title: __( 'Stop the dry run?', 'estasoft-migrate' ),
-					message: __( 'Nothing has been changed, so there is nothing to undo. You can run it again at any time.', 'estasoft-migrate' ),
-					confirm: __( 'Stop dry run', 'estasoft-migrate' ),
-					cancel: __( 'Keep running', 'estasoft-migrate' ),
+					title: __( 'Stop the dry run?', 'estasoft-migration-database-sanitizer' ),
+					message: __( 'Nothing has been changed, so there is nothing to undo. You can run it again at any time.', 'estasoft-migration-database-sanitizer' ),
+					confirm: __( 'Stop dry run', 'estasoft-migration-database-sanitizer' ),
+					cancel: __( 'Keep running', 'estasoft-migration-database-sanitizer' ),
 				} ).then( function ( ok ) {
 					if ( ! ok ) {
 						return;
@@ -593,9 +593,9 @@
 			ESTM.replace( runBox, h(
 				'section.card',
 				{ 'aria-labelledby': 'sr-prog-h' },
-				h( 'div.card-h', h( 'h2', { id: 'sr-prog-h' }, __( 'Dry run in progress', 'estasoft-migrate' ) ), cancelBtn ),
+				h( 'div.card-h', h( 'h2', { id: 'sr-prog-h' }, __( 'Dry run in progress', 'estasoft-migration-database-sanitizer' ) ), cancelBtn ),
 				h( 'div.stack', bar, status, detail, warn ),
-				h( 'p.sub', { style: 'margin-top:12px' }, __( 'The form stays usable. Keep this page open: the work is done in small steps while it is open.', 'estasoft-migrate' ) )
+				h( 'p.sub', { style: 'margin-top:12px' }, __( 'The form stays usable. Keep this page open: the work is done in small steps while it is open.', 'estasoft-migration-database-sanitizer' ) )
 			) );
 
 			function update( v ) {
@@ -604,21 +604,21 @@
 				var now = tables.filter( function ( t ) { return 'running' === t.status; } )[ 0 ];
 				var matches = tables.reduce( function ( n, t ) { return n + ( t.matches || 0 ); }, 0 );
 				ESTM.replace( status, now
-					? sprintf( /* translators: 1: table name, 2: percent done */ __( 'Searching %1$s · %2$s', 'estasoft-migrate' ), now.name, fmt.percent( v.progress ) )
-					: sprintf( /* translators: %s: percent done */ __( 'Searching · %s', 'estasoft-migrate' ), fmt.percent( v.progress ) ) );
+					? sprintf( /* translators: 1: table name, 2: percent done */ __( 'Searching %1$s · %2$s', 'estasoft-migration-database-sanitizer' ), now.name, fmt.percent( v.progress ) )
+					: sprintf( /* translators: %s: percent done */ __( 'Searching · %s', 'estasoft-migration-database-sanitizer' ), fmt.percent( v.progress ) ) );
 				var st = v.stats || {};
 				ESTM.replace( detail, [
 					sprintf(
 						/* translators: 1: number of matches found so far, 2: number of tables done, 3: number of tables */
-						__( '%1$s matches so far · %2$s of %3$s tables done', 'estasoft-migrate' ),
+						__( '%1$s matches so far · %2$s of %3$s tables done', 'estasoft-migration-database-sanitizer' ),
 						fmt.number( matches ),
 						fmt.number( tables.filter( function ( t ) { return 'done' === t.status || 'skipped' === t.status; } ).length ),
 						fmt.number( v.tables_total || tables.length )
 					),
-					st.elapsed ? ' · ' + sprintf( /* translators: %s: time elapsed */ __( '%s elapsed', 'estasoft-migrate' ), fmt.duration( st.elapsed ) ) : '',
+					st.elapsed ? ' · ' + sprintf( /* translators: %s: time elapsed */ __( '%s elapsed', 'estasoft-migration-database-sanitizer' ), fmt.duration( st.elapsed ) ) : '',
 				] );
 				ESTM.replace( warn, v.warning
-					? ui.note( 'warn', v.warning.message || __( 'A temporary problem came up. Trying again.', 'estasoft-migrate' ) )
+					? ui.note( 'warn', v.warning.message || __( 'A temporary problem came up. Trying again.', 'estasoft-migration-database-sanitizer' ) )
 					: null );
 			}
 			update( view );
@@ -652,11 +652,11 @@
 				var details = view.error && view.error.details && view.error.details.length
 					? h( 'ul', view.error.details.map( function ( d ) { return h( 'li', typeof d === 'string' ? d : JSON.stringify( d ) ); } ) )
 					: null;
-				note = ui.note( 'err', [ view.error && view.error.message ? view.error.message : __( 'The job stopped before it finished.', 'estasoft-migrate' ), details, ' ', h( 'a', { href: ESTM.url( 'logs', { job: view.id } ) }, __( 'View log', 'estasoft-migrate' ) ) ], { title: __( 'The dry run failed. Nothing was changed.', 'estasoft-migrate' ) } );
+				note = ui.note( 'err', [ view.error && view.error.message ? view.error.message : __( 'The job stopped before it finished.', 'estasoft-migration-database-sanitizer' ), details, ' ', h( 'a', { href: ESTM.url( 'logs', { job: view.id } ) }, __( 'View log', 'estasoft-migration-database-sanitizer' ) ) ], { title: __( 'The dry run failed. Nothing was changed.', 'estasoft-migration-database-sanitizer' ) } );
 			} else if ( 'cancelled' === view.status ) {
-				note = ui.note( 'tint', __( 'You stopped the dry run. Nothing was changed. Run it again when you are ready.', 'estasoft-migrate' ), { title: __( 'Dry run stopped.', 'estasoft-migrate' ) } );
+				note = ui.note( 'tint', __( 'You stopped the dry run. Nothing was changed. Run it again when you are ready.', 'estasoft-migration-database-sanitizer' ), { title: __( 'Dry run stopped.', 'estasoft-migration-database-sanitizer' ) } );
 			} else {
-				note = ui.note( 'warn', [ __( 'The job is paused.', 'estasoft-migrate' ), ' ', h( 'a', { href: ESTM.url( 'progress', { job: view.id } ) }, __( 'Open progress', 'estasoft-migrate' ) ) ] );
+				note = ui.note( 'warn', [ __( 'The job is paused.', 'estasoft-migration-database-sanitizer' ), ' ', h( 'a', { href: ESTM.url( 'progress', { job: view.id } ) }, __( 'Open progress', 'estasoft-migration-database-sanitizer' ) ) ] );
 			}
 			ESTM.replace( runBox, note );
 		}
@@ -706,7 +706,7 @@
 			}
 			return h(
 				'div.sr-sample',
-				h( 'div.row', h( 'span.mono.break', { style: 'font-weight:600' }, s.table + '.' + s.column ), h( 'span.sub', sprintf( /* translators: %s: primary key of the row */ __( 'row %s', 'estasoft-migrate' ), s.key ) ) ),
+				h( 'div.row', h( 'span.mono.break', { style: 'font-weight:600' }, s.table + '.' + s.column ), h( 'span.sub', sprintf( /* translators: %s: primary key of the row */ __( 'row %s', 'estasoft-migration-database-sanitizer' ), s.key ) ) ),
 				h( 'div.diff', h( 'del', beforeNodes ), h( 'ins', afterNodes ) )
 			);
 		}
@@ -714,16 +714,16 @@
 		function resultTable( rows, dry ) {
 			return ui.table(
 				[
-					{ label: __( 'Table', 'estasoft-migrate' ), className: 'mono', render: function ( t ) { return t.name; } },
-					{ label: __( 'Matches', 'estasoft-migrate' ), numeric: true, render: function ( t ) {
+					{ label: __( 'Table', 'estasoft-migration-database-sanitizer' ), className: 'mono', render: function ( t ) { return t.name; } },
+					{ label: __( 'Matches', 'estasoft-migration-database-sanitizer' ), numeric: true, render: function ( t ) {
 						return 'skipped' === t.status ? '–' : fmt.number( t.matches );
 					} },
-					{ label: dry ? __( 'Rows to change', 'estasoft-migrate' ) : __( 'Rows changed', 'estasoft-migrate' ), numeric: true, render: function ( t ) {
-						return 'skipped' === t.status ? ui.badge( __( 'Skipped', 'estasoft-migrate' ), 'idle' ) : fmt.number( t.rows );
+					{ label: dry ? __( 'Rows to change', 'estasoft-migration-database-sanitizer' ) : __( 'Rows changed', 'estasoft-migration-database-sanitizer' ), numeric: true, render: function ( t ) {
+						return 'skipped' === t.status ? ui.badge( __( 'Skipped', 'estasoft-migration-database-sanitizer' ), 'idle' ) : fmt.number( t.rows );
 					} },
 				],
 				rows,
-				{ caption: dry ? __( 'Matches per table in the dry run', 'estasoft-migrate' ) : __( 'Rows changed per table', 'estasoft-migrate' ) }
+				{ caption: dry ? __( 'Matches per table in the dry run', 'estasoft-migration-database-sanitizer' ) : __( 'Rows changed per table', 'estasoft-migration-database-sanitizer' ) }
 			);
 		}
 
@@ -738,17 +738,17 @@
 			var notes = ( r.notes || [] ).filter( Boolean );
 			var clean = ! notes.length && ! skipped.length;
 
-			var staleEl = ui.note( 'warn', __( 'You changed the form after this dry run, so these numbers are out of date. Run the dry run again to see what the new settings would do.', 'estasoft-migrate' ), { title: __( 'This result no longer matches the form.', 'estasoft-migrate' ) } );
+			var staleEl = ui.note( 'warn', __( 'You changed the form after this dry run, so these numbers are out of date. Run the dry run again to see what the new settings would do.', 'estasoft-migration-database-sanitizer' ), { title: __( 'This result no longer matches the form.', 'estasoft-migration-database-sanitizer' ) } );
 			staleEl.hidden = true;
 
 			var kids = [
 				h(
 					'div.g-auto',
 					{ style: 'grid-template-columns:repeat(auto-fit,minmax(130px,1fr))' },
-					ui.tile( __( 'Matches', 'estasoft-migrate' ), fmt.number( totals.matches ), sprintf( /* translators: %s: number of tables */ _n( 'in %s table', 'in %s tables', withMatches.length, 'estasoft-migrate' ), fmt.number( withMatches.length ) ) ),
-					ui.tile( dry ? __( 'Rows that would change', 'estasoft-migrate' ) : __( 'Rows changed', 'estasoft-migrate' ), fmt.number( totals.changed ), __( 'rows with at least one match', 'estasoft-migrate' ) ),
-					ui.tile( __( 'Rows scanned', 'estasoft-migrate' ), fmt.number( totals.scanned ), sprintf( /* translators: %s: number of tables */ _n( 'in %s table', 'in %s tables', tables.length, 'estasoft-migrate' ), fmt.number( tables.length ) ) ),
-					ui.tile( __( 'Inside serialized or JSON data', 'estasoft-migrate' ), fmt.number( totals.nested ), __( 'matches rewritten safely', 'estasoft-migrate' ) )
+					ui.tile( __( 'Matches', 'estasoft-migration-database-sanitizer' ), fmt.number( totals.matches ), sprintf( /* translators: %s: number of tables */ _n( 'in %s table', 'in %s tables', withMatches.length, 'estasoft-migration-database-sanitizer' ), fmt.number( withMatches.length ) ) ),
+					ui.tile( dry ? __( 'Rows that would change', 'estasoft-migration-database-sanitizer' ) : __( 'Rows changed', 'estasoft-migration-database-sanitizer' ), fmt.number( totals.changed ), __( 'rows with at least one match', 'estasoft-migration-database-sanitizer' ) ),
+					ui.tile( __( 'Rows scanned', 'estasoft-migration-database-sanitizer' ), fmt.number( totals.scanned ), sprintf( /* translators: %s: number of tables */ _n( 'in %s table', 'in %s tables', tables.length, 'estasoft-migration-database-sanitizer' ), fmt.number( tables.length ) ) ),
+					ui.tile( __( 'Inside serialized or JSON data', 'estasoft-migration-database-sanitizer' ), fmt.number( totals.nested ), __( 'matches rewritten safely', 'estasoft-migration-database-sanitizer' ) )
 				),
 			];
 
@@ -756,28 +756,28 @@
 				kids.push( ui.note(
 					'tint',
 					totals.matches
-						? __( 'This was only a dry run: the database is exactly as it was. Apply these changes to make the replacements for real.', 'estasoft-migrate' )
-						: __( 'This was only a dry run: the database is exactly as it was.', 'estasoft-migrate' ),
-					{ title: __( 'Nothing was written.', 'estasoft-migrate' ) }
+						? __( 'This was only a dry run: the database is exactly as it was. Apply these changes to make the replacements for real.', 'estasoft-migration-database-sanitizer' )
+						: __( 'This was only a dry run: the database is exactly as it was.', 'estasoft-migration-database-sanitizer' ),
+					{ title: __( 'Nothing was written.', 'estasoft-migration-database-sanitizer' ) }
 				) );
 			} else if ( r.snapshot ) {
 				kids.push( ui.note(
 					'tint',
-					[ __( 'The tables were saved before anything changed, so you can undo this from Packages.', 'estasoft-migrate' ), ' ', h( 'a', { href: ESTM.url( 'packages' ) }, __( 'Open Packages', 'estasoft-migrate' ) ) ],
-					{ title: __( 'A rollback snapshot was saved.', 'estasoft-migrate' ) }
+					[ __( 'The tables were saved before anything changed, so you can undo this from Packages.', 'estasoft-migration-database-sanitizer' ), ' ', h( 'a', { href: ESTM.url( 'packages' ) }, __( 'Open Packages', 'estasoft-migration-database-sanitizer' ) ) ],
+					{ title: __( 'A rollback snapshot was saved.', 'estasoft-migration-database-sanitizer' ) }
 				) );
 			} else {
-				kids.push( ui.note( 'warn', __( 'This run did not take a snapshot, so it cannot be undone from Packages.', 'estasoft-migrate' ) ) );
+				kids.push( ui.note( 'warn', __( 'This run did not take a snapshot, so it cannot be undone from Packages.', 'estasoft-migration-database-sanitizer' ) ) );
 			}
 			if ( notes.length ) {
-				kids.push( ui.note( 'warn', h( 'ul', notes.map( function ( n ) { return h( 'li', n ); } ) ), { title: __( 'Notes', 'estasoft-migrate' ) } ) );
+				kids.push( ui.note( 'warn', h( 'ul', notes.map( function ( n ) { return h( 'li', n ); } ) ), { title: __( 'Notes', 'estasoft-migration-database-sanitizer' ) } ) );
 			}
 			if ( skipped.length ) {
 				kids.push( ui.note(
 					'warn',
 					sprintf(
 						/* translators: 1: number of tables, 2: list of table names */
-						_n( '%1$s table was skipped because it has no primary or unique key, so its rows cannot be updated safely: %2$s.', '%1$s tables were skipped because they have no primary or unique key, so their rows cannot be updated safely: %2$s.', skipped.length, 'estasoft-migrate' ),
+						_n( '%1$s table was skipped because it has no primary or unique key, so its rows cannot be updated safely: %2$s.', '%1$s tables were skipped because they have no primary or unique key, so their rows cannot be updated safely: %2$s.', skipped.length, 'estasoft-migration-database-sanitizer' ),
 						fmt.number( skipped.length ),
 						shortList( skipped.map( function ( t ) { return t.name; } ), 5 )
 					)
@@ -787,10 +787,10 @@
 			var body = [ h( 'div.stack', { style: 'padding:20px' }, kids ) ];
 			if ( ! totals.matches ) {
 				body.push( ui.empty(
-					__( 'No matches found', 'estasoft-migrate' ),
+					__( 'No matches found', 'estasoft-migration-database-sanitizer' ),
 					opt.regex
-						? __( 'The pattern matched nothing. Check it, and whether upper and lower case should count.', 'estasoft-migrate' )
-						: __( 'The text was not found in the tables you chose. Check the spelling, whether upper and lower case should count, and which tables are searched.', 'estasoft-migrate' )
+						? __( 'The pattern matched nothing. Check it, and whether upper and lower case should count.', 'estasoft-migration-database-sanitizer' )
+						: __( 'The text was not found in the tables you chose. Check the spelling, whether upper and lower case should count, and which tables are searched.', 'estasoft-migration-database-sanitizer' )
 				) );
 			} else {
 				body.push( resultTable( withMatches.concat( skipped ), dry ) );
@@ -812,9 +812,9 @@
 			if ( samples.length ) {
 				body.push( h(
 					'div.stack.sr-samples',
-					h( 'div', h( 'h3', __( 'Examples', 'estasoft-migrate' ) ), h( 'p.sub', sprintf(
+					h( 'div', h( 'h3', __( 'Examples', 'estasoft-migration-database-sanitizer' ) ), h( 'p.sub', sprintf(
 						/* translators: %s: number of examples */
-						_n( 'The first %s match, shortened around the change.', 'The first %s matches, shortened around the change.', samples.length, 'estasoft-migrate' ),
+						_n( 'The first %s match, shortened around the change.', 'The first %s matches, shortened around the change.', samples.length, 'estasoft-migration-database-sanitizer' ),
 						fmt.number( samples.length )
 					) ) ),
 					samples.map( function ( s, i ) {
@@ -830,24 +830,24 @@
 			var applyBtn = null;
 			var footer = [];
 			if ( dry && totals.matches ) {
-				applyBtn = ui.btn( __( 'Apply these changes', 'estasoft-migrate' ), { kind: 'primary', onClick: function () {
+				applyBtn = ui.btn( __( 'Apply these changes', 'estasoft-migration-database-sanitizer' ), { kind: 'primary', onClick: function () {
 					goToPlan( current ? current.input : inputFromParams( view.params || {} ), totals );
 				} } );
-				footer.push( applyBtn, h( 'span.sub', __( 'You check and confirm on the next screen before anything is written.', 'estasoft-migrate' ) ) );
+				footer.push( applyBtn, h( 'span.sub', __( 'You check and confirm on the next screen before anything is written.', 'estasoft-migration-database-sanitizer' ) ) );
 			}
-			footer.push( h( 'span.sp' ), ui.btn( __( 'View log', 'estasoft-migrate' ), { kind: 'quiet', size: 'sm', href: ESTM.url( 'logs', { job: view.id } ) } ) );
+			footer.push( h( 'span.sp' ), ui.btn( __( 'View log', 'estasoft-migration-database-sanitizer' ), { kind: 'quiet', size: 'sm', href: ESTM.url( 'logs', { job: view.id } ) } ) );
 
 			if ( dry ) {
 				body.push( staleEl );
 			}
 			body.push( h( 'div.card-f', footer ) );
 
-			var heading = h( 'h2', { tabindex: '-1' }, dry ? __( 'Dry run result', 'estasoft-migrate' ) : __( 'What was changed', 'estasoft-migrate' ) );
+			var heading = h( 'h2', { tabindex: '-1' }, dry ? __( 'Dry run result', 'estasoft-migration-database-sanitizer' ) : __( 'What was changed', 'estasoft-migration-database-sanitizer' ) );
 			ESTM.replace( runBox, h(
 				'section.card.flush',
 				h( 'div.card-h', heading, clean
-					? ui.badge( dry ? __( 'No problems found', 'estasoft-migrate' ) : __( 'Completed', 'estasoft-migrate' ), 'ready' )
-					: ui.badge( __( 'Finished with notes', 'estasoft-migrate' ), 'warn' ) ),
+					? ui.badge( dry ? __( 'No problems found', 'estasoft-migration-database-sanitizer' ) : __( 'Completed', 'estasoft-migration-database-sanitizer' ), 'ready' )
+					: ui.badge( __( 'Finished with notes', 'estasoft-migration-database-sanitizer' ), 'warn' ) ),
 				body
 			) );
 			result = dry ? { staleEl: staleEl, applyBtn: applyBtn } : null;
@@ -858,7 +858,7 @@
 		function moreSamples( total ) {
 			var btn = ui.btn( sprintf(
 				/* translators: %s: number of examples */
-				__( 'Show all %s examples', 'estasoft-migrate' ),
+				__( 'Show all %s examples', 'estasoft-migration-database-sanitizer' ),
 				fmt.number( total )
 			), { kind: 'link', onClick: function () {
 				Array.prototype.forEach.call( runBox.querySelectorAll( '.sr-extra' ), function ( el ) { el.hidden = false; } );
@@ -868,7 +868,7 @@
 		}
 
 		function quietLabel( hidden ) {
-			return hidden ? __( 'Show the tables without matches', 'estasoft-migrate' ) : __( 'Hide the tables without matches', 'estasoft-migrate' );
+			return hidden ? __( 'Show the tables without matches', 'estasoft-migration-database-sanitizer' ) : __( 'Hide the tables without matches', 'estasoft-migration-database-sanitizer' );
 		}
 
 		/** The dry run on screen is only good for the settings it ran with. */
@@ -890,7 +890,7 @@
 			if ( input.regex ) {
 				lines.push( sprintf(
 					/* translators: 1: pattern, 2: replacement text */
-					__( 'Replace matches of the pattern “%1$s” with “%2$s”', 'estasoft-migrate' ),
+					__( 'Replace matches of the pattern “%1$s” with “%2$s”', 'estasoft-migration-database-sanitizer' ),
 					input.pairs[ 0 ][ 0 ],
 					input.pairs[ 0 ][ 1 ]
 				) );
@@ -899,13 +899,13 @@
 					lines.push( pair[ 1 ]
 						? sprintf(
 							/* translators: 1: text searched for, 2: replacement text */
-							__( 'Replace “%1$s” with “%2$s”', 'estasoft-migrate' ),
+							__( 'Replace “%1$s” with “%2$s”', 'estasoft-migration-database-sanitizer' ),
 							pair[ 0 ],
 							pair[ 1 ]
 						)
 						: sprintf(
 							/* translators: %s: text searched for */
-							__( 'Remove “%s”', 'estasoft-migrate' ),
+							__( 'Remove “%s”', 'estasoft-migration-database-sanitizer' ),
 							pair[ 0 ]
 						) );
 				} );
@@ -913,39 +913,39 @@
 			if ( input.tables ) {
 				lines.push( sprintf(
 					/* translators: 1: number of tables, 2: list of table names */
-					_n( 'Only this table (%1$s): %2$s', 'Only these %1$s tables: %2$s', input.tables.length, 'estasoft-migrate' ),
+					_n( 'Only this table (%1$s): %2$s', 'Only these %1$s tables: %2$s', input.tables.length, 'estasoft-migration-database-sanitizer' ),
 					fmt.number( input.tables.length ),
 					shortList( input.tables, 5 )
 				) );
 			} else if ( input.exclude_tables ) {
 				lines.push( sprintf(
 					/* translators: %s: list of table names */
-					__( 'All tables except: %s', 'estasoft-migrate' ),
+					__( 'All tables except: %s', 'estasoft-migration-database-sanitizer' ),
 					shortList( input.exclude_tables, 5 )
 				) );
 			} else {
 				lines.push( sprintf(
 					/* translators: %s: number of tables */
-					_n( 'All %s table', 'All %s tables', allTables.length, 'estasoft-migrate' ),
+					_n( 'All %s table', 'All %s tables', allTables.length, 'estasoft-migration-database-sanitizer' ),
 					fmt.number( allTables.length )
 				) );
 			}
-			lines.push( input.case_sensitive ? __( 'Upper and lower case count as different', 'estasoft-migrate' ) : __( 'Upper and lower case do not matter', 'estasoft-migrate' ) );
-			lines.push( input.skip_guid ? __( 'The guid column is left alone', 'estasoft-migrate' ) : __( 'The guid column is changed too', 'estasoft-migrate' ) );
+			lines.push( input.case_sensitive ? __( 'Upper and lower case count as different', 'estasoft-migration-database-sanitizer' ) : __( 'Upper and lower case do not matter', 'estasoft-migration-database-sanitizer' ) );
+			lines.push( input.skip_guid ? __( 'The guid column is left alone', 'estasoft-migration-database-sanitizer' ) : __( 'The guid column is changed too', 'estasoft-migration-database-sanitizer' ) );
 			if ( input.skip_columns && input.skip_columns.length ) {
 				lines.push( sprintf(
 					/* translators: %s: list of columns */
-					__( 'Columns left alone: %s', 'estasoft-migrate' ),
+					__( 'Columns left alone: %s', 'estasoft-migration-database-sanitizer' ),
 					shortList( input.skip_columns, 5 )
 				) );
 			}
 			lines.push( input.snapshot
-				? __( 'A rollback snapshot is saved first, so you can undo it from Packages', 'estasoft-migrate' )
-				: __( 'No rollback snapshot: this cannot be undone', 'estasoft-migrate' ) );
+				? __( 'A rollback snapshot is saved first, so you can undo it from Packages', 'estasoft-migration-database-sanitizer' )
+				: __( 'No rollback snapshot: this cannot be undone', 'estasoft-migration-database-sanitizer' ) );
 			if ( totals ) {
 				lines.push( sprintf(
 					/* translators: 1: number of matches, 2: number of rows */
-					__( 'The dry run found %1$s matches in %2$s rows', 'estasoft-migrate' ),
+					__( 'The dry run found %1$s matches in %2$s rows', 'estasoft-migration-database-sanitizer' ),
 					fmt.number( totals.matches ),
 					fmt.number( totals.changed )
 				) );
@@ -959,13 +959,13 @@
 				mode: 'search_replace',
 				type: 'search_replace',
 				input: live,
-				title: __( 'Search & replace', 'estasoft-migrate' ),
+				title: __( 'Search & replace', 'estasoft-migration-database-sanitizer' ),
 				lines: planLines( live, totals ),
 				back: 'replace',
 			};
 			ESTM.draft.set( 'replace-form', { input: live, dry: opt.dry } );
 			if ( ! ESTM.draft.set( 'plan', plan ) ) {
-				ESTM.replace( runNote, ui.note( 'err', __( 'Your browser would not keep the plan for the next step. Allow site data for this page and try again.', 'estasoft-migrate' ) ) );
+				ESTM.replace( runNote, ui.note( 'err', __( 'Your browser would not keep the plan for the next step. Allow site data for this page and try again.', 'estasoft-migration-database-sanitizer' ) ) );
 				return;
 			}
 			ESTM.go( ESTM.url( 'preflight' ) );
@@ -1022,7 +1022,7 @@
 
 		function adopt( job ) {
 			if ( 'search_replace' !== job.type ) {
-				ESTM.replace( introBox, ui.note( 'warn', [ __( 'That job is not a search and replace, so it cannot be shown here.', 'estasoft-migrate' ), ' ', h( 'a', { href: ESTM.url( 'progress', { job: job.id } ) }, __( 'Open it in Progress', 'estasoft-migrate' ) ) ] ) );
+				ESTM.replace( introBox, ui.note( 'warn', [ __( 'That job is not a search and replace, so it cannot be shown here.', 'estasoft-migration-database-sanitizer' ), ' ', h( 'a', { href: ESTM.url( 'progress', { job: job.id } ) }, __( 'Open it in Progress', 'estasoft-migration-database-sanitizer' ) ) ] ) );
 				return;
 			}
 			var params = job.params || {};
@@ -1031,19 +1031,19 @@
 			var dry = !! params.dry_run;
 			var message;
 			if ( ESTM.isActive( job.status ) ) {
-				message = __( 'This dry run is still running. The form shows its settings.', 'estasoft-migrate' );
+				message = __( 'This dry run is still running. The form shows its settings.', 'estasoft-migration-database-sanitizer' );
 			} else if ( 'completed' === job.status ) {
 				message = dry
-					? sprintf( /* translators: %s: date */ __( 'This is the dry run from %s. The form has the same settings, so you can change them and run it again.', 'estasoft-migrate' ), when )
-					: sprintf( /* translators: %s: date */ __( 'This replacement was applied on %s. The form has the same settings; they start as a dry run if you want to check them again.', 'estasoft-migrate' ), when );
+					? sprintf( /* translators: %s: date */ __( 'This is the dry run from %s. The form has the same settings, so you can change them and run it again.', 'estasoft-migration-database-sanitizer' ), when )
+					: sprintf( /* translators: %s: date */ __( 'This replacement was applied on %s. The form has the same settings; they start as a dry run if you want to check them again.', 'estasoft-migration-database-sanitizer' ), when );
 			} else if ( 'failed' === job.status ) {
-				message = sprintf( /* translators: %s: date */ __( 'This job failed on %s. The form has its settings.', 'estasoft-migrate' ), when );
+				message = sprintf( /* translators: %s: date */ __( 'This job failed on %s. The form has its settings.', 'estasoft-migration-database-sanitizer' ), when );
 			} else if ( 'cancelled' === job.status ) {
-				message = sprintf( /* translators: %s: date */ __( 'This job was cancelled on %s. The form has its settings.', 'estasoft-migrate' ), when );
+				message = sprintf( /* translators: %s: date */ __( 'This job was cancelled on %s. The form has its settings.', 'estasoft-migration-database-sanitizer' ), when );
 			} else {
-				message = sprintf( /* translators: %s: date */ __( 'This job did not finish (last activity %s). The form has its settings.', 'estasoft-migrate' ), when );
+				message = sprintf( /* translators: %s: date */ __( 'This job did not finish (last activity %s). The form has its settings.', 'estasoft-migration-database-sanitizer' ), when );
 			}
-			ESTM.replace( introBox, ui.note( 'tint', message, { title: dry ? __( 'Earlier dry run', 'estasoft-migrate' ) : __( 'Earlier job', 'estasoft-migrate' ) } ) );
+			ESTM.replace( introBox, ui.note( 'tint', message, { title: dry ? __( 'Earlier dry run', 'estasoft-migration-database-sanitizer' ) : __( 'Earlier job', 'estasoft-migration-database-sanitizer' ) } ) );
 
 			var input = buildInput();
 			if ( ESTM.isActive( job.status ) ) {
@@ -1073,7 +1073,7 @@
 
 		var whatCard = h(
 			'section.card',
-			h( 'h2', { style: 'margin-bottom:14px' }, __( 'What to replace', 'estasoft-migrate' ) ),
+			h( 'h2', { style: 'margin-bottom:14px' }, __( 'What to replace', 'estasoft-migration-database-sanitizer' ) ),
 			h(
 				'div.stack',
 				{ style: 'gap:16px' },
@@ -1088,14 +1088,14 @@
 
 		var optionsCard = h(
 			'section.card',
-			h( 'h2', { style: 'margin-bottom:14px' }, __( 'Options', 'estasoft-migrate' ) ),
-			optionRow( 'dry', __( 'Dry run first', 'estasoft-migrate' ), __( 'Counts matches and writes nothing. When this is off, the button goes straight to the review step and then applies the change.', 'estasoft-migrate' ) ),
+			h( 'h2', { style: 'margin-bottom:14px' }, __( 'Options', 'estasoft-migration-database-sanitizer' ) ),
+			optionRow( 'dry', __( 'Dry run first', 'estasoft-migration-database-sanitizer' ), __( 'Counts matches and writes nothing. When this is off, the button goes straight to the review step and then applies the change.', 'estasoft-migration-database-sanitizer' ) ),
 			serialRow,
-			optionRow( 'guid', __( 'Skip the guid column', 'estasoft-migrate' ), fill( /* translators: %s: the name of a database column, guid */ __( 'WordPress uses %s as a permanent identifier, so it should not change. Recommended.', 'estasoft-migrate' ), [ code( 'guid' ) ] ) ),
-			optionRow( 'cs', __( 'Match case', 'estasoft-migrate' ), fill( /* translators: 1: an address with capital letters, 2: the same address in small letters */ __( 'Treat %1$s and %2$s as different.', 'estasoft-migrate' ), [ code( 'Example.com' ), code( 'example.com' ) ] ) ),
-			optionRow( 'regex', __( 'Regular expression', 'estasoft-migrate' ), __( 'The search text is a pattern, for example https?://(www\\.)?example\\.com. Only one pair can be used. Leave off for plain text.', 'estasoft-migrate' ) ),
-			optionRow( 'keys', __( 'Also replace inside array keys', 'estasoft-migrate' ), __( 'In serialized and JSON data, text used as a key is replaced too, not only the values.', 'estasoft-migrate' ) ),
-			optionRow( 'snap', __( 'Take a rollback snapshot before applying', 'estasoft-migrate' ), __( 'Lets you undo the whole replacement from Packages. Only used when you apply; a dry run never writes anything.', 'estasoft-migrate' ) ),
+			optionRow( 'guid', __( 'Skip the guid column', 'estasoft-migration-database-sanitizer' ), fill( /* translators: %s: the name of a database column, guid */ __( 'WordPress uses %s as a permanent identifier, so it should not change. Recommended.', 'estasoft-migration-database-sanitizer' ), [ code( 'guid' ) ] ) ),
+			optionRow( 'cs', __( 'Match case', 'estasoft-migration-database-sanitizer' ), fill( /* translators: 1: an address with capital letters, 2: the same address in small letters */ __( 'Treat %1$s and %2$s as different.', 'estasoft-migration-database-sanitizer' ), [ code( 'Example.com' ), code( 'example.com' ) ] ) ),
+			optionRow( 'regex', __( 'Regular expression', 'estasoft-migration-database-sanitizer' ), __( 'The search text is a pattern, for example https?://(www\\.)?example\\.com. Only one pair can be used. Leave off for plain text.', 'estasoft-migration-database-sanitizer' ) ),
+			optionRow( 'keys', __( 'Also replace inside array keys', 'estasoft-migration-database-sanitizer' ), __( 'In serialized and JSON data, text used as a key is replaced too, not only the values.', 'estasoft-migration-database-sanitizer' ) ),
+			optionRow( 'snap', __( 'Take a rollback snapshot before applying', 'estasoft-migration-database-sanitizer' ), __( 'Lets you undo the whole replacement from Packages. Only used when you apply; a dry run never writes anything.', 'estasoft-migration-database-sanitizer' ) ),
 			runNote,
 			h( 'div.card-f', { style: 'margin:16px -20px -20px' }, runBtn, runHint )
 		);
@@ -1121,7 +1121,7 @@
 			function ser( text ) {
 				return [ 'a:1:{s:4:"home";s:', h( 'mark', String( utf8Length( text ) ) ), ':"', h( 'mark', text ), '";}' ];
 			}
-			ESTM.replace( serialCode, h( 'span.dim', __( 'Before', 'estasoft-migrate' ) ), '\n', ser( from ), '\n\n', h( 'span.dim', __( 'After', 'estasoft-migrate' ) ), '\n', ser( to ) );
+			ESTM.replace( serialCode, h( 'span.dim', __( 'Before', 'estasoft-migration-database-sanitizer' ) ), '\n', ser( from ), '\n\n', h( 'span.dim', __( 'After', 'estasoft-migration-database-sanitizer' ) ), '\n', ser( to ) );
 			var shown = to || 'https://staging.example.com';
 			ESTM.replace( jsonCode, '<!-- wp:image {"url":"', h( 'mark', shown ), '/uploads/a.jpg"} -->' );
 		}
@@ -1129,25 +1129,25 @@
 		var sideCards = [
 			h(
 				'section.card.dark',
-				h( 'h2', { style: 'margin-bottom:6px' }, __( 'Why serialized data needs care', 'estasoft-migrate' ) ),
-				h( 'p.sub', { style: 'margin-bottom:14px' }, __( 'PHP stores the length of every string. A plain text replace changes the text but not the length, and the setting is lost. Estasoft Migrate updates both.', 'estasoft-migrate' ) ),
+				h( 'h2', { style: 'margin-bottom:6px' }, __( 'Why serialized data needs care', 'estasoft-migration-database-sanitizer' ) ),
+				h( 'p.sub', { style: 'margin-bottom:14px' }, __( 'PHP stores the length of every string. A plain text replace changes the text but not the length, and the setting is lost. Estasoft Migrate updates both.', 'estasoft-migration-database-sanitizer' ) ),
 				serialCode
 			),
 			h(
 				'section.card',
-				h( 'h3', { style: 'margin-bottom:6px' }, __( 'JSON and block comments', 'estasoft-migrate' ) ),
-				h( 'p.sub', { style: 'margin-bottom:12px' }, __( 'Gutenberg and page-builder settings are read as JSON, not as plain text.', 'estasoft-migrate' ) ),
+				h( 'h3', { style: 'margin-bottom:6px' }, __( 'JSON and block comments', 'estasoft-migration-database-sanitizer' ) ),
+				h( 'p.sub', { style: 'margin-bottom:12px' }, __( 'Gutenberg and page-builder settings are read as JSON, not as plain text.', 'estasoft-migration-database-sanitizer' ) ),
 				jsonCode
 			),
 			h(
 				'section.card',
-				h( 'h3', { style: 'margin-bottom:6px' }, __( 'Safe by design', 'estasoft-migrate' ) ),
+				h( 'h3', { style: 'margin-bottom:6px' }, __( 'Safe by design', 'estasoft-migration-database-sanitizer' ) ),
 				h(
 					'ul.stack.checklist',
 					{ style: 'gap:8px;font-size:13.5px' },
-					h( 'li', __( 'Objects inside serialized data are never created or run, only read as plain values.', 'estasoft-migrate' ) ),
-					h( 'li', __( 'Large tables are processed in batches, so there is no timeout.', 'estasoft-migrate' ) ),
-					h( 'li', h( 'span', fill( /* translators: %s: link to the Logs screen */ __( 'Every run is saved in %s.', 'estasoft-migrate' ), [ h( 'a', { href: ESTM.url( 'logs' ) }, __( 'Logs', 'estasoft-migrate' ) ) ] ) ) )
+					h( 'li', __( 'Objects inside serialized data are never created or run, only read as plain values.', 'estasoft-migration-database-sanitizer' ) ),
+					h( 'li', __( 'Large tables are processed in batches, so there is no timeout.', 'estasoft-migration-database-sanitizer' ) ),
+					h( 'li', h( 'span', fill( /* translators: %s: link to the Logs screen */ __( 'Every run is saved in %s.', 'estasoft-migration-database-sanitizer' ), [ h( 'a', { href: ESTM.url( 'logs' ) }, __( 'Logs', 'estasoft-migration-database-sanitizer' ) ) ] ) ) )
 				)
 			),
 		];
@@ -1175,7 +1175,7 @@
 		}
 
 		if ( jobRes && jobRes.error ) {
-			ESTM.replace( introBox, ui.note( 'err', ESTM.errorMessage( jobRes.error ), { title: __( 'That job could not be opened.', 'estasoft-migrate' ) } ) );
+			ESTM.replace( introBox, ui.note( 'err', ESTM.errorMessage( jobRes.error ), { title: __( 'That job could not be opened.', 'estasoft-migration-database-sanitizer' ) } ) );
 		} else if ( jobRes && jobRes.job ) {
 			adopt( jobRes.job );
 		}

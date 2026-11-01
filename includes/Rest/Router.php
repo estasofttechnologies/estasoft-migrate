@@ -98,7 +98,7 @@ class Router {
 				'estm_error',
 				sprintf(
 					/* translators: %s: error message */
-					__( 'Something went wrong: %s', 'estasoft-migrate' ),
+					__( 'Something went wrong: %s', 'estasoft-migration-database-sanitizer' ),
 					$e->getMessage()
 				),
 				array( 'status' => 500 )

@@ -10,14 +10,14 @@ Everything the review team asks for is in the repository. What is left needs a p
 | `Tested up to` | 7.1, the newest stable WordPress when this was written. Raise it only after testing on a newer release. |
 | Minimum versions | WordPress 5.8, PHP 7.4. The CI runs the integration tests on exactly that combination (WordPress 5.8, PHP 7.4, MySQL 5.7) as well as the newest. |
 | License | GPL v2 or later, stated in the plugin header, `readme.txt` and `license.txt`. Every file is original or MIT/GPL-compatible; there are no bundled libraries. |
-| Plugin Check | `wp plugin check estasoft-migrate --include-experimental` reports no errors and no warnings on the zip. Run it again after any change (install the Plugin Check plugin on a throw-away site). |
+| Plugin Check | `wp plugin check estasoft-migration-database-sanitizer --include-experimental` reports no errors and no warnings on the zip. Run it again after any change (install the Plugin Check plugin on a throw-away site). |
 | Tests | `composer check` and the integration tests (`phpunit-integration.xml.dist`) pass on MySQL and MariaDB. |
 | Review | Three independent reviews (engine, security, screens) were done and their findings fixed; what remains is listed in [REVIEW.md](REVIEW.md). |
-| Zip | `bin/build-zip.sh` makes `dist/estasoft-migrate-<version>.zip` with one top-level folder, `estasoft-migrate`. |
+| Zip | `bin/build-zip.sh` makes `dist/estasoft-migration-database-sanitizer-<version>.zip` with one top-level folder of the same name, the WordPress.org slug. |
 
 ## Slug and text domain
 
-The text domain is `estasoft-migrate` everywhere and the plugin folder is `estasoft-migrate`. WordPress.org builds the slug from the plugin name when you upload, so it may offer `estasoft-migration-database-sanitizer`. If that happens, reply to the review email and ask for the slug `estasoft-migrate` so that the folder, the text domain and the slug stay the same. If they insist on another slug, the text domain must be changed to match (search and replace `estasoft-migrate` in `includes/`, `views/`, `assets/js/`, `languages/` and the plugin header, then rebuild the `.pot`).
+The slug WordPress.org assigned on 1 Nov 2026 is `estasoft-migration-database-sanitizer`, so the text domain (in the plugin header and in every translation call), the plugin folder inside the zip, the `.pot` file and the support link all use it. Plugin Check compares the text domain with the slug, and the automated scan of the first upload reported 479 errors and 1 warning that were all this mismatch while the text domain was still `estasoft-migrate`. Names that are not translation labels keep the short form and must not be changed: the main file `estasoft-migrate.php`, the `estasoft_migrate_*` options and hooks, the admin page slugs (`estasoft-migrate`, `estasoft-migrate-settings`, ...), the REST namespace `estasoft-migrate/v1`, the WP-CLI command `wp estasoft-migrate`, the script and style handles, the `estasoft-migrate-<random>` folder in uploads, and the strings that feed key and package hashes (changing those would invalidate saved keys and encrypted packages). If WordPress.org ever grants a different slug, replace the text domain only in the last argument of translation calls (`__()`, `_n()`, `esc_html__()` and so on, in PHP and JavaScript), the `Text Domain` header and `wp_set_script_translations()`, rename the `.pot`, regenerate it with the new `--slug` and `--domain`, and rebuild.
 
 ## What the review team will ask, and the answers
 
@@ -32,7 +32,7 @@ The text domain is `estasoft-migrate` everywhere and the plugin folder is `estas
 ## Upload
 
 1. Sign in at https://wordpress.org/plugins/developers/add/ with the account named in `Contributors`.
-2. Upload `dist/estasoft-migrate-<version>.zip`.
+2. Upload `dist/estasoft-migration-database-sanitizer-<version>.zip`.
 3. Answer the review email within 7 days. Reviews are done by volunteers; the first answer can take several weeks.
 4. After approval you get an SVN repository. Put the plugin files in `trunk/`, a copy in `tags/<version>/`, and the contents of `.wordpress-org/` in `assets/` (not in `trunk/`). `bin/build-zip.sh` shows exactly which files belong in the plugin.
 

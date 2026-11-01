@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 # Build the zip that people install from Plugins > Add New > Upload Plugin (or that goes to wordpress.org).
 #
-#   bin/build-zip.sh            -> dist/estasoft-migrate-<version>.zip
+#   bin/build-zip.sh            -> dist/estasoft-migration-database-sanitizer-<version>.zip
 #
 # Only what runs on a site goes in: no tests, docs, tooling or dev scripts. The folder inside the zip is
-# always "estasoft-migrate", so WordPress replaces an installed copy on upgrade.
+# always the WordPress.org slug "estasoft-migration-database-sanitizer", so WordPress replaces an installed copy on upgrade
+# and the text domain in the code matches the folder (Plugin Check compares the two).
 set -euo pipefail
 
+SLUG="estasoft-migration-database-sanitizer"
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
@@ -26,13 +28,13 @@ done
 OUT="$ROOT/dist"
 STAGE="$(mktemp -d)"
 trap 'rm -rf "$STAGE"' EXIT
-mkdir -p "$STAGE/estasoft-migrate" "$OUT"
+mkdir -p "$STAGE/$SLUG" "$OUT"
 
-cp estasoft-migrate.php uninstall.php readme.txt "$STAGE/estasoft-migrate/"
-cp -R includes assets views "$STAGE/estasoft-migrate/"
-mkdir -p "$STAGE/estasoft-migrate/languages"
-[ -d languages ] && cp -R languages/. "$STAGE/estasoft-migrate/languages/"
-[ -f LICENSE ] && cp LICENSE "$STAGE/estasoft-migrate/license.txt"
+cp estasoft-migrate.php uninstall.php readme.txt "$STAGE/$SLUG/"
+cp -R includes assets views "$STAGE/$SLUG/"
+mkdir -p "$STAGE/$SLUG/languages"
+[ -d languages ] && cp -R languages/. "$STAGE/$SLUG/languages/"
+[ -f LICENSE ] && cp LICENSE "$STAGE/$SLUG/license.txt"
 
 # Nothing else that does not belong on a live site.
 find "$STAGE" \( -name '.DS_Store' -o -name '*.log' -o -name '.gitkeep' -o -name '*.map' \) -delete
@@ -41,8 +43,8 @@ find "$STAGE" \( -name '.DS_Store' -o -name '*.log' -o -name '.gitkeep' -o -name
 while IFS= read -r -d '' f; do php -l "$f" > /dev/null; done < <(find "$STAGE" -name '*.php' -print0)
 while IFS= read -r -d '' f; do node --check "$f" 2>/dev/null || { echo "JavaScript does not parse: $f" >&2; exit 1; }; done < <(find "$STAGE" -name '*.js' -print0 2>/dev/null) || true
 
-ZIP="$OUT/estasoft-migrate-$VERSION.zip"
+ZIP="$OUT/$SLUG-$VERSION.zip"
 rm -f "$ZIP"
-(cd "$STAGE" && zip -qr -X "$ZIP" estasoft-migrate)
+(cd "$STAGE" && zip -qr -X "$ZIP" "$SLUG")
 
 echo "Built $ZIP ($(du -h "$ZIP" | cut -f1), $(unzip -Z1 "$ZIP" | grep -vc '/$') files)"

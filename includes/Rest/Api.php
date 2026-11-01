@@ -235,7 +235,7 @@ final class Api {
 	public function preflight( array $in ) {
 		$mode = (string) ( $in['mode'] ?? '' );
 		if ( ! in_array( $mode, array( 'export', 'sanitize', 'import', 'search_replace', 'push', 'pull' ), true ) ) {
-			throw new ApiException( 'estm_invalid', __( 'Choose what to do first.', 'estasoft-migrate' ), 400 );
+			throw new ApiException( 'estm_invalid', __( 'Choose what to do first.', 'estasoft-migration-database-sanitizer' ), 400 );
 		}
 		return ( new Checker( $this->ctx, (array) $this->opts['env'] ) )->run( $in );
 	}
@@ -273,12 +273,12 @@ final class Api {
 	public function create_job( $type, array $in ) {
 		$type = (string) $type;
 		if ( ! in_array( $type, JobParams::TYPES, true ) ) {
-			throw new ApiException( 'estm_invalid', __( 'Unknown job type.', 'estasoft-migrate' ), 400 );
+			throw new ApiException( 'estm_invalid', __( 'Unknown job type.', 'estasoft-migration-database-sanitizer' ), 400 );
 		}
 		if ( 'export' === $type && $this->settings->get( 'encrypt_packages' ) && empty( $in['protect_with_site_key'] ) && '' === (string) ( $in['password'] ?? '' ) ) {
 			throw new ApiException(
 				'estm_password_required',
-				__( 'Packages are set to be encrypted. Enter a password for this package, or turn off encryption in Settings.', 'estasoft-migrate' ),
+				__( 'Packages are set to be encrypted. Enter a password for this package, or turn off encryption in Settings.', 'estasoft-migration-database-sanitizer' ),
 				400
 			);
 		}
@@ -294,7 +294,7 @@ final class Api {
 				'estm_busy',
 				sprintf(
 					/* translators: %s: title of the job that is running */
-					__( 'Another job is still in progress: %s. Wait for it to finish, or cancel it first.', 'estasoft-migrate' ),
+					__( 'Another job is still in progress: %s. Wait for it to finish, or cancel it first.', 'estasoft-migration-database-sanitizer' ),
 					$busy->title
 				),
 				409,
@@ -370,33 +370,33 @@ final class Api {
 		switch ( $action ) {
 			case 'pause':
 				if ( ! $job->is_runnable() ) {
-					throw new ApiException( 'estm_state', __( 'This job is not running.', 'estasoft-migrate' ), 409 );
+					throw new ApiException( 'estm_state', __( 'This job is not running.', 'estasoft-migration-database-sanitizer' ), 409 );
 				}
 				$this->runner->pause( $job->id );
 				break;
 			case 'resume':
 				if ( Job::PAUSED !== $job->status ) {
-					throw new ApiException( 'estm_state', __( 'This job is not paused.', 'estasoft-migrate' ), 409 );
+					throw new ApiException( 'estm_state', __( 'This job is not paused.', 'estasoft-migration-database-sanitizer' ), 409 );
 				}
 				$this->runner->resume( $job->id );
 				$this->dispatch( $job->id );
 				break;
 			case 'cancel':
 				if ( $job->is_finished() ) {
-					throw new ApiException( 'estm_state', __( 'This job has already finished.', 'estasoft-migrate' ), 409 );
+					throw new ApiException( 'estm_state', __( 'This job has already finished.', 'estasoft-migration-database-sanitizer' ), 409 );
 				}
 				if ( ! $this->runner->cancel( $job->id ) ) {
-					throw new ApiException( 'estm_state', __( 'This job can no longer be cancelled: its new data is already in place and it is finishing.', 'estasoft-migrate' ), 409 );
+					throw new ApiException( 'estm_state', __( 'This job can no longer be cancelled: its new data is already in place and it is finishing.', 'estasoft-migration-database-sanitizer' ), 409 );
 				}
 				break;
 			case 'retry':
 				if ( ! $this->runner->retry( $job->id ) ) {
-					throw new ApiException( 'estm_state', __( 'Only a failed job can be retried.', 'estasoft-migrate' ), 409 );
+					throw new ApiException( 'estm_state', __( 'Only a failed job can be retried.', 'estasoft-migration-database-sanitizer' ), 409 );
 				}
 				$this->dispatch( $job->id );
 				break;
 			default:
-				throw new ApiException( 'estm_invalid', __( 'Unknown action.', 'estasoft-migrate' ), 400 );
+				throw new ApiException( 'estm_invalid', __( 'Unknown action.', 'estasoft-migration-database-sanitizer' ), 400 );
 		}
 		return $this->job_view( $this->find_job( $id ) );
 	}
@@ -410,7 +410,7 @@ final class Api {
 	public function delete_job( $id ) {
 		$job = $this->find_job( $id );
 		if ( ! $job->is_finished() ) {
-			throw new ApiException( 'estm_state', __( 'Cancel the job before removing it.', 'estasoft-migrate' ), 409 );
+			throw new ApiException( 'estm_state', __( 'Cancel the job before removing it.', 'estasoft-migration-database-sanitizer' ), 409 );
 		}
 		$this->runner->discard( $job->id );
 		$this->ctx->logger->purge( $job->id );
@@ -441,7 +441,7 @@ final class Api {
 	private function find_job( $id ) {
 		$job = $this->ctx->store->find( (int) $id );
 		if ( ! $job ) {
-			throw new ApiException( 'estm_not_found', __( 'That job no longer exists.', 'estasoft-migrate' ), 404 );
+			throw new ApiException( 'estm_not_found', __( 'That job no longer exists.', 'estasoft-migration-database-sanitizer' ), 404 );
 		}
 		return $job;
 	}
@@ -920,7 +920,7 @@ final class Api {
 	public function delete_package( $id ) {
 		$id = (string) $id;
 		if ( ! Storage::is_valid_id( $id ) || ! is_file( $this->ctx->storage->package_path( $id ) ) ) {
-			throw new ApiException( 'estm_not_found', __( 'That package no longer exists.', 'estasoft-migrate' ), 404 );
+			throw new ApiException( 'estm_not_found', __( 'That package no longer exists.', 'estasoft-migration-database-sanitizer' ), 404 );
 		}
 		$job = $this->package_in_use( $id );
 		if ( $job ) {
@@ -928,7 +928,7 @@ final class Api {
 				'estm_busy',
 				sprintf(
 					/* translators: %s: job title */
-					__( 'This package is being used by a job that is still in progress: %s.', 'estasoft-migrate' ),
+					__( 'This package is being used by a job that is still in progress: %s.', 'estasoft-migration-database-sanitizer' ),
 					$job->title
 				),
 				409
@@ -948,13 +948,13 @@ final class Api {
 	public function upload_init( $name, $size ) {
 		$size = (int) $size;
 		if ( $size < 1 ) {
-			throw new ApiException( 'estm_invalid', __( 'The file is empty.', 'estasoft-migrate' ), 400 );
+			throw new ApiException( 'estm_invalid', __( 'The file is empty.', 'estasoft-migration-database-sanitizer' ), 400 );
 		}
 		if ( $size > Storage::max_package_bytes() ) {
-			throw new ApiException( 'estm_invalid', __( 'The file is larger than this site accepts as a package.', 'estasoft-migrate' ), 413 );
+			throw new ApiException( 'estm_invalid', __( 'The file is larger than this site accepts as a package.', 'estasoft-migration-database-sanitizer' ), 413 );
 		}
 		if ( ! $this->ctx->storage->is_writable() ) {
-			throw new ApiException( 'estm_no_space', __( 'The package folder is not writable.', 'estasoft-migrate' ), 507 );
+			throw new ApiException( 'estm_no_space', __( 'The package folder is not writable.', 'estasoft-migration-database-sanitizer' ), 507 );
 		}
 		$free = $this->free_space();
 		if ( null !== $free && $free > 0 && $free < $size * 1.1 ) {
@@ -962,7 +962,7 @@ final class Api {
 				'estm_no_space',
 				sprintf(
 					/* translators: 1: needed, 2: free */
-					__( 'Not enough disk space: %1$s needed, %2$s free.', 'estasoft-migrate' ),
+					__( 'Not enough disk space: %1$s needed, %2$s free.', 'estasoft-migration-database-sanitizer' ),
 					Util::format_bytes( $size ),
 					Util::format_bytes( $free )
 				),
@@ -973,7 +973,7 @@ final class Api {
 		$id   = Storage::new_id( 'uploaded-' . $base );
 		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 		if ( false === file_put_contents( $this->ctx->storage->package_path( $id ), '' ) ) {
-			throw new ApiException( 'estm_no_space', __( 'The package file could not be created.', 'estasoft-migrate' ), 507 );
+			throw new ApiException( 'estm_no_space', __( 'The package file could not be created.', 'estasoft-migration-database-sanitizer' ), 507 );
 		}
 		$this->ctx->storage->write_meta(
 			$id,
@@ -1006,29 +1006,29 @@ final class Api {
 		$offset = (int) $offset;
 		$bytes  = (string) $bytes;
 		if ( '' === $bytes || $offset < 0 ) {
-			throw new ApiException( 'estm_invalid', __( 'The piece could not be read.', 'estasoft-migrate' ), 400 );
+			throw new ApiException( 'estm_invalid', __( 'The piece could not be read.', 'estasoft-migration-database-sanitizer' ), 400 );
 		}
 		$expected = (int) ( ( (array) $this->ctx->storage->read_meta( (string) $id ) )['expected'] ?? 0 );
 		if ( $expected > 0 && $offset + strlen( $bytes ) > $expected ) {
-			throw new ApiException( 'estm_invalid', __( 'The piece is larger than the file announced.', 'estasoft-migrate' ), 413 );
+			throw new ApiException( 'estm_invalid', __( 'The piece is larger than the file announced.', 'estasoft-migration-database-sanitizer' ), 413 );
 		}
 		clearstatcache( true, $path );
 		$have = (int) filesize( $path );
 		if ( $offset > $have ) {
-			throw new ApiException( 'estm_offset', __( 'A piece is missing.', 'estasoft-migrate' ), 409, array( 'received' => $have ) );
+			throw new ApiException( 'estm_offset', __( 'A piece is missing.', 'estasoft-migration-database-sanitizer' ), 409, array( 'received' => $have ) );
 		}
 		if ( $offset + strlen( $bytes ) <= $have ) {
 			return array( 'received' => $have );
 		}
 		$fh = fopen( $path, 'cb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
 		if ( ! $fh ) {
-			throw new ApiException( 'estm_no_space', __( 'The package could not be written.', 'estasoft-migrate' ), 507 );
+			throw new ApiException( 'estm_no_space', __( 'The package could not be written.', 'estasoft-migration-database-sanitizer' ), 507 );
 		}
 		fseek( $fh, $offset );
 		$written = fwrite( $fh, $bytes ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
 		fclose( $fh ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		if ( strlen( $bytes ) !== $written ) {
-			throw new ApiException( 'estm_no_space', __( 'The server ran out of disk space while receiving the package.', 'estasoft-migrate' ), 507 );
+			throw new ApiException( 'estm_no_space', __( 'The server ran out of disk space while receiving the package.', 'estasoft-migration-database-sanitizer' ), 507 );
 		}
 		clearstatcache( true, $path );
 		return array( 'received' => (int) filesize( $path ) );
@@ -1046,7 +1046,7 @@ final class Api {
 		clearstatcache( true, $path );
 		$have = (int) filesize( $path );
 		if ( $have !== (int) $size ) {
-			throw new ApiException( 'estm_offset', __( 'The file arrived incomplete. Try the upload again.', 'estasoft-migrate' ), 409, array( 'received' => $have ) );
+			throw new ApiException( 'estm_offset', __( 'The file arrived incomplete. Try the upload again.', 'estasoft-migration-database-sanitizer' ), 409, array( 'received' => $have ) );
 		}
 		try {
 			$header = PackageReader::read_header( $path );
@@ -1124,11 +1124,11 @@ final class Api {
 	private function upload_path( $id ) {
 		$id = (string) $id;
 		if ( ! Storage::is_valid_id( $id ) || ! is_file( $this->ctx->storage->package_path( $id ) ) ) {
-			throw new ApiException( 'estm_not_found', __( 'That upload no longer exists. Start it again.', 'estasoft-migrate' ), 404 );
+			throw new ApiException( 'estm_not_found', __( 'That upload no longer exists. Start it again.', 'estasoft-migration-database-sanitizer' ), 404 );
 		}
 		$meta = $this->ctx->storage->read_meta( $id );
 		if ( ! is_array( $meta ) || 'receiving' !== ( $meta['status'] ?? '' ) || 'upload' !== ( $meta['kind'] ?? '' ) ) {
-			throw new ApiException( 'estm_state', __( 'That package is not being uploaded.', 'estasoft-migrate' ), 409 );
+			throw new ApiException( 'estm_state', __( 'That package is not being uploaded.', 'estasoft-migration-database-sanitizer' ), 409 );
 		}
 		return $this->ctx->storage->package_path( $id );
 	}
@@ -1142,11 +1142,11 @@ final class Api {
 	public function download_info( $id ) {
 		$id = (string) $id;
 		if ( ! Storage::is_valid_id( $id ) || ! is_file( $this->ctx->storage->package_path( $id ) ) ) {
-			throw new ApiException( 'estm_not_found', __( 'That package no longer exists.', 'estasoft-migrate' ), 404 );
+			throw new ApiException( 'estm_not_found', __( 'That package no longer exists.', 'estasoft-migration-database-sanitizer' ), 404 );
 		}
 		$meta = (array) $this->ctx->storage->read_meta( $id );
 		if ( 'complete' !== ( $meta['status'] ?? 'complete' ) ) {
-			throw new ApiException( 'estm_state', __( 'That package is not finished yet.', 'estasoft-migrate' ), 409 );
+			throw new ApiException( 'estm_state', __( 'That package is not finished yet.', 'estasoft-migration-database-sanitizer' ), 409 );
 		}
 		return array(
 			'path' => $this->ctx->storage->package_path( $id ),
@@ -1207,7 +1207,7 @@ final class Api {
 					'estm_invalid',
 					sprintf(
 						/* translators: %s: the entries that are not IP addresses */
-						__( 'None of these is a valid IP address or range: %s. Use an address like 203.0.113.7 or a range like 203.0.113.0/24, one per line, or leave the list empty to accept any address.', 'estasoft-migrate' ),
+						__( 'None of these is a valid IP address or range: %s. Use an address like 203.0.113.7 or a range like 203.0.113.0/24, one per line, or leave the list empty to accept any address.', 'estasoft-migration-database-sanitizer' ),
 						implode( ', ', array_slice( $given, 0, 5 ) )
 					),
 					400
@@ -1250,10 +1250,10 @@ final class Api {
 		$url = rtrim( trim( (string) $url ), '/' );
 		$key = trim( (string) $key );
 		if ( ! preg_match( '#^https?://[^\s/]+(?:/[^\s?\#]*)?$#i', $url ) ) {
-			throw new ApiException( 'estm_invalid', __( 'Enter the full address of the other site, for example https://example.com', 'estasoft-migrate' ), 400 );
+			throw new ApiException( 'estm_invalid', __( 'Enter the full address of the other site, for example https://example.com', 'estasoft-migration-database-sanitizer' ), 400 );
 		}
 		if ( 0 !== strpos( $key, 'esm_' ) ) {
-			throw new ApiException( 'estm_invalid', __( 'That does not look like a connection key. Keys start with esm_.', 'estasoft-migrate' ), 400 );
+			throw new ApiException( 'estm_invalid', __( 'That does not look like a connection key. Keys start with esm_.', 'estasoft-migration-database-sanitizer' ), 400 );
 		}
 		$started = microtime( true );
 		try {
@@ -1402,7 +1402,7 @@ final class Api {
 	public function save_sanitizer( array $in ) {
 		$profile = (string) ( $in['profile'] ?? 'staging' );
 		if ( ! isset( Profiles::all()[ $profile ] ) ) {
-			throw new ApiException( 'estm_invalid', __( 'Choose one of the sanitizer profiles.', 'estasoft-migrate' ), 400 );
+			throw new ApiException( 'estm_invalid', __( 'Choose one of the sanitizer profiles.', 'estasoft-migration-database-sanitizer' ), 400 );
 		}
 		return array( 'saved' => $this->settings->save_sanitizer( $in ) );
 	}
@@ -1416,7 +1416,7 @@ final class Api {
 	public function sanitizer_preview( array $in ) {
 		$profile = (string) ( $in['profile'] ?? 'staging' );
 		if ( ! isset( Profiles::all()[ $profile ] ) ) {
-			throw new ApiException( 'estm_invalid', __( 'Choose one of the sanitizer profiles.', 'estasoft-migrate' ), 400 );
+			throw new ApiException( 'estm_invalid', __( 'Choose one of the sanitizer profiles.', 'estasoft-migration-database-sanitizer' ), 400 );
 		}
 		$config = Profiles::build_config( $profile, (array) ( $in['overrides'] ?? array() ) );
 		$db     = $this->ctx->db;

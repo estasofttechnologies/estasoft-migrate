@@ -98,10 +98,10 @@ class Client {
 	 */
 	public function call( $action, array $payload = array(), $timeout = 60, $tries = 3 ) {
 		if ( '' === $this->base || ! preg_match( '#^https?://#i', $this->base ) ) {
-			throw new RemoteException( 'estm_address', __( 'Enter the full address of the other site, starting with https://', 'estasoft-migrate' ) );
+			throw new RemoteException( 'estm_address', __( 'Enter the full address of the other site, starting with https://', 'estasoft-migration-database-sanitizer' ) );
 		}
 		if ( '' === $this->key ) {
-			throw new RemoteException( 'estm_bad_key', __( 'Enter the connection key from the other site.', 'estasoft-migrate' ) );
+			throw new RemoteException( 'estm_bad_key', __( 'Enter the connection key from the other site.', 'estasoft-migration-database-sanitizer' ) );
 		}
 
 		$body  = (string) wp_json_encode( (object) $payload, JSON_UNESCAPED_SLASHES );
@@ -160,7 +160,7 @@ class Client {
 		if ( ! Signer::verify_response( $this->key, $headers['X-Estm-Nonce'], $text, $sig ) ) {
 			throw new RemoteException(
 				'estm_bad_response',
-				__( 'The answer was not signed with your connection key. It may not come from the site you meant, or something between the two sites changed it.', 'estasoft-migrate' ),
+				__( 'The answer was not signed with your connection key. It may not come from the site you meant, or something between the two sites changed it.', 'estasoft-migration-database-sanitizer' ),
 				$status
 			);
 		}
@@ -178,11 +178,11 @@ class Client {
 	private function message_for( $code, array $data ) {
 		switch ( $code ) {
 			case 'estm_off':
-				return __( 'The other site is not accepting migrations. It may never have been switched on, or it switched itself off after a while without a migration. On that site open Estasoft Migration → Settings and turn on “Accept incoming migrations”.', 'estasoft-migrate' );
+				return __( 'The other site is not accepting migrations. It may never have been switched on, or it switched itself off after a while without a migration. On that site open Estasoft Migration → Settings and turn on “Accept incoming migrations”.', 'estasoft-migration-database-sanitizer' );
 			case 'estm_bad_key':
-				return __( 'The other site did not accept the connection key. Copy the key again from its Settings screen.', 'estasoft-migrate' );
+				return __( 'The other site did not accept the connection key. Copy the key again from its Settings screen.', 'estasoft-migration-database-sanitizer' );
 			case 'estm_bad_sig':
-				return __( 'The other site could not confirm the request. Check the connection key, and that nothing between the two sites changes the data.', 'estasoft-migrate' );
+				return __( 'The other site could not confirm the request. Check the connection key, and that nothing between the two sites changes the data.', 'estasoft-migration-database-sanitizer' );
 			case 'estm_clock':
 				$skew = isset( $data['data']['server_time'] ) ? (int) round( abs( time() - (int) $data['data']['server_time'] ) / 60 ) : 0;
 				return sprintf(
@@ -191,12 +191,12 @@ class Client {
 						'The clocks of the two sites differ by about %d minute. Correct the time on one of them and try again.',
 						'The clocks of the two sites differ by about %d minutes. Correct the time on one of them and try again.',
 						max( 1, $skew ),
-						'estasoft-migrate'
+						'estasoft-migration-database-sanitizer'
 					),
 					max( 1, $skew )
 				);
 		}
-		return (string) ( $data['message'] ?? __( 'The other site reported an error.', 'estasoft-migrate' ) );
+		return (string) ( $data['message'] ?? __( 'The other site reported an error.', 'estasoft-migration-database-sanitizer' ) );
 	}
 
 	/**
@@ -214,22 +214,22 @@ class Client {
 				'' !== $to
 					? sprintf(
 						/* translators: %s: address the other site redirects to */
-						__( 'The address redirects to %s. Use that address instead (check http or https, and with or without www).', 'estasoft-migrate' ),
+						__( 'The address redirects to %s. Use that address instead (check http or https, and with or without www).', 'estasoft-migration-database-sanitizer' ),
 						preg_replace( '#[?&]estm_remote=.*$#', '', $to )
 					)
-					: __( 'The address redirects somewhere else. Use the final address of the other site (check http or https, and with or without www).', 'estasoft-migrate' ),
+					: __( 'The address redirects somewhere else. Use the final address of the other site (check http or https, and with or without www).', 'estasoft-migration-database-sanitizer' ),
 				$status
 			);
 		}
 		if ( 429 === $status || $status >= 500 ) {
-			return new RemoteException( 'estm_server_error', __( 'The other site had a temporary problem. Trying again in a moment usually works.', 'estasoft-migrate' ), $status, array(), true );
+			return new RemoteException( 'estm_server_error', __( 'The other site had a temporary problem. Trying again in a moment usually works.', 'estasoft-migration-database-sanitizer' ), $status, array(), true );
 		}
 		if ( 401 === $status || 403 === $status ) {
-			return new RemoteException( 'estm_blocked', __( 'The other site or its firewall refused the request. Ask the host to allow requests to the site address from this server, or allow them in the firewall plugin.', 'estasoft-migrate' ), $status );
+			return new RemoteException( 'estm_blocked', __( 'The other site or its firewall refused the request. Ask the host to allow requests to the site address from this server, or allow them in the firewall plugin.', 'estasoft-migration-database-sanitizer' ), $status );
 		}
 		return new RemoteException(
 			'estm_not_found',
-			__( 'Estasoft Migration did not answer at this address. Check the address, and make sure the plugin is installed and active on the other site.', 'estasoft-migrate' ),
+			__( 'Estasoft Migration did not answer at this address. Check the address, and make sure the plugin is installed and active on the other site.', 'estasoft-migration-database-sanitizer' ),
 			$status
 		);
 	}

@@ -60,48 +60,48 @@ class Admin {
 	public static function screens() {
 		return array(
 			'overview'  => array(
-				'title' => __( 'Overview', 'estasoft-migrate' ),
-				'menu'  => __( 'Overview', 'estasoft-migrate' ),
+				'title' => __( 'Overview', 'estasoft-migration-database-sanitizer' ),
+				'menu'  => __( 'Overview', 'estasoft-migration-database-sanitizer' ),
 				'slug'  => self::SLUG,
 			),
 			'new'       => array(
-				'title' => __( 'New migration', 'estasoft-migrate' ),
-				'menu'  => __( 'New migration', 'estasoft-migrate' ),
+				'title' => __( 'New migration', 'estasoft-migration-database-sanitizer' ),
+				'menu'  => __( 'New migration', 'estasoft-migration-database-sanitizer' ),
 				'slug'  => self::SLUG . '-new',
 			),
 			'preflight' => array(
-				'title' => __( 'Pre-flight check', 'estasoft-migrate' ),
+				'title' => __( 'Pre-flight check', 'estasoft-migration-database-sanitizer' ),
 				'menu'  => '',
 				'slug'  => self::SLUG . '-preflight',
 			),
 			'progress'  => array(
-				'title' => __( 'Progress', 'estasoft-migrate' ),
+				'title' => __( 'Progress', 'estasoft-migration-database-sanitizer' ),
 				'menu'  => '',
 				'slug'  => self::SLUG . '-progress',
 			),
 			'sanitizer' => array(
-				'title' => __( 'Sanitizer', 'estasoft-migrate' ),
-				'menu'  => __( 'Sanitizer', 'estasoft-migrate' ),
+				'title' => __( 'Sanitizer', 'estasoft-migration-database-sanitizer' ),
+				'menu'  => __( 'Sanitizer', 'estasoft-migration-database-sanitizer' ),
 				'slug'  => self::SLUG . '-sanitizer',
 			),
 			'replace'   => array(
-				'title' => __( 'Search & replace', 'estasoft-migrate' ),
-				'menu'  => __( 'Search & replace', 'estasoft-migrate' ),
+				'title' => __( 'Search & replace', 'estasoft-migration-database-sanitizer' ),
+				'menu'  => __( 'Search & replace', 'estasoft-migration-database-sanitizer' ),
 				'slug'  => self::SLUG . '-search-replace',
 			),
 			'packages'  => array(
-				'title' => __( 'Packages & snapshots', 'estasoft-migrate' ),
-				'menu'  => __( 'Packages', 'estasoft-migrate' ),
+				'title' => __( 'Packages & snapshots', 'estasoft-migration-database-sanitizer' ),
+				'menu'  => __( 'Packages', 'estasoft-migration-database-sanitizer' ),
 				'slug'  => self::SLUG . '-packages',
 			),
 			'logs'      => array(
-				'title' => __( 'Logs', 'estasoft-migrate' ),
-				'menu'  => __( 'Logs', 'estasoft-migrate' ),
+				'title' => __( 'Logs', 'estasoft-migration-database-sanitizer' ),
+				'menu'  => __( 'Logs', 'estasoft-migration-database-sanitizer' ),
 				'slug'  => self::SLUG . '-logs',
 			),
 			'settings'  => array(
-				'title' => __( 'Settings', 'estasoft-migrate' ),
-				'menu'  => __( 'Settings', 'estasoft-migrate' ),
+				'title' => __( 'Settings', 'estasoft-migration-database-sanitizer' ),
+				'menu'  => __( 'Settings', 'estasoft-migration-database-sanitizer' ),
 				'slug'  => self::SLUG . '-settings',
 			),
 		);
@@ -144,8 +144,8 @@ class Admin {
 		$first   = $screens['overview'];
 
 		add_menu_page(
-			$first['title'] . ' · ' . __( 'Estasoft Migrate', 'estasoft-migrate' ),
-			__( 'Estasoft Migrate', 'estasoft-migrate' ),
+			$first['title'] . ' · ' . __( 'Estasoft Migrate', 'estasoft-migration-database-sanitizer' ),
+			__( 'Estasoft Migrate', 'estasoft-migration-database-sanitizer' ),
 			$cap,
 			self::SLUG,
 			array( $this, 'render' ),
@@ -155,7 +155,7 @@ class Admin {
 		foreach ( $screens as $screen ) {
 			add_submenu_page(
 				self::SLUG,
-				$screen['title'] . ' · ' . __( 'Estasoft Migrate', 'estasoft-migrate' ),
+				$screen['title'] . ' · ' . __( 'Estasoft Migrate', 'estasoft-migration-database-sanitizer' ),
 				'' === $screen['menu'] ? $screen['title'] : $screen['menu'],
 				$cap,
 				$screen['slug'],
@@ -225,8 +225,8 @@ class Admin {
 		wp_enqueue_script( 'estasoft-migrate', $base . 'js/core.js', array( 'wp-i18n' ), $ver, true );
 		wp_enqueue_script( 'estasoft-migrate-screen', $base . 'js/screens/' . $screen . '.js', array( 'estasoft-migrate' ), $ver, true );
 		if ( function_exists( 'wp_set_script_translations' ) ) {
-			wp_set_script_translations( 'estasoft-migrate', 'estasoft-migrate', ESTASOFT_MIGRATE_DIR . 'languages' );
-			wp_set_script_translations( 'estasoft-migrate-screen', 'estasoft-migrate', ESTASOFT_MIGRATE_DIR . 'languages' );
+			wp_set_script_translations( 'estasoft-migrate', 'estasoft-migration-database-sanitizer', ESTASOFT_MIGRATE_DIR . 'languages' );
+			wp_set_script_translations( 'estasoft-migrate-screen', 'estasoft-migration-database-sanitizer', ESTASOFT_MIGRATE_DIR . 'languages' );
 		}
 		wp_add_inline_script( 'estasoft-migrate', 'window.ESTM = ' . wp_json_encode( $this->boot_data( $screen ) ) . ';', 'before' );
 	}
@@ -281,7 +281,7 @@ class Admin {
 			'estasoft_migrate_links',
 			array(
 				'docs'    => 'https://estasoft.com/',
-				'support' => 'https://wordpress.org/support/plugin/estasoft-migrate/',
+				'support' => 'https://wordpress.org/support/plugin/estasoft-migration-database-sanitizer/',
 				'source'  => '',
 			)
 		);
@@ -294,7 +294,7 @@ class Admin {
 	 */
 	public function render() {
 		if ( ! current_user_can( Router::capability() ) ) {
-			wp_die( esc_html__( 'You do not have permission to use Estasoft Migrate.', 'estasoft-migrate' ), 403 );
+			wp_die( esc_html__( 'You do not have permission to use Estasoft Migrate.', 'estasoft-migration-database-sanitizer' ), 403 );
 		}
 		$id      = $this->current_screen_id();
 		$screens = self::screens();
@@ -313,8 +313,8 @@ class Admin {
 		$screens = self::screens();
 		array_unshift(
 			$links,
-			'<a href="' . esc_url( admin_url( 'admin.php?page=' . $screens['settings']['slug'] ) ) . '">' . esc_html__( 'Settings', 'estasoft-migrate' ) . '</a>',
-			'<a href="' . esc_url( admin_url( 'admin.php?page=' . self::SLUG ) ) . '">' . esc_html__( 'Open', 'estasoft-migrate' ) . '</a>'
+			'<a href="' . esc_url( admin_url( 'admin.php?page=' . $screens['settings']['slug'] ) ) . '">' . esc_html__( 'Settings', 'estasoft-migration-database-sanitizer' ) . '</a>',
+			'<a href="' . esc_url( admin_url( 'admin.php?page=' . self::SLUG ) ) . '">' . esc_html__( 'Open', 'estasoft-migration-database-sanitizer' ) . '</a>'
 		);
 		return $links;
 	}

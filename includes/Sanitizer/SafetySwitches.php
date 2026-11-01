@@ -75,9 +75,9 @@ final class SafetySwitches {
 		}
 		printf(
 			'<div class="notice notice-warning"><p>%s <a href="%s">%s</a></p></div>',
-			esc_html__( 'Outgoing email is blocked on this site by Estasoft Migration & Database Sanitizer, so no real person receives messages from this copy.', 'estasoft-migrate' ),
+			esc_html__( 'Outgoing email is blocked on this site by Estasoft Migration & Database Sanitizer, so no real person receives messages from this copy.', 'estasoft-migration-database-sanitizer' ),
 			esc_url( admin_url( 'admin.php?page=estasoft-migrate-settings' ) ),
-			esc_html__( 'Change this', 'estasoft-migrate' )
+			esc_html__( 'Change this', 'estasoft-migration-database-sanitizer' )
 		);
 	}
 
@@ -98,11 +98,11 @@ final class SafetySwitches {
 
 		if ( ! empty( $flags['mail'] ) ) {
 			self::set_option( $db, $table, self::MAIL_OPTION, '1' );
-			$done[] = __( 'Outgoing email is blocked.', 'estasoft-migrate' );
+			$done[] = __( 'Outgoing email is blocked.', 'estasoft-migration-database-sanitizer' );
 		}
 		if ( ! empty( $flags['seo'] ) ) {
 			self::set_option( $db, $table, 'blog_public', '0' );
-			$done[] = __( 'Search engines are asked not to index the site.', 'estasoft-migrate' );
+			$done[] = __( 'Search engines are asked not to index the site.', 'estasoft-migration-database-sanitizer' );
 		}
 
 		$folders = array();
@@ -120,7 +120,7 @@ final class SafetySwitches {
 					self::set_option( $db, $table, 'active_plugins', $new );
 					foreach ( $removed as $file ) {
 						/* translators: %s: plugin file */
-						$done[] = sprintf( __( 'Deactivated %s.', 'estasoft-migrate' ), $file );
+						$done[] = sprintf( __( 'Deactivated %s.', 'estasoft-migration-database-sanitizer' ), $file );
 					}
 				}
 			}

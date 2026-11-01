@@ -163,7 +163,7 @@ class JobRunner {
 				$task->prepare( $job->params, $job->state, $this->ctx );
 				$job->status      = Job::RUNNING;
 				$job->started_gmt = Util::now();
-				$job->message     = __( 'Started.', 'estasoft-migrate' );
+				$job->message     = __( 'Started.', 'estasoft-migration-database-sanitizer' );
 				$this->ctx->log( 'info', 'Job started.' );
 				$this->store->save( $job );
 			}
@@ -236,7 +236,7 @@ class JobRunner {
 			$job->state['_failures'] = $failures;
 			$job->message            = sprintf(
 				/* translators: %d: attempt number */
-				__( 'A temporary problem interrupted the job. Trying again (attempt %d).', 'estasoft-migrate' ),
+				__( 'A temporary problem interrupted the job. Trying again (attempt %d).', 'estasoft-migration-database-sanitizer' ),
 				$failures + 1
 			);
 			$this->ctx->job = $job;
@@ -251,18 +251,18 @@ class JobRunner {
 			$details = $e->details;
 		} elseif ( $e instanceof PackageException ) {
 			$details = array(
-				'untouched' => __( 'Your site was not changed.', 'estasoft-migrate' ),
-				'advice'    => __( 'Check the package, then retry.', 'estasoft-migrate' ),
+				'untouched' => __( 'Your site was not changed.', 'estasoft-migration-database-sanitizer' ),
+				'advice'    => __( 'Check the package, then retry.', 'estasoft-migration-database-sanitizer' ),
 			);
 		} elseif ( $e instanceof DatabaseException ) {
 			$details = array(
-				'untouched' => __( 'Rows already handled are safe. The job stopped at the last saved position.', 'estasoft-migrate' ),
-				'advice'    => __( 'Retry the job. If it fails again, check the database error in the log.', 'estasoft-migrate' ),
+				'untouched' => __( 'Rows already handled are safe. The job stopped at the last saved position.', 'estasoft-migration-database-sanitizer' ),
+				'advice'    => __( 'Retry the job. If it fails again, check the database error in the log.', 'estasoft-migration-database-sanitizer' ),
 			);
 		} else {
 			$message = sprintf(
 				/* translators: %s: error message */
-				__( 'Unexpected error: %s', 'estasoft-migrate' ),
+				__( 'Unexpected error: %s', 'estasoft-migration-database-sanitizer' ),
 				$e->getMessage()
 			);
 		}
@@ -358,7 +358,7 @@ class JobRunner {
 		$job->state['_retried'] = $retried;
 		$job->status            = $job->started_gmt ? Job::RUNNING : Job::QUEUED;
 		$job->finished_gmt      = null;
-		$job->message           = __( 'Retrying from the last saved position.', 'estasoft-migrate' );
+		$job->message           = __( 'Retrying from the last saved position.', 'estasoft-migration-database-sanitizer' );
 		$this->store->save( $job );
 		$this->store->unlock( $job_id );
 		$this->ctx->logger->info( 'Retry requested. The job continues from its last saved position.', $job_id );
@@ -382,7 +382,7 @@ class JobRunner {
 			return false;
 		}
 		// Mark it first, without touching the lock: a slice that is running looks at the status between batches and stops.
-		$this->store->set_status( $job_id, Job::CANCELLED, __( 'Cancelled.', 'estasoft-migrate' ), false );
+		$this->store->set_status( $job_id, Job::CANCELLED, __( 'Cancelled.', 'estasoft-migration-database-sanitizer' ), false );
 
 		// If no runner is working on it right now, clean up here. Otherwise the running slice does it.
 		if ( $this->store->lock( $job_id, 60 ) ) {
@@ -504,10 +504,10 @@ class JobRunner {
 		$this->ctx->log( 'warning', 'The previous step did not finish. The server probably ran out of memory or time, so smaller batches are used now.', array( 'attempt' => $crashes ) );
 		if ( $crashes >= self::MAX_INTERRUPTED_SLICES ) {
 			throw new TaskException(
-				__( 'The server stopped this job several times in a row, most likely because it ran out of memory or time.', 'estasoft-migrate' ),
+				__( 'The server stopped this job several times in a row, most likely because it ran out of memory or time.', 'estasoft-migration-database-sanitizer' ),
 				array(
-					'untouched' => __( 'Rows already handled are safe. The job stopped at the last saved position.', 'estasoft-migrate' ),
-					'advice'    => __( 'Raise the PHP memory limit or lower the largest batch in Settings, then retry.', 'estasoft-migrate' ),
+					'untouched' => __( 'Rows already handled are safe. The job stopped at the last saved position.', 'estasoft-migration-database-sanitizer' ),
+					'advice'    => __( 'Raise the PHP memory limit or lower the largest batch in Settings, then retry.', 'estasoft-migration-database-sanitizer' ),
 				),
 				false
 			);

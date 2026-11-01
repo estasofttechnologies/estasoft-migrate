@@ -52,7 +52,7 @@ Delta sync (sending only the chunks that changed). The plugin already stores a c
 
 == Installation ==
 
-1. Upload the `estasoft-migrate` folder to `/wp-content/plugins/`, or install the zip from **Plugins > Add New > Upload Plugin**.
+1. Upload the `estasoft-migration-database-sanitizer` folder to `/wp-content/plugins/`, or install the zip from **Plugins > Add New > Upload Plugin**.
 2. Activate the plugin.
 3. Open **Estasoft Migrate** in the admin menu. The Overview shows an environment check.
 

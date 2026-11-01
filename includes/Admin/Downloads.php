@@ -41,10 +41,10 @@ class Downloads {
 	 */
 	private function authorize() {
 		if ( ! current_user_can( Router::capability() ) ) {
-			wp_die( esc_html__( 'You do not have permission to download this.', 'estasoft-migrate' ), 403 );
+			wp_die( esc_html__( 'You do not have permission to download this.', 'estasoft-migration-database-sanitizer' ), 403 );
 		}
 		if ( ! isset( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ) ), 'estm_download' ) ) {
-			wp_die( esc_html__( 'This download link has expired. Go back, reload the page and try again.', 'estasoft-migrate' ), 403 );
+			wp_die( esc_html__( 'This download link has expired. Go back, reload the page and try again.', 'estasoft-migration-database-sanitizer' ), 403 );
 		}
 	}
 
@@ -59,7 +59,7 @@ class Downloads {
 		try {
 			$info = $this->plugin->api()->download_info( $id );
 		} catch ( ApiException $e ) {
-			wp_die( esc_html( $e->getMessage() ), esc_html__( 'Download not available', 'estasoft-migrate' ), array( 'response' => (int) $e->status ) );
+			wp_die( esc_html( $e->getMessage() ), esc_html__( 'Download not available', 'estasoft-migration-database-sanitizer' ), array( 'response' => (int) $e->status ) );
 		}
 		self::stream_file( $info['path'], $info['name'], 'application/octet-stream' );
 	}

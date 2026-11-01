@@ -61,10 +61,10 @@ class ImportTask extends Task {
 		$path = $ctx->storage->package_path( $id );
 		if ( '' === $id || ! is_file( $path ) ) {
 			throw new TaskException(
-				__( 'The package file could not be found.', 'estasoft-migrate' ),
+				__( 'The package file could not be found.', 'estasoft-migration-database-sanitizer' ),
 				array(
-					'untouched' => __( 'Your site was not changed.', 'estasoft-migrate' ),
-					'advice'    => __( 'Upload the package again or choose another one on the Packages screen.', 'estasoft-migrate' ),
+					'untouched' => __( 'Your site was not changed.', 'estasoft-migration-database-sanitizer' ),
+					'advice'    => __( 'Upload the package again or choose another one on the Packages screen.', 'estasoft-migration-database-sanitizer' ),
 				)
 			);
 		}
@@ -72,7 +72,7 @@ class ImportTask extends Task {
 		$reader = $this->open( $params, $ctx, $path );
 		$first  = $this->read_frame( $reader );
 		if ( ! $first || 'M' !== $first['type'] ) {
-			throw new TaskException( __( 'This file does not start with a package manifest, so it cannot be imported.', 'estasoft-migrate' ), array( 'untouched' => __( 'Your site was not changed.', 'estasoft-migrate' ) ) );
+			throw new TaskException( __( 'This file does not start with a package manifest, so it cannot be imported.', 'estasoft-migration-database-sanitizer' ), array( 'untouched' => __( 'Your site was not changed.', 'estasoft-migration-database-sanitizer' ) ) );
 		}
 		$manifest = $first['data'];
 		$offset   = $first['end'];
@@ -82,8 +82,8 @@ class ImportTask extends Task {
 		$source = (array) ( $manifest['source'] ?? array() );
 		if ( ! empty( $source['multisite'] ) ) {
 			throw new TaskException(
-				__( 'This package comes from a WordPress multisite network. Multisite is not supported yet.', 'estasoft-migrate' ),
-				array( 'untouched' => __( 'Your site was not changed.', 'estasoft-migrate' ) )
+				__( 'This package comes from a WordPress multisite network. Multisite is not supported yet.', 'estasoft-migration-database-sanitizer' ),
+				array( 'untouched' => __( 'Your site was not changed.', 'estasoft-migration-database-sanitizer' ) )
 			);
 		}
 
@@ -117,7 +117,7 @@ class ImportTask extends Task {
 			);
 		}
 		if ( ! $tables ) {
-			throw new TaskException( __( 'The package has no tables to import.', 'estasoft-migrate' ), array( 'untouched' => __( 'Your site was not changed.', 'estasoft-migrate' ) ) );
+			throw new TaskException( __( 'The package has no tables to import.', 'estasoft-migration-database-sanitizer' ), array( 'untouched' => __( 'Your site was not changed.', 'estasoft-migration-database-sanitizer' ) ) );
 		}
 
 		$pairs = array();
@@ -164,13 +164,13 @@ class ImportTask extends Task {
 
 		$origin = (string) ( $source['url'] ?? '' );
 		if ( '' === $origin ) {
-			$origin = __( 'an unknown site', 'estasoft-migrate' );
+			$origin = __( 'an unknown site', 'estasoft-migration-database-sanitizer' );
 		}
 		$ctx->log(
 			'info',
 			sprintf(
 				/* translators: 1: number of tables, 2: package id, 3: source address */
-				_n( 'Importing %1$d table from package %2$s (made on %3$s).', 'Importing %1$d tables from package %2$s (made on %3$s).', count( $tables ), 'estasoft-migrate' ),
+				_n( 'Importing %1$d table from package %2$s (made on %3$s).', 'Importing %1$d tables from package %2$s (made on %3$s).', count( $tables ), 'estasoft-migration-database-sanitizer' ),
 				count( $tables ),
 				$id,
 				$origin
@@ -251,18 +251,18 @@ class ImportTask extends Task {
 	 * @return TaskException
 	 */
 	private function package_error( PackageException $e ) {
-		$advice = __( 'Check the package, then try again.', 'estasoft-migrate' );
+		$advice = __( 'Check the package, then try again.', 'estasoft-migration-database-sanitizer' );
 		if ( PackageException::BAD_PASSPHRASE === $e->reason || PackageException::NEEDS_KEY === $e->reason ) {
-			$advice = __( 'Start the import again and enter the password used when the package was made.', 'estasoft-migrate' );
+			$advice = __( 'Start the import again and enter the password used when the package was made.', 'estasoft-migration-database-sanitizer' );
 		} elseif ( PackageException::TRUNCATED === $e->reason ) {
-			$advice = __( 'Upload or download the package again. It looks incomplete.', 'estasoft-migrate' );
+			$advice = __( 'Upload or download the package again. It looks incomplete.', 'estasoft-migration-database-sanitizer' );
 		} elseif ( PackageException::CORRUPT === $e->reason ) {
-			$advice = __( 'The file was damaged in transit. Upload or download it again.', 'estasoft-migrate' );
+			$advice = __( 'The file was damaged in transit. Upload or download it again.', 'estasoft-migration-database-sanitizer' );
 		}
 		return new TaskException(
 			$e->getMessage(),
 			array(
-				'untouched' => __( 'Your site was not changed.', 'estasoft-migrate' ),
+				'untouched' => __( 'Your site was not changed.', 'estasoft-migration-database-sanitizer' ),
 				'advice'    => $advice,
 			),
 			false,
@@ -330,10 +330,10 @@ class ImportTask extends Task {
 				if ( null === $f ) {
 					if ( ! $complete ) {
 						throw new TaskException(
-							__( 'The package is incomplete: its closing block is missing.', 'estasoft-migrate' ),
+							__( 'The package is incomplete: its closing block is missing.', 'estasoft-migration-database-sanitizer' ),
 							array(
-								'untouched' => __( 'Your site was not changed.', 'estasoft-migrate' ),
-								'advice'    => __( 'Upload or download the package again.', 'estasoft-migrate' ),
+								'untouched' => __( 'Your site was not changed.', 'estasoft-migration-database-sanitizer' ),
+								'advice'    => __( 'Upload or download the package again.', 'estasoft-migration-database-sanitizer' ),
 							)
 						);
 					}
@@ -344,7 +344,7 @@ class ImportTask extends Task {
 				if ( $f['seq'] !== $seq ) {
 					throw new TaskException(
 						sprintf( 'A block is missing from the package (expected %1$d, found %2$d).', $seq, $f['seq'] ),
-						array( 'untouched' => __( 'Your site was not changed.', 'estasoft-migrate' ) )
+						array( 'untouched' => __( 'Your site was not changed.', 'estasoft-migration-database-sanitizer' ) )
 					);
 				}
 				++$seq;
@@ -446,7 +446,7 @@ class ImportTask extends Task {
 				}
 				$f = $this->read_frame( $reader );
 				if ( null === $f ) {
-					throw new TaskException( __( 'The package ended before its closing block.', 'estasoft-migrate' ), array( 'untouched' => __( 'Your site was not changed.', 'estasoft-migrate' ) ) );
+					throw new TaskException( __( 'The package ended before its closing block.', 'estasoft-migration-database-sanitizer' ), array( 'untouched' => __( 'Your site was not changed.', 'estasoft-migration-database-sanitizer' ) ) );
 				}
 				$data = $f['data'];
 
@@ -551,12 +551,12 @@ class ImportTask extends Task {
 			throw new TaskException(
 				sprintf(
 					/* translators: %s: table name */
-					__( 'The definition of the table %s in this package is not a plain table definition, so it was not run.', 'estasoft-migrate' ),
+					__( 'The definition of the table %s in this package is not a plain table definition, so it was not run.', 'estasoft-migration-database-sanitizer' ),
 					$entry['target']
 				),
 				array(
-					'untouched' => __( 'Your site was not changed.', 'estasoft-migrate' ),
-					'advice'    => __( 'Only import packages you made yourself or got from someone you trust. This package may have been changed after it was made.', 'estasoft-migrate' ),
+					'untouched' => __( 'Your site was not changed.', 'estasoft-migration-database-sanitizer' ),
+					'advice'    => __( 'Only import packages you made yourself or got from someone you trust. This package may have been changed after it was made.', 'estasoft-migration-database-sanitizer' ),
 					'table'     => $entry['target'],
 				)
 			);
@@ -567,13 +567,13 @@ class ImportTask extends Task {
 			throw new TaskException(
 				sprintf(
 					/* translators: 1: table name, 2: database message */
-					__( 'The table %1$s could not be created on this server: %2$s', 'estasoft-migrate' ),
+					__( 'The table %1$s could not be created on this server: %2$s', 'estasoft-migration-database-sanitizer' ),
 					$entry['target'],
 					$e->getMessage()
 				),
 				array(
-					'untouched' => __( 'Your site was not changed. Only a temporary copy was affected.', 'estasoft-migrate' ),
-					'advice'    => __( 'The database versions may differ. Try again with a collation chosen in the import options.', 'estasoft-migrate' ),
+					'untouched' => __( 'Your site was not changed. Only a temporary copy was affected.', 'estasoft-migration-database-sanitizer' ),
+					'advice'    => __( 'The database versions may differ. Try again with a collation chosen in the import options.', 'estasoft-migration-database-sanitizer' ),
 					'table'     => $entry['target'],
 				),
 				false,
@@ -622,13 +622,13 @@ class ImportTask extends Task {
 			throw new TaskException(
 				sprintf(
 					/* translators: 1: table name, 2: database message */
-					__( 'A batch of rows for %1$s could not be imported: %2$s', 'estasoft-migrate' ),
+					__( 'A batch of rows for %1$s could not be imported: %2$s', 'estasoft-migration-database-sanitizer' ),
 					$entry['target'],
 					$e->getMessage()
 				),
 				array(
-					'untouched' => __( 'Your live site was not changed. Rows already staged are kept.', 'estasoft-migrate' ),
-					'advice'    => __( 'Retry the failed batch. If it fails again, raise max_allowed_packet or check the database error in the log.', 'estasoft-migrate' ),
+					'untouched' => __( 'Your live site was not changed. Rows already staged are kept.', 'estasoft-migration-database-sanitizer' ),
+					'advice'    => __( 'Retry the failed batch. If it fails again, raise max_allowed_packet or check the database error in the log.', 'estasoft-migration-database-sanitizer' ),
 					'table'     => $entry['target'],
 				),
 				$e instanceof \Estasoft\Migrate\Db\DatabaseException && $e->is_transient(),
@@ -670,8 +670,8 @@ class ImportTask extends Task {
 				throw new TaskException(
 					sprintf( 'The staged copy of %s is missing or incomplete.', $t['target'] ),
 					array(
-						'untouched' => __( 'Your live site was not changed.', 'estasoft-migrate' ),
-						'advice'    => __( 'Retry the import.', 'estasoft-migrate' ),
+						'untouched' => __( 'Your live site was not changed.', 'estasoft-migration-database-sanitizer' ),
+						'advice'    => __( 'Retry the import.', 'estasoft-migration-database-sanitizer' ),
 					)
 				);
 			}
@@ -680,8 +680,8 @@ class ImportTask extends Task {
 				throw new TaskException(
 					sprintf( 'The staged copy of %1$s has %2$d rows but the package holds %3$d.', $t['target'], $have, $t['expect'] ),
 					array(
-						'untouched' => __( 'Your live site was not changed.', 'estasoft-migrate' ),
-						'advice'    => __( 'Retry the import. If it happens again, the package may be damaged.', 'estasoft-migrate' ),
+						'untouched' => __( 'Your live site was not changed.', 'estasoft-migration-database-sanitizer' ),
+						'advice'    => __( 'Retry the import. If it happens again, the package may be damaged.', 'estasoft-migration-database-sanitizer' ),
 					)
 				);
 			}
@@ -737,8 +737,8 @@ class ImportTask extends Task {
 			throw new TaskException(
 				sprintf( 'The tables could not be swapped: %s', $e->getMessage() ),
 				array(
-					'untouched' => __( 'Your live site was not changed.', 'estasoft-migrate' ),
-					'advice'    => __( 'Retry the import.', 'estasoft-migrate' ),
+					'untouched' => __( 'Your live site was not changed.', 'estasoft-migration-database-sanitizer' ),
+					'advice'    => __( 'Retry the import.', 'estasoft-migration-database-sanitizer' ),
 				),
 				false,
 				$e
@@ -853,7 +853,7 @@ class ImportTask extends Task {
 			// The plugin must stay active, or the site owner loses the way back.
 			$basename = (string) $ctx->service( 'plugin_basename' );
 			if ( '' === $basename ) {
-				$basename = 'estasoft-migrate/estasoft-migrate.php';
+				$basename = 'estasoft-migration-database-sanitizer/estasoft-migrate.php';
 			}
 			$stored = $db->get_var( 'SELECT option_value FROM ' . $qo . ' WHERE option_name = %s', array( 'active_plugins' ) );
 			$list   = null === $stored ? array() : @unserialize( $stored, array( 'allowed_classes' => false ) ); // phpcs:ignore WordPress.PHP.NoSilencedErrors,WordPress.PHP.DiscouragedPHPFunctions
@@ -1008,22 +1008,22 @@ class ImportTask extends Task {
 	public function describe( array $params, array $state ) {
 		switch ( $state['phase'] ?? '' ) {
 			case 'verify':
-				return __( 'Checking the package.', 'estasoft-migrate' );
+				return __( 'Checking the package.', 'estasoft-migration-database-sanitizer' );
 			case 'snapshot':
-				return __( 'Saving a rollback snapshot of the current tables.', 'estasoft-migrate' );
+				return __( 'Saving a rollback snapshot of the current tables.', 'estasoft-migration-database-sanitizer' );
 			case 'stage':
 				$cur = (int) ( $state['cur'] ?? -1 );
 				if ( isset( $state['tables'][ $cur ] ) ) {
 					/* translators: %s: table name */
-					return sprintf( __( 'Importing %s into a temporary copy.', 'estasoft-migrate' ), $state['tables'][ $cur ]['target'] );
+					return sprintf( __( 'Importing %s into a temporary copy.', 'estasoft-migration-database-sanitizer' ), $state['tables'][ $cur ]['target'] );
 				}
-				return __( 'Importing tables into temporary copies.', 'estasoft-migrate' );
+				return __( 'Importing tables into temporary copies.', 'estasoft-migration-database-sanitizer' );
 			case 'swap':
-				return __( 'Switching to the imported tables.', 'estasoft-migrate' );
+				return __( 'Switching to the imported tables.', 'estasoft-migration-database-sanitizer' );
 			case 'finish':
-				return __( 'Finishing up.', 'estasoft-migrate' );
+				return __( 'Finishing up.', 'estasoft-migration-database-sanitizer' );
 			case 'done':
-				return __( 'Import complete.', 'estasoft-migrate' );
+				return __( 'Import complete.', 'estasoft-migration-database-sanitizer' );
 		}
 		return '';
 	}
@@ -1063,11 +1063,11 @@ class ImportTask extends Task {
 		$phase = (string) ( $state['phase'] ?? 'verify' );
 		$order = array( 'verify', 'snapshot', 'stage', 'swap', 'finish' );
 		$label = array(
-			'verify'   => __( 'Check the package', 'estasoft-migrate' ),
-			'snapshot' => __( 'Save a rollback snapshot', 'estasoft-migrate' ),
-			'stage'    => __( 'Import into temporary tables', 'estasoft-migrate' ),
-			'swap'     => __( 'Switch tables', 'estasoft-migrate' ),
-			'finish'   => __( 'Finish up', 'estasoft-migrate' ),
+			'verify'   => __( 'Check the package', 'estasoft-migration-database-sanitizer' ),
+			'snapshot' => __( 'Save a rollback snapshot', 'estasoft-migration-database-sanitizer' ),
+			'stage'    => __( 'Import into temporary tables', 'estasoft-migration-database-sanitizer' ),
+			'swap'     => __( 'Switch tables', 'estasoft-migration-database-sanitizer' ),
+			'finish'   => __( 'Finish up', 'estasoft-migration-database-sanitizer' ),
 		);
 		if ( isset( $params['snapshot'] ) && ! $params['snapshot'] ) {
 			unset( $order[1] );
