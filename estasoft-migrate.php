@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       Estasoft Migration & Database Sanitizer
- * Plugin URI:        https://estasoft.com/
+ * Plugin URI:        https://github.com/estasofttechnologies/estasoft-migrate
  * Description:       Zero-downtime WordPress migration with resumable chunked database transfer, serialization-safe search and replace, and a rule-based database sanitizer. 100% free.
  * Version:           1.0.0
  * Requires at least: 5.8
