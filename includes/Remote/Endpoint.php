@@ -57,9 +57,9 @@ class Endpoint {
 	 * @return void
 	 */
 	public function serve() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput
-		$given  = wp_unslash( $_GET['estm_remote'] );
-		$action = is_scalar( $given ) ? preg_replace( '/[^a-z_]/', '', strtolower( (string) $given ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Requests are authenticated by their signature.
+		$given  = isset( $_GET['estm_remote'] ) ? sanitize_key( wp_unslash( $_GET['estm_remote'] ) ) : '';
+		$action = (string) preg_replace( '/[^a-z_]/', '', $given );
 
 		// Other plugins sometimes print notices; they must not end up inside the signed answer.
 		ob_start();
@@ -82,20 +82,25 @@ class Endpoint {
 		@ignore_user_abort( true ); // phpcs:ignore WordPress.PHP.NoSilencedErrors
 		$body = (string) file_get_contents( 'php://input' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 
+		// Only the five headers of the signed protocol are read. Their values are hexadecimal text or digits,
+		// so cleaning them as text changes nothing that is valid.
 		$headers = array();
-		foreach ( $_SERVER as $name => $value ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
-			if ( 0 === strpos( $name, 'HTTP_X_ESTM_' ) ) {
-				$headers[ strtolower( str_replace( '_', '-', substr( $name, 5 ) ) ) ] = (string) $value;
+		foreach ( array( 'version', 'key', 'time', 'nonce', 'sig' ) as $part ) {
+			$name = 'HTTP_X_ESTM_' . strtoupper( $part );
+			if ( isset( $_SERVER[ $name ] ) ) {
+				$headers[ 'x-estm-' . $part ] = sanitize_text_field( wp_unslash( $_SERVER[ $name ] ) );
 			}
 		}
+
+		$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
 
 		/**
 		 * The address of the other site as seen by this one. Change it when the site is behind a proxy
 		 * that passes the real address in a header you trust.
 		 *
-		 * @param string $ip REMOTE_ADDR.
+		 * @param string $ip REMOTE_ADDR, cleaned as text.
 		 */
-		$ip = (string) apply_filters( 'estasoft_migrate_remote_ip', (string) ( $_SERVER['REMOTE_ADDR'] ?? '' ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
+		$ip = sanitize_text_field( (string) apply_filters( 'estasoft_migrate_remote_ip', $ip ) );
 
 		$server = new Server( $this->plugin->settings(), $this->plugin->runner(), $this->plugin->context(), new WpNonces() );
 		$reply  = $server->handle( $action, $body, $headers, $ip, is_ssl() );

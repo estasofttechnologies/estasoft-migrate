@@ -61,7 +61,8 @@ final class SafetySwitches {
 	}
 
 	/**
-	 * Remind administrators that email is blocked.
+	 * Remind administrators that email is blocked. It is shown only on the Dashboard and the Plugins list,
+	 * not on every screen of wp-admin, and not on our own screens, which show the state themselves.
 	 *
 	 * @return void
 	 */
@@ -70,7 +71,7 @@ final class SafetySwitches {
 			return;
 		}
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-		if ( $screen && false !== strpos( (string) $screen->id, 'estasoft-migrate' ) ) {
+		if ( ! $screen || ! in_array( (string) $screen->id, array( 'dashboard', 'plugins' ), true ) ) {
 			return;
 		}
 		printf(

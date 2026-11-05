@@ -36,6 +36,9 @@ if ( version_compare( PHP_VERSION, ESTASOFT_MIGRATE_MIN_PHP, '<' ) ) {
 	add_action(
 		'admin_notices',
 		static function () {
+			if ( ! current_user_can( 'activate_plugins' ) ) {
+				return;
+			}
 			printf(
 				'<div class="notice notice-error"><p>%s</p></div>',
 				esc_html(

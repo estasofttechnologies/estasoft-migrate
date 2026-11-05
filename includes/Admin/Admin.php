@@ -21,6 +21,11 @@ class Admin {
 	const SLUG = 'estasoft-migrate';
 
 	/**
+	 * Handle of the small rule that keeps the flow screens (Pre-flight, Progress) out of the menu.
+	 */
+	const MENU_STYLE = 'estasoft-migrate-menu';
+
+	/**
 	 * Plugin.
 	 *
 	 * @var Plugin
@@ -45,7 +50,7 @@ class Admin {
 		add_action( 'admin_menu', array( $this, 'menu' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'assets' ) );
 		add_filter( 'admin_body_class', array( $this, 'body_class' ) );
-		add_action( 'admin_head', array( $this, 'menu_style' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'menu_style' ) );
 		add_filter( 'plugin_action_links_' . plugin_basename( ESTASOFT_MIGRATE_FILE ), array( $this, 'action_links' ) );
 		add_filter( 'admin_footer_text', array( $this, 'footer_text' ), 20 );
 		add_action( 'admin_post_estm_download_package', array( new Downloads( $this->plugin ), 'package' ) );
@@ -178,8 +183,10 @@ class Admin {
 			}
 		}
 		if ( $hide ) {
-			// Selectors are built from fixed slugs above.
-			echo '<style id="estm-menu">' . implode( ',', $hide ) . '{display:none}</style>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput
+			// The selectors are built from the fixed slugs above. The handle has no file of its own: it only carries the rule.
+			wp_register_style( self::MENU_STYLE, false, array(), ESTASOFT_MIGRATE_VERSION );
+			wp_enqueue_style( self::MENU_STYLE );
+			wp_add_inline_style( self::MENU_STYLE, implode( ',', $hide ) . '{display:none}' );
 		}
 	}
 
