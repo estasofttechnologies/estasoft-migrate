@@ -37,7 +37,15 @@ The slug WordPress.org assigned on 1 Nov 2026 is `estasoft-migration-database-sa
 1. Sign in at https://wordpress.org/plugins/developers/add/ with the account named in `Contributors`.
 2. Upload `dist/estasoft-migration-database-sanitizer-<version>.zip`.
 3. Answer the review email within 7 days. Reviews are done by volunteers; the first answer can take several weeks.
-4. After approval you get an SVN repository. Put the plugin files in `trunk/`, a copy in `tags/<version>/`, and the contents of `.wordpress-org/` in `assets/` (not in `trunk/`). `bin/build-zip.sh` shows exactly which files belong in the plugin.
+4. After approval you get an SVN repository (approved on 6 Nov 2026: `https://plugins.svn.wordpress.org/estasoft-migration-database-sanitizer`, user `estasoft`). Put the plugin files in `trunk/`, a copy in `tags/<version>/`, and the contents of `.wordpress-org/` in `assets/` (not in `trunk/`). `bin/build-zip.sh` shows exactly which files belong in the plugin.
+
+## Releasing from the zip
+
+`bin/svn-release.sh` does step 4 in a throw-away working copy: it makes `trunk/` an exact copy of the plugin folder inside the built zip, creates `tags/<version>/`, puts `.wordpress-org/` into `assets/`, shows the change list and asks before it commits. It refuses to run when the plugin header version and the readme `Stable tag` differ, and it never overwrites an existing tag. Subversion asks for the SVN password (the one under Account & Security in the WordPress.org profile, not the login password); the script never stores it.
+
+1. Raise the version in `estasoft-migrate.php` (header and `ESTASOFT_MIGRATE_VERSION`) and the `Stable tag` and changelog in `readme.txt`; run the checks; `bin/build-zip.sh`.
+2. `bin/svn-release.sh` (add `--no-commit` to look first).
+3. The plugin page and the download update within a few minutes; search and the profile can take up to 72 hours.
 
 ## Assets in `.wordpress-org/`
 
